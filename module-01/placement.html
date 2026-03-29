@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Where are you right now? — Module 1 · AI Fluency for K–12 Educators</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+:root { --dark: #0f0f0e; --cream: #f0ece0; --coral: #d97757; --blue: #6a9bcc; --green: #8fa870; --gray: #b0aea5; }
+html, body { min-height: 100vh; background: var(--dark); display: flex; align-items: center; justify-content: center; padding: 2rem 1rem; }
+.stage { width: 100%; max-width: 780px; position: relative; }
+.stage::before { content: ''; position: fixed; inset: 0; background: radial-gradient(ellipse 50% 30% at 80% 10%, rgba(217,119,87,0.06) 0%, transparent 60%), radial-gradient(ellipse 35% 50% at 15% 90%, rgba(106,155,204,0.04) 0%, transparent 60%); pointer-events: none; z-index: 0; }
+.card-outer { position: relative; z-index: 1; background: rgba(240,236,224,0.02); border: 0.5px solid rgba(240,236,224,0.1); border-radius: 4px; padding: 3rem 3rem 2.5rem; }
+.breadcrumb { font-family: 'DM Sans', sans-serif; font-size: 10px; font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(240,236,224,0.28); margin-bottom: 1.75rem; display: flex; align-items: center; gap: 12px; }
+.breadcrumb::after { content: ''; flex: 1; height: 0.5px; background: rgba(240,236,224,0.07); }
+.title-block { margin-bottom: 2.5rem; }
+.headline { font-family: 'Playfair Display', Georgia, serif; font-size: clamp(24px, 4vw, 36px); font-weight: 400; font-style: italic; color: var(--cream); line-height: 1.2; margin-bottom: 0.5rem; letter-spacing: -0.01em; }
+.subhead { font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 300; color: rgba(240,236,224,0.38); letter-spacing: 0.03em; line-height: 1.5; }
+.positions { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-bottom: 1.5rem; margin-top: 2rem; }
+.pos { background: rgba(240,236,224,0.02); border: 0.5px solid rgba(240,236,224,0.09); border-radius: 3px; padding: 16px 12px 14px; cursor: pointer; min-height: 130px; display: flex; flex-direction: column; justify-content: space-between; transition: background 0.2s, border-color 0.2s, transform 0.18s; user-select: none; }
+.pos:hover { background: rgba(240,236,224,0.065); border-color: rgba(240,236,224,0.2); transform: translateY(-2px); }
+.pos.selected { background: rgba(217,119,87,0.1); border-color: rgba(217,119,87,0.55); }
+.pos.passed { background: rgba(240,236,224,0.01); border-color: rgba(240,236,224,0.04); }
+.pos-num { font-family: 'Playfair Display', Georgia, serif; font-size: 28px; font-weight: 400; color: rgba(240,236,224,0.09); line-height: 1; transition: color 0.25s; display: block; }
+.pos.selected .pos-num { color: var(--coral); }
+.pos.passed .pos-num { color: rgba(217,119,87,0.22); }
+.pos-label { font-family: 'DM Sans', sans-serif; font-size: 10.5px; font-weight: 400; color: rgba(240,236,224,0.32); line-height: 1.5; transition: color 0.25s; display: block; flex: 1; padding-top: 8px; }
+.pos.selected .pos-label { color: rgba(240,236,224,0.82); }
+.pos.passed .pos-label { color: rgba(240,236,224,0.18); }
+.pos-pip { width: 5px; height: 5px; border-radius: 50%; background: rgba(240,236,224,0.08); transition: background 0.25s, box-shadow 0.25s; align-self: flex-end; flex-shrink: 0; }
+.pos.selected .pos-pip { background: var(--coral); box-shadow: 0 0 8px rgba(217,119,87,0.55); }
+.prog-wrap { height: 1.5px; background: rgba(240,236,224,0.05); border-radius: 2px; margin-bottom: 2rem; overflow: hidden; }
+.prog-fill { height: 100%; width: 0%; background: linear-gradient(to right, rgba(217,119,87,0.35), var(--coral)); border-radius: 2px; transition: width 0.6s cubic-bezier(0.4,0,0.2,1); }
+.response { border-top: 0.5px solid rgba(240,236,224,0.08); padding-top: 1.75rem; display: none; }
+.response.visible { display: block; animation: riseIn 0.5s cubic-bezier(0.2,0,0,1) forwards; }
+@keyframes riseIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+.response-grid { display: grid; grid-template-columns: 220px 1fr; gap: 2.5rem; align-items: start; }
+.resp-left { border-right: 0.5px solid rgba(240,236,224,0.07); padding-right: 2.5rem; }
+.resp-position { font-family: 'DM Sans', sans-serif; font-size: 10px; font-weight: 500; letter-spacing: 0.16em; text-transform: uppercase; color: var(--coral); margin-bottom: 0.75rem; display: block; }
+.resp-vignette { font-family: 'Playfair Display', Georgia, serif; font-size: 14px; font-style: italic; color: rgba(240,236,224,0.58); line-height: 1.7; margin-bottom: 1.25rem; }
+.tags { display: flex; gap: 6px; flex-wrap: wrap; }
+.tag { font-family: 'DM Sans', sans-serif; font-size: 9.5px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; padding: 3px 9px; border-radius: 2px; border: 0.5px solid; }
+.tag-d { border-color: rgba(217,119,87,0.55); color: var(--coral); background: rgba(217,119,87,0.08); }
+.tag-s { border-color: rgba(106,155,204,0.55); color: var(--blue); background: rgba(106,155,204,0.08); }
+.tag-c { border-color: rgba(143,168,112,0.55); color: var(--green); background: rgba(143,168,112,0.08); }
+.tag-g { border-color: rgba(176,174,165,0.55); color: var(--gray); background: rgba(176,174,165,0.08); }
+.resp-right { padding-top: 2px; }
+.ornament { font-family: 'Playfair Display', Georgia, serif; font-size: 22px; color: rgba(217,119,87,0.22); display: block; margin-bottom: 0.85rem; line-height: 1; }
+.resp-body { font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 300; color: rgba(240,236,224,0.68); line-height: 1.9; margin-bottom: 1.25rem; }
+.resp-anchor { font-family: 'Playfair Display', Georgia, serif; font-size: 13px; font-style: italic; color: rgba(217,119,87,0.5); display: block; }
+.divider { display: flex; align-items: center; gap: 12px; margin-top: 1.75rem; }
+.divider::before, .divider::after { content: ''; flex: 1; height: 0.5px; background: rgba(240,236,224,0.06); }
+.divider-mark { font-family: 'Playfair Display', Georgia, serif; font-size: 14px; color: rgba(217,119,87,0.16); }
+.footer { text-align: center; margin-top: 1.5rem; font-family: 'DM Sans', sans-serif; font-size: 11px; font-weight: 300; color: rgba(240,236,224,0.16); letter-spacing: 0.05em; transition: color 0.4s; }
+.status-badge { position: absolute; top: -12px; right: 24px; font-family: 'DM Sans', sans-serif; font-size: 9.5px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; background: #1a1a18; border: 0.5px solid rgba(240,236,224,0.12); color: rgba(240,236,224,0.35); padding: 4px 12px; border-radius: 2px; }
+@media (max-width: 600px) { .card-outer { padding: 2rem 1.25rem 1.75rem; } .positions { gap: 5px; } .pos { min-height: 105px; padding: 12px 8px 10px; } .pos-num { font-size: 22px; } .pos-label { font-size: 9.5px; } .response-grid { grid-template-columns: 1fr; gap: 1.5rem; } .resp-left { border-right: none; border-bottom: 0.5px solid rgba(240,236,224,0.07); padding-right: 0; padding-bottom: 1.25rem; } }
+</style>
+</head>
+<body>
+<div class="stage">
+  <div class="status-badge">Draft &middot; Module 1</div>
+  <div class="card-outer">
+    <div class="breadcrumb">AI Fluency for K&ndash;12 Educators &nbsp;&middot;&nbsp; Module 1 &nbsp;&middot;&nbsp; Orientation</div>
+    <div class="title-block">
+      <h1 class="headline">Where are you, right now?</h1>
+      <p class="subhead">Select the position that honestly describes your relationship with AI today.</p>
+    </div>
+    <div class="positions" id="positions">
+      <div class="pos" data-idx="0"><span class="pos-num">I</span><span class="pos-label">Haven&rsquo;t opened it yet &mdash; but I&rsquo;m here</span><span class="pos-pip"></span></div>
+      <div class="pos" data-idx="1"><span class="pos-num">II</span><span class="pos-label">Tried it a few times, unsure if I&rsquo;m doing it right</span><span class="pos-pip"></span></div>
+      <div class="pos" data-idx="2"><span class="pos-num">III</span><span class="pos-label">Using it regularly, but flying on instinct</span><span class="pos-pip"></span></div>
+      <div class="pos" data-idx="3"><span class="pos-num">IV</span><span class="pos-label">Confident, but want a principled approach</span><span class="pos-pip"></span></div>
+      <div class="pos" data-idx="4"><span class="pos-num">V</span><span class="pos-label">Daily user &mdash; here to sharpen my judgment</span><span class="pos-pip"></span></div>
+    </div>
+    <div class="prog-wrap"><div class="prog-fill" id="prog"></div></div>
+    <div class="response" id="response">
+      <div class="response-grid">
+        <div class="resp-left">
+          <span class="resp-position" id="r-pos"></span>
+          <p class="resp-vignette" id="r-vign"></p>
+          <div class="tags" id="r-tags"></div>
+        </div>
+        <div class="resp-right">
+          <span class="ornament">&#10087;</span>
+          <p class="resp-body" id="r-body"></p>
+          <span class="resp-anchor">That&rsquo;s exactly where this course meets you.</span>
+        </div>
+      </div>
+      <div class="divider"><span class="divider-mark">&#10022;</span></div>
+    </div>
+    <p class="footer" id="footer">Each position is a legitimate starting point.</p>
+  </div>
+</div>
+<script>
+var data = [
+  { pos: "Position I — The threshold", vignette: "“I’ve heard a lot about AI. But honestly, I haven’t really opened it yet.”", body: "That’s a completely honest place to be. The noise is real, and so is the uncertainty. This course won’t push you before it makes sense. It starts by helping you figure out what would even be worth your time — rooted in what you already know about your students.", tags: [["Delegation","tag-d"],["Diligence","tag-g"]], prog: 10 },
+  { pos: "Position II — The curious beginner", vignette: "“I’ve tried it a few times. Sometimes useful. Sometimes I wonder if I’m doing it wrong.”", body: "That instinct — the one that wonders whether you’re doing it right — is already a sign of good judgment. It means you’re thinking critically rather than just consuming. This course gives that instinct a framework, something you can return to every time you sit down with an AI.", tags: [["Description","tag-s"],["Discernment","tag-c"]], prog: 30 },
+  { pos: "Position III — The regular practitioner", vignette: "“I use it regularly and it saves me time. But I’m not always sure I’m being careful enough.”", body: "That tension between usefulness and carefulness is exactly the right thing to sit with. You’ve built the habit. What this course offers is the principled thinking underneath it — so the decisions you’re already making become more intentional, and the ones you’re avoiding become less daunting.", tags: [["Delegation","tag-d"],["Description","tag-s"],["Discernment","tag-c"]], prog: 55 },
+  { pos: "Position IV — The structured thinker", vignette: "“I feel pretty confident. I want a more professional, structured approach for my classroom.”", body: "Confidence is a foundation, not a destination. Teachers who are already fluent tend to get the most from frameworks like this one, because they have enough experience to recognize what the structure is pointing at. You’ll move quickly through the fundamentals and find the depth where it matters.", tags: [["Delegation","tag-d"],["Description","tag-s"],["Discernment","tag-c"],["Diligence","tag-g"]], prog: 77 },
+  { pos: "Position V — The reflective expert", vignette: "“I use AI every day. I’m here to sharpen my judgment and think more rigorously.”", body: "Then you already understand the most important thing: fluency isn’t about using AI more. It’s about using it better — and knowing when not to at all. This course will give precise language to things you’ve probably sensed but haven’t had a framework to articulate or teach to others.", tags: [["Delegation","tag-d"],["Description","tag-s"],["Discernment","tag-c"],["Diligence","tag-g"]], prog: 100 }
+];
+document.querySelectorAll('.pos').forEach(function(el) {
+  el.addEventListener('click', function() {
+    var idx = parseInt(el.getAttribute('data-idx'));
+    document.querySelectorAll('.pos').forEach(function(p, i) {
+      p.classList.remove('selected','passed');
+      if (i === idx) p.classList.add('selected');
+      else if (i < idx) p.classList.add('passed');
+    });
+    document.getElementById('prog').style.width = data[idx].prog + '%';
+    var d = data[idx];
+    document.getElementById('r-pos').textContent = d.pos;
+    document.getElementById('r-vign').textContent = d.vignette;
+    document.getElementById('r-body').textContent = d.body;
+    var tw = document.getElementById('r-tags');
+    tw.innerHTML = '';
+    d.tags.forEach(function(t) { var s = document.createElement('span'); s.className = 'tag ' + t[1]; s.textContent = t[0]; tw.appendChild(s); });
+    var resp = document.getElementById('response');
+    resp.classList.remove('visible');
+    void resp.offsetWidth;
+    resp.classList.add('visible');
+    var footer = document.getElementById('footer');
+    footer.textContent = 'The 4D competencies you’ll build most are highlighted above.';
+    footer.style.color = 'rgba(240,236,224,0.28)';
+  });
+});
+</script>
+</body>
+</html>
