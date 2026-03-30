@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>You already have a head start — Module 1 · AI Fluency for K–12 Educators</title>
+<title>You already have a head start â Module 1 Â· AI Fluency for Kâ12 Educators</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@300;400;600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -34,8 +34,8 @@ html,body{min-height:100vh;background:var(--bg);display:flex;align-items:center;
 .subhead{font-size:13px;font-weight:400;color:var(--muted);line-height:1.5}
 .field-wrap{position:relative;width:100%;height:420px;margin-top:0.5rem;cursor:none;background:var(--surface);border-top:0.5px solid var(--border);border-bottom:0.5px solid var(--border)}
 canvas{display:block;width:100%;height:100%}
-.panel{padding:1.25rem 2rem 1.75rem;background:var(--bg)}
-.panel-inner{display:grid;grid-template-columns:1fr 1.8fr;gap:2rem;align-items:start;opacity:0;transform:translateY(5px);transition:opacity 0.35s,transform 0.35s}
+.panel{padding:1.25rem 2rem 1.75rem;background:var(--bg);min-height:200px}
+.panel-inner{display:grid;grid-template-columns:1fr 1.8fr;gap:2rem;align-items:start;opacity:0;transition:opacity 0.35s}
 .panel-inner.show{opacity:1;transform:translateY(0)}
 .pleft{border-right:0.5px solid var(--border);padding-right:2rem}
 .plabel{font-size:10px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:var(--coral);margin-bottom:0.4rem;display:block}
@@ -90,40 +90,40 @@ var DARK='rgba(20,20,19,';
 var CORAL='rgba(217,119,87,';
 
 var nodes=[
-  {l1:"My students always",l2:"know what’s expected",fx:0.18,fy:0.24,
+  {l1:"My students always",l2:"know whatâs expected",fx:0.18,fy:0.24,
    name:"You define what good work looks like",
    desc:"Your rubrics and objectives say exactly what you mean.",
    tags:[["Description","ts"]],d4:"Description",
    nc:'rgba(106,155,204,',
-   insight:"This is Description — telling AI exactly what you need. You already do it every time you write a learning target.",
+   insight:"This is Description â telling AI exactly what you need. You already do it every time you write a learning target.",
    anchor:"Your lesson planning instincts are a prompting superpower."},
-  {l1:"I can tell when",l2:"something’s off",fx:0.82,fy:0.21,
-   name:"You catch what isn’t working",
+  {l1:"I can tell when",l2:"somethingâs off",fx:0.82,fy:0.21,
+   name:"You catch what isnât working",
    desc:"You read the room and adjust before anyone falls behind.",
    tags:[["Discernment","tc"]],d4:"Discernment",
    nc:'rgba(120,140,93,',
-   insight:"This is Discernment — evaluating what AI gives you. Most people skip this step. You won’t.",
-   anchor:"Your instinct for ‘something’s off’ is your most important AI skill."},
+   insight:"This is Discernment â evaluating what AI gives you. Most people skip this step. You wonât.",
+   anchor:"Your instinct for âsomethingâs offâ is your most important AI skill."},
   {l1:"My feedback actually",l2:"changes the work",fx:0.5,fy:0.14,
    name:"Your feedback opens a door",
    desc:"Your comments show the path. Students know exactly what to do next.",
    tags:[["Description","ts"],["Discernment","tc"]],d4:"Inner Loop",
    nc:'rgba(183,148,100,',
-   insight:"Description + Discernment work as a loop. Describe, evaluate, refine. You’ve been doing this with students your whole career.",
-   anchor:"You’ve been running the inner loop your entire career."},
-  {l1:"I know what’s not",l2:"mine to share",fx:0.13,fy:0.65,
+   insight:"Description + Discernment work as a loop. Describe, evaluate, refine. Youâve been doing this with students your whole career.",
+   anchor:"Youâve been running the inner loop your entire career."},
+  {l1:"I know whatâs not",l2:"mine to share",fx:0.13,fy:0.65,
    name:"You hold student information with care",
    desc:"You know what goes in writing and what stays in the room.",
    tags:[["Diligence","tg"]],d4:"Diligence",
    nc:'rgba(136,135,128,',
-   insight:"This is Diligence — owning your AI use responsibly. Your professional judgment doesn’t live in the model.",
-   anchor:"AI assistance doesn’t transfer professional responsibility."},
+   insight:"This is Diligence â owning your AI use responsibly. Your professional judgment doesnât live in the model.",
+   anchor:"AI assistance doesnât transfer professional responsibility."},
   {l1:"I protect my time",l2:"for what matters",fx:0.87,fy:0.63,
-   name:"You decide what’s worth your energy",
+   name:"You decide whatâs worth your energy",
    desc:"You guard your attention for the students and decisions that need you.",
    tags:[["Delegation","td"]],d4:"Delegation",
    nc:CORAL,
-   insight:"This is Delegation — deciding what to hand off to AI and what to keep. You’ve been making this call your entire career.",
+   insight:"This is Delegation â deciding what to hand off to AI and what to keep. Youâve been making this call your entire career.",
    anchor:"Every effective teacher is already a strategic delegator."},
   {l1:"I break hard things",l2:"into learnable steps",fx:0.31,fy:0.76,
    name:"You scaffold learning beautifully",
@@ -132,19 +132,19 @@ var nodes=[
    nc:'rgba(140,148,118,',
    insight:"Decomposing a task for a student and for AI are the same skill. Your scaffolding instincts transfer directly.",
    anchor:"Teaching is task design. Prompting is task design."},
-  {l1:"My name is on it,",l2:"so I make sure it’s right",fx:0.68,fy:0.79,
+  {l1:"My name is on it,",l2:"so I make sure itâs right",fx:0.68,fy:0.79,
    name:"You stand behind what you send",
-   desc:"When something goes out under your name, you’ve made sure it’s right.",
+   desc:"When something goes out under your name, youâve made sure itâs right.",
    tags:[["Diligence","tg"],["Delegation","td"]],d4:"Diligence",
    nc:'rgba(197,155,128,',
-   insight:"AI helps you move faster — but you’re the one who stands behind everything that reaches your students.",
+   insight:"AI helps you move faster â but youâre the one who stands behind everything that reaches your students.",
    anchor:"The work is yours. AI is a tool in service of it."},
   {l1:"I know when to call",l2:"in the right person",fx:0.5,fy:0.51,
    name:"You recognize the edges of your knowledge",
-   desc:"You know when to bring in the specialist. That’s a professional strength.",
+   desc:"You know when to bring in the specialist. Thatâs a professional strength.",
    tags:[["Delegation","td"],["Discernment","tc"]],d4:"Delegation + Discernment",
    nc:'rgba(150,158,128,',
-   insight:"Knowing what only you can do — and what AI can’t — is the whole game.",
+   insight:"Knowing what only you can do â and what AI canât â is the whole game.",
    anchor:"Knowing when not to use AI is as important as knowing when to."}
 ];
 
@@ -238,7 +238,7 @@ function draw(){
 }
 
 function showNode(n){
-  document.getElementById('pl').textContent='Your strength → '+n.d4;
+  document.getElementById('pl').textContent='Your strength â '+n.d4;
   document.getElementById('pn').textContent=n.name;
   document.getElementById('pd').textContent=n.desc;
   document.getElementById('pins').textContent=n.insight;
@@ -247,7 +247,7 @@ function showNode(n){
   n.tags.forEach(function(t){var s=document.createElement('span');s.className='tag '+t[1];s.textContent=t[0];tw.appendChild(s);});
   var pi=document.getElementById('pi');pi.classList.remove('show');void pi.offsetWidth;pi.classList.add('show');
   var c=Object.keys(revealedSet).length,h=document.getElementById('hint');
-  if(c>=7)h.textContent='You’ve traced the full 4D framework — built from what you already do.';
+  if(c>=7)h.textContent='Youâve traced the full 4D framework â built from what you already do.';
   else if(c>=4)h.textContent=c+' of 8 explored.';
   else if(c>=1)h.textContent=c+' explored. Keep moving.';
   h.style.color='rgba(20,20,19,0.5)';
