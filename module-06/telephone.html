@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Conduct the Symphony - Module 6 - AI Fluency for K-12 Educators</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,300;8..60,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#faf9f5;--surface:#f0eee6;--dark:#141413;--muted:rgba(20,20,19,0.42);--border:rgba(20,20,19,0.1);--coral:#d97757;--sans:'DM Sans',Arial,sans-serif}
+html,body{min-height:100vh;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:2rem 1rem;font-family:var(--sans);color:var(--dark)}
+.stage{width:100%;max-width:760px;position:relative}
+.status-badge{position:absolute;top:0;right:0;z-index:10;font-size:9.5px;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;background:var(--surface);border:0.5px solid var(--border);color:var(--muted);padding:4px 12px;border-radius:0 6px 0 4px}
+.card{background:var(--bg);border:0.5px solid var(--border);border-radius:6px;overflow:hidden}
+.top-bar{padding:1.75rem 2rem 0;padding-right:8rem}
+.eyebrow{font-size:10px;font-weight:500;letter-spacing:0.16em;text-transform:uppercase;color:var(--muted)}
+.title-area{padding:0.75rem 2rem 0.25rem}
+.headline{font-family:var(--sans);font-size:clamp(20px,3.2vw,28px);font-weight:600;color:var(--dark);line-height:1.2;margin-bottom:0.25rem;letter-spacing:-0.02em}
+.subhead{font-size:13px;color:var(--muted);line-height:1.5}
+.field-wrap{position:relative;background:var(--surface);border-top:0.5px solid var(--border);border-bottom:0.5px solid var(--border)}
+canvas{display:block;width:100%}
+.controls{padding:1.25rem 2rem 1.5rem;background:var(--bg)}
+.controls-label{font-size:10px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);margin-bottom:0.85rem;display:block}
+.btn-row{display:flex;gap:0.5rem;flex-wrap:wrap}
+.ctx-btn{font-family:var(--sans);font-size:12px;font-weight:500;padding:0.45rem 1rem;border-radius:3px;cursor:pointer;border:0.5px solid var(--border);background:var(--bg);color:var(--muted);transition:background 0.2s,border-color 0.2s,color 0.2s,box-shadow 0.2s,opacity 0.3s;letter-spacing:0.02em;user-select:none}
+.ctx-btn:hover{border-color:rgba(217,119,87,0.4);color:var(--dark)}
+.ctx-btn.active{background:var(--coral);border-color:var(--coral);color:#fff;box-shadow:0 2px 8px rgba(217,119,87,0.25)}
+.ctx-btn.fifth{border-style:dashed;border-color:rgba(217,119,87,0.3);color:rgba(217,119,87,0.45);background:transparent;opacity:0.5;pointer-events:none;cursor:default}
+.ctx-btn.fifth.ready{opacity:1;pointer-events:auto;border-color:rgba(217,119,87,0.55);color:rgba(217,119,87,0.9)}
+.ctx-btn.fifth.active{border-style:solid;background:var(--coral);color:#fff;opacity:1;box-shadow:0 2px 14px rgba(217,119,87,0.45)}
+.foot{text-align:center;font-size:11px;font-weight:400;color:var(--muted);padding:0.6rem 0 1rem;border-top:0.5px solid var(--border);background:var(--surface);transition:color 0.4s;letter-spacing:0.02em}
+</style>
+</head>
+<body>
+<div class="stage">
+  <div class="status-badge">Draft &middot; Module 6</div>
+  <div class="card">
+    <div class="top-bar"><span class="eyebrow">AI Fluency for K&ndash;12 Educators &nbsp;&middot;&nbsp; Module 6</span></div>
+    <div class="title-area">
+      <h1 class="headline">Conduct the symphony.</h1>
+      <p class="subhead">Each piece of context you give AI is a note. Add them all and watch what takes shape.</p>
+    </div>
+    <div class="field-wrap" id="wrap"><canvas id="c"></canvas></div>
+    <div class="controls">
+      <span class="controls-label">Add context &mdash; watch the field respond</span>
+      <div class="btn-row">
+        <button class="ctx-btn" data-i="0">Grade level</button>
+        <button class="ctx-btn" data-i="1">Topic</button>
+        <button class="ctx-btn" data-i="2">Purpose</button>
+        <button class="ctx-btn" data-i="3">Your students</button>
+        <button class="ctx-btn fifth" id="fifthbtn" data-i="4">What only you know</button>
+      </div>
+    </div>
+    <div class="foot" id="foot">Start by adding context. Each one matters.</div>
+  </div>
+</div>
+<script>
+var CV=document.getElementById('c'),CTX=CV.getContext('2d'),wrap=document.getElementById('wrap');
+var W=0,H=0,dpr=1,tick=0,N=4000,parts=[],act=[false,false,false,false,false],actN=0;
+var glowTarget=0,glowCurrent=0,cache=[null,null,null,null];
+
+function makeDome(cx,cy,R){
+  var p=[];
+  for(var i=0;i<=700;i++){var a=Math.PI+i/700*Math.PI;p.push({x:cx+R*Math.cos(a),y:cy+R*Math.sin(a)});}
+  var nW=R*0.30,tH=R*0.55;
+  for(var i=0;i<=80;i++){var f=i/80,curve=Math.sin(f*Math.PI)*R*0.12,xR=(R+curve)*(1-f)+nW*f,y=cy+f*tH;p.push({x:cx+xR,y:y});p.push({x:cx-xR,y:y});}
+  return p;
+}
+
+function makeNeck(cx,cy,R){
+  var p=[],nW=R*0.30,nT=cy+R*0.55,nB=cy+R*1.00;
+  for(var j=0;j<4;j++){var y=nT+j/3*(nB-nT),w=nW*(1-j*0.05);for(var i=0;i<=90;i++)p.push({x:cx-w+i/90*w*2,y:y});}
+  var bW=nW*0.76;for(var i=0;i<=60;i++)p.push({x:cx-bW+i/60*bW*2,y:nB});
+  return p;
+}
+
+function makeFilament(cx,cy,R){
+  var p=[],lR=R*0.13,lY=cy+R*0.08,lS=R*0.14,sB=cy+R*0.50;
+  for(var i=0;i<=100;i++){var a=Math.PI+i/100*Math.PI;p.push({x:cx-lS+lR*Math.cos(a),y:lY+lR*Math.sin(a)});}
+  for(var i=0;i<=100;i++){var a=Math.PI+i/100*Math.PI;p.push({x:cx+lS+lR*Math.cos(a),y:lY+lR*Math.sin(a)});}
+  for(var i=0;i<=50;i++){var f=i/50,yy=lY+lR+f*(sB-lY-lR);p.push({x:cx-lS,y:yy});p.push({x:cx+lS,y:yy});}
+  for(var i=0;i<=30;i++)p.push({x:cx-lS+i/30*lS*2,y:lY+lR});
+  return p;
+}
+
+function makeRays(cx,cy,R){
+  var p=[],rc=8,r0=R*1.28,r1=R*1.58;
+  for(var k=0;k<rc;k++){var ra=Math.PI+k/(rc-1)*Math.PI;for(var i=0;i<=20;i++){var r=r0+i/20*(r1-r0);p.push({x:cx+r*Math.cos(ra),y:cy+r*Math.sin(ra)});}}
+  return p;
+}
+
+function buildCache(){
+  var R=Math.min(H*0.72/2.58,W*0.228),cx=W*0.50,cy=H/2+R*0.29;
+  cache[0]=makeDome(cx,cy,R);cache[1]=makeNeck(cx,cy,R);cache[2]=makeFilament(cx,cy,R);cache[3]=makeRays(cx,cy,R);
+}
+
+function ptFrom(ci){var arr=cache[ci];if(!arr||!arr.length)return{x:W/2,y:H/2};var p=arr[Math.floor(Math.random()*arr.length)];return{x:p.x+(Math.random()-0.5)*2,y:p.y+(Math.random()-0.5)*2};}
+
+var BS=[0.00,0.24,0.48,0.72],BE=[0.24,0.48,0.72,0.96];
+
+function initParts(){parts=[];for(var i=0;i<N;i++){var ang=Math.random()*Math.PI*2,spd=0.12+Math.random()*0.14;parts.push({x:Math.random()*W,y:Math.random()*H,vx:Math.cos(ang)*spd,vy:Math.sin(ang)*spd,wx:Math.random()*W,wy:Math.random()*H,tx:0,ty:0,shaped:false,band:-1,sz:Math.random()*1.4+0.9,alpha:0.10+Math.random()*0.12,talpha:0.10+Math.random()*0.12,phase:Math.random()*Math.PI*2});}}
+
+function activateBand(bi){
+  var s=Math.floor(BS[bi]*N),e=Math.floor(BE[bi]*N);
+  for(var i=s;i<e;i++){var p=parts[i];if(p.shaped&&p.band===bi)continue;var pt=ptFrom(bi);p.tx=pt.x;p.ty=pt.y;p.shaped=true;p.band=bi;p.talpha=0.60+Math.random()*0.35;}
+}
+
+function deactivateBand(bi){
+  var s=Math.floor(BS[bi]*N),e=Math.floor(BE[bi]*N);
+  for(var i=s;i<e;i++){var p=parts[i];p.shaped=false;p.band=-1;p.talpha=0.07+Math.random()*0.09;p.wx=Math.random()*W;p.wy=Math.random()*H;}
+}
+
+function resize(){
+  dpr=window.devicePixelRatio||1;var r=wrap.getBoundingClientRect();W=r.width;H=Math.round(W*0.56);
+  CV.width=Math.round(W*dpr);CV.height=Math.round(H*dpr);CV.style.width=W+'px';CV.style.height=H+'px';
+  CTX.setTransform(dpr,0,0,dpr,0,0);
+  if(parts.length>0){buildCache();for(var bi=0;bi<4;bi++){if(act[bi])activateBand(bi);}}
+}
+
+function loop(){
+  requestAnimationFrame(loop);
+  if(W===0){resize();return;}
+  tick+=0.007;
+  glowCurrent+=(glowTarget-glowCurrent)*0.018;
+  CTX.clearRect(0,0,W,H);
+  parts.forEach(function(p){
+    if(p.shaped){
+      p.vx+=(p.tx-p.x)*0.003;p.vy+=(p.ty-p.y)*0.003;
+      p.vx+=(Math.random()-0.5)*0.010;p.vy+=(Math.random()-0.5)*0.010;
+      p.vx*=0.86;p.vy*=0.86;
+      p.talpha=0.60+glowCurrent*0.28;
+    } else {
+      p.vx+=(p.wx-p.x)*0.0005;p.vy+=(p.wy-p.y)*0.0005;
+      p.vx+=(Math.random()-0.5)*0.025;p.vy+=(Math.random()-0.5)*0.025;
+      p.vx*=0.94;p.vy*=0.94;
+      var dx=p.wx-p.x,dy=p.wy-p.y;
+      if(dx*dx+dy*dy<300){p.wx=Math.random()*W;p.wy=Math.random()*H;}
+    }
+    var spd=Math.sqrt(p.vx*p.vx+p.vy*p.vy),mx=p.shaped?1.8:0.7;
+    if(spd>mx){var sc=mx/spd;p.vx*=sc;p.vy*=sc;}
+    if(spd>0.005&&spd<0.08){var sm=0.08/spd;p.vx*=sm;p.vy*=sm;}
+    p.x+=p.vx;p.y+=p.vy;
+    if(p.x<-12)p.x=W+12;if(p.x>W+12)p.x=-12;
+    if(p.y<-12)p.y=H+12;if(p.y>H+12)p.y=-12;
+    p.alpha+=(p.talpha-p.alpha)*0.022;
+    var pulse=p.shaped?Math.sin(tick*(1.9+glowCurrent*1.2)+p.phase)*(0.04+glowCurrent*0.06):0;
+    var sz=p.sz+(p.shaped?actN*0.08+glowCurrent*0.7:0);
+    CTX.beginPath();CTX.arc(p.x,p.y,Math.max(0.4,sz),0,Math.PI*2);
+    CTX.fillStyle='rgba(217,119,87,'+Math.min(1,Math.max(0,p.alpha+pulse))+')';
+    CTX.fill();
+  });
+}
+
+var footEl=document.getElementById('foot'),fifthBtn=document.getElementById('fifthbtn');
+var msgs=['Start by adding context. Each one matters.','The outline is forming.','The structure is taking hold.','The idea is almost whole.','There it is. Now illuminate it.','This is what description does. The more you bring, the more it becomes yours.'];
+
+document.querySelectorAll('.ctx-btn').forEach(function(btn){
+  btn.addEventListener('click',function(){
+    var i=parseInt(btn.getAttribute('data-i'));
+    act[i]=!act[i];btn.classList.toggle('active',act[i]);
+    if(i<4){
+      actN=act.slice(0,4).filter(Boolean).length;
+      if(act[i])activateBand(i);else deactivateBand(i);
+      if(actN>=4)fifthBtn.classList.add('ready');
+      else{fifthBtn.classList.remove('ready');if(act[4]){act[4]=false;fifthBtn.classList.remove('active');glowTarget=0;}}
+    } else {
+      glowTarget=act[4]?1:0;
+    }
+    var mi=act[4]?5:actN;
+    footEl.textContent=msgs[Math.min(mi,5)];
+    footEl.style.color=mi>=5?'rgba(20,20,19,0.78)':mi>=4?'rgba(20,20,19,0.62)':'rgba(20,20,19,0.42)';
+  });
+});
+
+window.addEventListener('load',function(){requestAnimationFrame(function(){requestAnimationFrame(function(){resize();initParts();buildCache();loop();});});});
+window.addEventListener('resize',resize);
+if(window.ResizeObserver){new ResizeObserver(resize).observe(wrap);}
+</script>
+</body>
+</html>
