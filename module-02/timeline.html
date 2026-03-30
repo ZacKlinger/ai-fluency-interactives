@@ -9,180 +9,211 @@
 <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@300;400;600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-:root{--bg:#faf9f5;--surface:#f0eee6;--dark:#141413;--muted:rgba(20,20,19,0.45);--border:rgba(20,20,19,0.1);--coral:#d97757;--coral-bg:rgba(217,119,87,0.08);--coral-border:rgba(217,119,87,0.35);--amber:#b07d2e;--amber-bg:rgba(176,125,46,0.08);--amber-border:rgba(176,125,46,0.35);--green:#4a7c59;--green-bg:rgba(74,124,89,0.08);--green-border:rgba(74,124,89,0.35);--sans:'DM Sans',Arial,sans-serif;--serif:'Source Serif 4',Georgia,serif}
+:root{
+  --bg:#faf9f5;--surface:#f0eee6;--dark:#141413;--muted:rgba(20,20,19,0.42);
+  --border:rgba(20,20,19,0.1);--coral:#d97757;--amber:#9a6e2a;--green:#3d6b4f;
+  --sans:'DM Sans',Arial,sans-serif;--serif:'Source Serif 4',Georgia,serif
+}
 html,body{min-height:100vh;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:2rem 1rem;font-family:var(--sans);color:var(--dark)}
-.stage{width:100%;max-width:720px}
+.stage{width:100%;max-width:680px}
 .card{background:var(--bg);border:0.5px solid var(--border);border-radius:6px;overflow:hidden}
-.top-bar{padding:1.5rem 2rem 0;display:flex;justify-content:space-between;align-items:center}
+.top-bar{padding:1.5rem 2rem 0;display:flex;justify-content:space-between}
 .eyebrow{font-size:10px;font-weight:500;letter-spacing:0.16em;text-transform:uppercase;color:var(--muted)}
 .badge{font-size:9px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;border:0.5px solid var(--border);color:var(--muted);padding:3px 10px;border-radius:2px}
 .title-area{padding:0.75rem 2rem 0}
-.headline{font-family:var(--sans);font-size:clamp(20px,3vw,28px);font-weight:600;color:var(--dark);line-height:1.2;margin-bottom:0.3rem;letter-spacing:-0.02em}
-.subhead{font-size:13px;font-weight:400;color:var(--muted);line-height:1.55}
-.instruction{margin:1rem 2rem 0;padding:0.85rem 1.1rem;background:var(--surface);border-radius:4px;border-left:2px solid rgba(20,20,19,0.15)}
-.instruction p{font-size:12.5px;font-weight:400;color:var(--dark);line-height:1.65}
-.instruction strong{font-weight:600}
-.para-wrap{padding:1.5rem 2rem;border-top:0.5px solid var(--border);margin-top:1rem}
-.para-label{font-size:10px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);margin-bottom:0.85rem;display:flex;align-items:center;gap:8px}
+.headline{font-family:var(--sans);font-size:clamp(20px,3vw,26px);font-weight:600;color:var(--dark);line-height:1.2;margin-bottom:0.25rem;letter-spacing:-0.02em}
+.subhead{font-size:13px;color:var(--muted);line-height:1.5}
+.nudge{margin:1rem 2rem 0;padding:0.75rem 1rem;background:var(--surface);border-radius:4px;font-size:12.5px;color:var(--dark);line-height:1.6;border-left:2px solid rgba(20,20,19,0.12)}
+.nudge strong{font-weight:600}
+.para-wrap{padding:1.5rem 2rem 1.25rem;border-top:0.5px solid var(--border);margin-top:1rem}
+.para-label{font-size:10px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);margin-bottom:1rem;display:flex;align-items:center;gap:8px}
 .para-label::after{content:'';flex:1;height:0.5px;background:var(--border)}
-.paragraph{font-family:var(--serif);font-size:16.5px;font-weight:400;line-height:1.85;color:var(--dark)}
-.sentence{display:inline;cursor:pointer;border-radius:3px;padding:1px 2px;margin:0 -2px;transition:background 0.15s,border-color 0.15s;border-bottom:1.5px solid transparent;position:relative}
-.sentence:hover{background:rgba(20,20,19,0.05);border-bottom-color:rgba(20,20,19,0.2)}
-.sentence.revealed-risky{background:var(--coral-bg);border-bottom:1.5px solid var(--coral-border)}
-.sentence.revealed-safe{background:var(--green-bg);border-bottom:1.5px solid var(--green-border)}
-.sentence.revealed-unknown{background:var(--amber-bg);border-bottom:1.5px solid var(--amber-border)}
-.feedback-area{min-height:72px;padding:0 2rem 0;margin-top:0}
-.feedback{padding:0.85rem 1.1rem;border-radius:4px;opacity:0;transform:translateY(4px);transition:opacity 0.3s,transform 0.3s;display:none}
-.feedback.show{opacity:1;transform:translateY(0);display:block}
-.feedback.risky{background:var(--coral-bg);border-left:2px solid var(--coral-border)}
-.feedback.safe{background:var(--green-bg);border-left:2px solid var(--green-border)}
-.feedback.unknown{background:var(--amber-bg);border-left:2px solid var(--amber-border)}
-.fb-tag{font-size:9.5px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:4px;display:block}
-.risky .fb-tag{color:var(--coral)}
-.safe .fb-tag{color:var(--green)}
-.unknown .fb-tag{color:var(--amber)}
-.fb-body{font-size:13px;font-weight:400;color:var(--dark);line-height:1.6}
-.fb-body strong{font-weight:600}
-.hint-bar{text-align:center;font-size:11px;font-weight:400;color:var(--muted);padding:0.75rem 0 1.1rem;border-top:0.5px solid var(--border);background:var(--surface);transition:color 0.4s}
-.progress-dots{display:flex;justify-content:center;gap:5px;padding:0.6rem 0 0.5rem;border-top:0.5px solid var(--border)}
-.dot{width:7px;height:7px;border-radius:50%;background:rgba(20,20,19,0.12);transition:background 0.3s}
-.dot.risky{background:var(--coral)}
-.dot.safe{background:var(--green)}
-.dot.unknown{background:var(--amber)}
+.paragraph{font-family:var(--serif);font-size:16px;font-weight:400;line-height:1.9;color:var(--dark)}
+
+.s{
+  display:inline;
+  padding:2px 4px;margin:0 -4px;
+  border-radius:3px;
+  cursor:pointer;
+  border-bottom:2px solid transparent;
+  transition:background 0.12s,border-color 0.12s,transform 0.1s;
+  position:relative;
+}
+.s:hover{background:rgba(20,20,19,0.06);border-bottom-color:rgba(20,20,19,0.25)}
+.s:active{transform:scale(0.99)}
+
+.s.risky{
+  background:rgba(217,119,87,0.12);
+  border-bottom:2px solid rgba(217,119,87,0.5);
+  animation:popIn 0.2s cubic-bezier(0.34,1.56,0.64,1);
+}
+.s.safe{
+  background:rgba(61,107,79,0.1);
+  border-bottom:2px solid rgba(61,107,79,0.45);
+  animation:popIn 0.2s cubic-bezier(0.34,1.56,0.64,1);
+}
+.s.amber{
+  background:rgba(154,110,42,0.1);
+  border-bottom:2px solid rgba(154,110,42,0.4);
+  animation:popIn 0.2s cubic-bezier(0.34,1.56,0.64,1);
+}
+
+@keyframes popIn{
+  0%{transform:scale(1)}
+  50%{transform:scale(1.01)}
+  100%{transform:scale(1)}
+}
+
+.reveal{
+  margin:0 2rem;
+  height:0;
+  overflow:hidden;
+  transition:height 0.28s cubic-bezier(0.4,0,0.2,1);
+}
+.reveal-inner{
+  padding:0.9rem 1.1rem;
+  border-radius:4px;
+  margin-bottom:1rem;
+}
+.reveal.risky .reveal-inner{background:rgba(217,119,87,0.09);border-left:2px solid rgba(217,119,87,0.5)}
+.reveal.safe .reveal-inner{background:rgba(61,107,79,0.09);border-left:2px solid rgba(61,107,79,0.45)}
+.reveal.amber .reveal-inner{background:rgba(154,110,42,0.09);border-left:2px solid rgba(154,110,42,0.4)}
+.reveal-tag{font-size:9.5px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;display:block;margin-bottom:4px}
+.reveal.risky .reveal-tag{color:var(--coral)}
+.reveal.safe .reveal-tag{color:var(--green)}
+.reveal.amber .reveal-tag{color:var(--amber)}
+.reveal-text{font-size:13px;color:var(--dark);line-height:1.6}
+.reveal-text strong{font-weight:600}
+
+.dots{display:flex;justify-content:center;gap:6px;padding:0.75rem 0;border-top:0.5px solid var(--border);background:var(--surface)}
+.dot{width:8px;height:8px;border-radius:50%;background:rgba(20,20,19,0.12);transition:background 0.25s,transform 0.25s}
+.dot.risky{background:var(--coral);transform:scale(1.2)}
+.dot.safe{background:var(--green);transform:scale(1.2)}
+.dot.amber{background:var(--amber);transform:scale(1.2)}
+.foot{text-align:center;font-size:11px;color:var(--muted);padding:0.5rem 0 1rem;background:var(--surface);transition:color 0.4s}
 </style>
 </head>
 <body>
-<div class="stage">
-  <div class="card">
-    <div class="top-bar">
-      <span class="eyebrow">AI Fluency for K&ndash;12 Educators &nbsp;&middot;&nbsp; Module 2</span>
-      <span class="badge">Draft</span>
-    </div>
-    <div class="title-area">
-      <h1 class="headline">Read carefully.</h1>
-      <p class="subhead">This paragraph was written by AI. Click any sentence you&rsquo;d want to verify before using it with students.</p>
-    </div>
+<div class="stage"><div class="card">
 
-    <div class="instruction">
-      <p>There&rsquo;s no wrong answer. <strong>Click what feels risky</strong> &mdash; anything with a specific number, a named source, or a claim you couldn&rsquo;t easily check yourself.</p>
-    </div>
-
-    <div class="para-wrap">
-      <div class="para-label">AI-generated paragraph &mdash; learning science</div>
-      <div class="paragraph" id="paragraph"></div>
-    </div>
-
-    <div class="feedback-area">
-      <div class="feedback" id="feedback">
-        <span class="fb-tag" id="fb-tag"></span>
-        <p class="fb-body" id="fb-body"></p>
-      </div>
-    </div>
-
-    <div class="progress-dots" id="dots"></div>
-    <div class="hint-bar" id="hint">Click any sentence to begin.</div>
+  <div class="top-bar">
+    <span class="eyebrow">AI Fluency for K&ndash;12 Educators &nbsp;&middot;&nbsp; Module 2</span>
+    <span class="badge">Draft</span>
   </div>
-</div>
+  <div class="title-area">
+    <h1 class="headline">Read carefully.</h1>
+    <p class="subhead">A teacher asked AI for advice on writing IEP goals. Click anything you&rsquo;d verify before acting on it.</p>
+  </div>
+
+  <div class="nudge">
+    <strong>What’s worth flagging:</strong> specific numbers, named sources, or anything you couldn’t easily check yourself.
+  </div>
+
+  <div class="para-wrap">
+    <div class="para-label">AI-generated response</div>
+    <div class="paragraph" id="para"></div>
+  </div>
+
+  <div class="reveal" id="reveal"><div class="reveal-inner"><span class="reveal-tag" id="rtag"></span><p class="reveal-text" id="rtext"></p></div></div>
+
+  <div class="dots" id="dots"></div>
+  <div class="foot" id="foot">Click any sentence to begin.</div>
+
+</div></div>
 
 <script>
-var sentences = [
+var data=[
   {
-    text: "Research in cognitive science consistently shows that spaced repetition — spreading practice over time rather than cramming — significantly improves long-term retention.",
-    type: "safe",
-    tag: "This one holds up.",
-    body: "Spaced repetition is one of the most replicated findings in learning science. Your instinct to look closely is still the right one — even solid claims deserve a second glance."
+    t:"When writing IEP goals, the SMART framework — Specific, Measurable, Achievable, Relevant, and Time-bound — is widely accepted as best practice across special education.",
+    type:"safe",
+    tag:"This one holds up.",
+    body:"SMART goals are genuinely standard practice in special education. The instinct to check is still good — even solid claims deserve a second look."
   },
   {
-    text: "The Learning Pyramid, developed by the National Training Laboratories in the 1960s, suggests students retain 90% of what they teach to others and only 5% of what they hear in a lecture.",
-    type: "risky",
-    tag: "Good instinct.",
-    body: "Those exact percentages — 90%, 5% — have never been validated by research. The NTL has no record of producing this data. Specific statistics like this are exactly where AI fabricates most confidently."
+    t:"Research from the National Center for Learning Disabilities found that students with clearly measurable IEP goals make 34% more academic progress than those without.",
+    type:"risky",
+    tag:"Good instinct.",
+    body:"That specific figure — 34%, that source — is fabricated. AI generates authoritative-sounding statistics that don’t exist. <strong>Always search for the actual study before citing it.</strong>"
   },
   {
-    text: "Retrieval practice — testing yourself before you feel ready — is one of the most robust and replicated findings in learning science.",
-    type: "safe",
-    tag: "This one holds up.",
-    body: "Retrieval practice is strongly supported by decades of research. Roediger, Karpicke, and others have replicated this finding across many contexts. Good instinct to check, though."
+    t:"Goals should reference the general education curriculum and connect to grade-level standards wherever possible, per IDEA requirements.",
+    type:"safe",
+    tag:"This one holds up.",
+    body:"IDEA does require IEP goals to connect to the general curriculum. The instinct to read carefully is exactly right — keep going."
   },
   {
-    text: "A 2019 meta-analysis published in Educational Psychology Review found that retrieval practice improves test scores by an average of 47% compared to re-reading.",
-    type: "risky",
-    tag: "Good instinct.",
-    body: "That specific figure — 47%, that journal, that year — is almost certainly fabricated. AI generates plausible-sounding citations that don’t exist. Always search for the actual study before citing it."
+    t:"Avoid vague language like “will improve” — instead specify the skill, the condition, and the criteria for mastery.",
+    type:"safe",
+    tag:"This one holds up.",
+    body:"Solid special education writing guidance. This is consistent with how most districts and the research frame measurable goal-writing."
   },
   {
-    text: "Cognitive load theory, introduced by John Sweller in 1988, suggests that working memory is limited and that instruction should be designed to avoid overwhelming it.",
-    type: "unknown",
-    tag: "Worth a quick check.",
-    body: "The core claim is accurate — Sweller’s work is real and well-established. But the year and specific framing are worth verifying before you cite them in professional writing. Close enough to check."
+    t:"A 2021 Harvard study found that IEP goals written collaboratively with families are met at twice the rate of those written by teachers alone.",
+    type:"risky",
+    tag:"Strong instinct.",
+    body:"That study doesn’t exist. The “2021 Harvard” framing is a classic hallucination pattern — prestigious institution, recent year, specific ratio. <strong>AI is most confident when it’s most wrong.</strong>"
   },
   {
-    text: "The “learning styles” framework — the idea that students learn best when taught in their preferred auditory, visual, or kinesthetic style — was supported by a 2004 meta-analysis of over 300 studies.",
-    type: "risky",
-    tag: "Strong instinct.",
-    body: "This is inverted. The research – including large meta-analyses – consistently debunks learning styles, not validates them. AI got the direction of the evidence completely backwards while sounding authoritative."
-  },
-  {
-    text: "The practical implication for teachers is clear: mixing retrieval practice with spaced repetition produces stronger outcomes than either strategy alone.",
-    type: "unknown",
-    tag: "Reasonable to flag.",
-    body: "This is plausible and loosely supported by research, but the confident framing — “the practical implication is clear” — overstates the certainty. AI often sounds more definitive than the evidence warrants."
+    t:"Progress should be reported to families at least as often as report cards are issued for non-disabled students, which is a federal requirement.",
+    type:"amber",
+    tag:"Worth a quick check.",
+    body:"This is broadly accurate under IDEA, but the exact phrasing and interpretation varies by state and district. Close enough to verify before you cite it in a meeting."
   }
 ];
 
-var clicked = {};
+var clicked={};
+var currentReveal=null;
 
-function buildParagraph() {
-  var p = document.getElementById('paragraph');
-  var dots = document.getElementById('dots');
-  sentences.forEach(function(s, i) {
-    var span = document.createElement('span');
-    span.className = 'sentence';
-    span.setAttribute('data-i', i);
-    span.textContent = (i > 0 ? ' ' : '') + s.text;
-    span.addEventListener('click', function() { handleClick(i); });
-    p.appendChild(span);
-    var dot = document.createElement('div');
-    dot.className = 'dot';
-    dot.id = 'dot-' + i;
-    dots.appendChild(dot);
+function build(){
+  var p=document.getElementById('para');
+  var d=document.getElementById('dots');
+  data.forEach(function(s,i){
+    var sp=document.createElement('span');
+    sp.className='s';sp.dataset.i=i;
+    sp.innerHTML=(i>0?' ':'')+s.t;
+    sp.addEventListener('click',function(){tap(i);});
+    p.appendChild(sp);
+    var dot=document.createElement('div');
+    dot.className='dot';dot.id='dot'+i;
+    d.appendChild(dot);
   });
 }
 
-function handleClick(i) {
-  var s = sentences[i];
-  var span = document.querySelector('[data-i="' + i + '"]');
-  clicked[i] = true;
+function tap(i){
+  var s=data[i];
+  var sp=document.querySelector('[data-i="'+i+'"]');
+  sp.classList.remove('risky','safe','amber');
+  void sp.offsetWidth;
+  sp.classList.add(s.type);
+  clicked[i]=true;
 
-  span.classList.remove('revealed-risky','revealed-safe','revealed-unknown');
-  span.classList.add('revealed-' + s.type);
+  var dot=document.getElementById('dot'+i);
+  dot.className='dot '+s.type;
 
-  var dot = document.getElementById('dot-' + i);
-  dot.className = 'dot ' + s.type;
+  var rev=document.getElementById('reveal');
+  var inner=rev.querySelector('.reveal-inner');
 
-  var fb = document.getElementById('feedback');
-  var tag = document.getElementById('fb-tag');
-  var body = document.getElementById('fb-body');
+  rev.classList.remove('risky','safe','amber');
+  rev.style.height=rev.scrollHeight+'px';
+  rev.style.height='0px';
 
-  fb.classList.remove('show','risky','safe','unknown');
-  void fb.offsetWidth;
-  tag.textContent = s.tag;
-  body.innerHTML = s.body;
-  fb.classList.add('show', s.type);
+  document.getElementById('rtag').textContent=s.tag;
+  document.getElementById('rtext').innerHTML=s.body;
+  rev.classList.add(s.type);
 
-  var count = Object.keys(clicked).length;
-  var hint = document.getElementById('hint');
-  if(count >= 5) {
-    hint.textContent = 'This is what AI-generated text actually looks like under close reading.';
-    hint.style.color = 'rgba(20,20,19,0.65)';
-  } else if(count >= 3) {
-    hint.textContent = count + ' of 7 examined. Keep going.';
-  } else {
-    hint.textContent = count + ' examined. Keep reading closely.';
-  }
+  requestAnimationFrame(function(){
+    requestAnimationFrame(function(){
+      rev.style.height=rev.querySelector('.reveal-inner').scrollHeight+24+'px';
+    });
+  });
+
+  var n=Object.keys(clicked).length;
+  var f=document.getElementById('foot');
+  if(n>=5){f.textContent='This is what AI output looks like under close reading.';f.style.color='rgba(20,20,19,0.7)';}
+  else if(n>=3){f.textContent=n+' of 6 examined.';}
+  else{f.textContent=n+' examined. Keep reading.';}
 }
 
-buildParagraph();
+build();
 </script>
-</body>
-</html>
+</body></html>
