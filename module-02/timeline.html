@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Read carefully — Module 2 · AI Fluency for K–12 Educators</title>
+<title>Read carefully â Module 2 Â· AI Fluency for Kâ12 Educators</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@300;400;600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -67,12 +67,11 @@ html,body{min-height:100vh;background:var(--bg);display:flex;align-items:center;
 
 .reveal{
   margin:0 2rem;
-  max-height:0;
-  overflow:hidden;
-  transition:max-height 0.3s cubic-bezier(0.4,0,0.2,1),opacity 0.25s;
+  min-height:110px;
+  transition:opacity 0.28s;
   opacity:0;
 }
-.reveal.open{max-height:200px;opacity:1}
+.reveal.open{opacity:1}
 .reveal-inner{padding:0.9rem 1.1rem;border-radius:4px;margin-bottom:1rem}
 .reveal.risky .reveal-inner{background:rgba(217,119,87,0.09);border-left:2px solid rgba(217,119,87,0.5)}
 .reveal.safe .reveal-inner{background:rgba(61,107,79,0.09);border-left:2px solid rgba(61,107,79,0.45)}
@@ -128,37 +127,37 @@ html,body{min-height:100vh;background:var(--bg);display:flex;align-items:center;
 <script>
 var data=[
   {
-    t:"When writing IEP goals, the SMART framework — Specific, Measurable, Achievable, Relevant, and Time-bound — is widely accepted as best practice across special education.",
+    t:"When writing IEP goals, the SMART framework â Specific, Measurable, Achievable, Relevant, and Time-bound â is widely accepted as best practice across special education.",
     type:"safe",
     tag:"This one holds up.",
-    body:"SMART goals are genuinely standard practice in special education. The instinct to check is still the right one — even solid claims deserve a second look."
+    body:"SMART goals are genuinely standard practice in special education. The instinct to check is still the right one â even solid claims deserve a second look."
   },
   {
     t:"Research from the National Center for Learning Disabilities found that students with clearly measurable IEP goals make 34% more academic progress than those without.",
     type:"risky",
     tag:"Good instinct.",
-    body:"That specific figure — 34%, that source — is fabricated. AI generates authoritative-sounding statistics that don’t exist. <strong>Always search for the actual study before citing it.</strong>"
+    body:"That specific figure â 34%, that source â is fabricated. AI generates authoritative-sounding statistics that donât exist. <strong>Always search for the actual study before citing it.</strong>"
   },
   {
     t:"Goals should reference the general education curriculum and connect to grade-level standards wherever possible, per IDEA requirements.",
     type:"safe",
     tag:"This one holds up.",
-    body:"IDEA does require IEP goals to connect to the general curriculum. Solid ground here — keep reading."
+    body:"IDEA does require IEP goals to connect to the general curriculum. Solid ground here â keep reading."
   },
   {
     t:"A 2021 Harvard study found that IEP goals written collaboratively with families are met at twice the rate of those written by teachers alone.",
     type:"risky",
     tag:"Strong instinct.",
-    body:"That study doesn’t exist. “2021 Harvard” is a classic hallucination pattern — prestigious institution, recent year, specific ratio. <strong>AI is most confident when it’s most wrong.</strong>"
+    body:"That study doesnât exist. â2021 Harvardâ is a classic hallucination pattern â prestigious institution, recent year, specific ratio. <strong>AI is most confident when itâs most wrong.</strong>"
   },
   {
-    t:"Progress should be reported to families at least as often as report cards are issued for non-disabled students — a federal requirement under IDEA.",
+    t:"Progress should be reported to families at least as often as report cards are issued for non-disabled students â a federal requirement under IDEA.",
     type:"amber",
     tag:"Worth a quick check.",
     body:"Broadly accurate, but exact interpretation varies by state and district. Close enough to verify before citing it in a meeting."
   },
   {
-    t:"Avoid vague language like “will improve” — instead specify the skill, the condition, and the criteria for mastery.",
+    t:"Avoid vague language like âwill improveâ â instead specify the skill, the condition, and the criteria for mastery.",
     type:"safe",
     tag:"This one holds up.",
     body:"Solid goal-writing guidance, consistent with how most districts and the research frame measurable IEP goals."
@@ -206,9 +205,9 @@ function tap(i){
     sp.classList.add(s.type);
     document.getElementById('dot'+i).className='dot '+s.type;
     rev.classList.remove('open','risky','safe','amber');
-    void rev.offsetWidth;
     document.getElementById('rtag').textContent=s.tag;
     document.getElementById('rtext').innerHTML=s.body;
+    void rev.offsetWidth;
     rev.classList.add(s.type,'open');
     activeIdx=i;
   }
