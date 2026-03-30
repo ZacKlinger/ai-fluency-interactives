@@ -3,17 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Read carefully â Module 2 Â· AI Fluency for Kâ12 Educators</title>
+<title>Read carefully - Module 2 - AI Fluency for K-12 Educators</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@300;400;600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --bg:#faf9f5;--surface:#f0eee6;--dark:#141413;--muted:rgba(20,20,19,0.42);
-  --border:rgba(20,20,19,0.1);--coral:#d97757;--amber:#9a6e2a;--green:#3d6b4f;
-  --sans:'DM Sans',Arial,sans-serif;--serif:'Source Serif 4',Georgia,serif
-}
+:root{--bg:#faf9f5;--surface:#f0eee6;--dark:#141413;--muted:rgba(20,20,19,0.42);--border:rgba(20,20,19,0.1);--coral:#d97757;--amber:#9a6e2a;--green:#3d6b4f;--sans:'DM Sans',Arial,sans-serif;--serif:'Source Serif 4',Georgia,serif}
 html,body{min-height:100vh;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:2rem 1rem;font-family:var(--sans);color:var(--dark)}
 .stage{width:100%;max-width:680px}
 .card{background:var(--bg);border:0.5px solid var(--border);border-radius:6px;overflow:hidden}
@@ -28,61 +24,25 @@ html,body{min-height:100vh;background:var(--bg);display:flex;align-items:center;
 .para-wrap{padding:1.5rem 2rem 1.25rem;border-top:0.5px solid var(--border);margin-top:1rem}
 .para-label{font-size:10px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);margin-bottom:1rem;display:flex;align-items:center;gap:8px}
 .para-label::after{content:'';flex:1;height:0.5px;background:var(--border)}
-
 .paragraph{font-family:var(--serif);font-size:16px;font-weight:400;line-height:1.95;color:var(--dark)}
-
-/* Key fix: display:inline, zero padding, border-bottom only */
-.s{
-  display:inline;
-  padding:0;
-  margin:0;
-  cursor:pointer;
-  border-bottom:2px solid transparent;
-  transition:border-color 0.15s,color 0.15s;
-  position:relative;
-}
+.s{display:inline;padding:0;margin:0;cursor:pointer;border-bottom:2px solid transparent;transition:border-color 0.15s}
 .s:hover{border-bottom-color:rgba(20,20,19,0.25)}
-
-.s.risky{
-  border-bottom:2px solid var(--coral);
-  color:rgba(20,20,19,0.85);
-  animation:flash 0.25s ease;
-}
-.s.safe{
-  border-bottom:2px solid var(--green);
-  color:rgba(20,20,19,0.85);
-  animation:flash 0.25s ease;
-}
-.s.amber{
-  border-bottom:2px solid var(--amber);
-  color:rgba(20,20,19,0.85);
-  animation:flash 0.25s ease;
-}
-
-@keyframes flash{
-  0%{opacity:1}
-  30%{opacity:0.6}
-  100%{opacity:1}
-}
-
-.reveal{
-  margin:0 2rem;
-  min-height:110px;
-  transition:opacity 0.28s;
-  opacity:0;
-}
-.reveal.open{opacity:1}
-.reveal-inner{padding:0.9rem 1.1rem;border-radius:4px;margin-bottom:1rem}
-.reveal.risky .reveal-inner{background:rgba(217,119,87,0.09);border-left:2px solid rgba(217,119,87,0.5)}
-.reveal.safe .reveal-inner{background:rgba(61,107,79,0.09);border-left:2px solid rgba(61,107,79,0.45)}
-.reveal.amber .reveal-inner{background:rgba(154,110,42,0.09);border-left:2px solid rgba(154,110,42,0.4)}
+.s.risky{border-bottom:2px solid var(--coral);animation:flash 0.2s ease}
+.s.safe{border-bottom:2px solid var(--green);animation:flash 0.2s ease}
+.s.amber{border-bottom:2px solid var(--amber);animation:flash 0.2s ease}
+@keyframes flash{0%{opacity:1}35%{opacity:0.65}100%{opacity:1}}
+.reveal-zone{margin:0 2rem;min-height:110px;padding-bottom:0.5rem}
+.reveal-inner{padding:0.9rem 1.1rem;border-radius:4px;opacity:0;transition:opacity 0.28s}
+.reveal-inner.show{opacity:1}
+.reveal-inner.risky{background:rgba(217,119,87,0.09);border-left:2px solid rgba(217,119,87,0.5)}
+.reveal-inner.safe{background:rgba(61,107,79,0.09);border-left:2px solid rgba(61,107,79,0.45)}
+.reveal-inner.amber{background:rgba(154,110,42,0.09);border-left:2px solid rgba(154,110,42,0.4)}
 .reveal-tag{font-size:9.5px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;display:block;margin-bottom:4px}
-.reveal.risky .reveal-tag{color:var(--coral)}
-.reveal.safe .reveal-tag{color:var(--green)}
-.reveal.amber .reveal-tag{color:var(--amber)}
+.reveal-inner.risky .reveal-tag{color:var(--coral)}
+.reveal-inner.safe .reveal-tag{color:var(--green)}
+.reveal-inner.amber .reveal-tag{color:var(--amber)}
 .reveal-text{font-size:13px;color:var(--dark);line-height:1.6}
 .reveal-text strong{font-weight:600}
-
 .dots{display:flex;justify-content:center;gap:6px;padding:0.75rem 0;border-top:0.5px solid var(--border);background:var(--surface)}
 .dot{width:8px;height:8px;border-radius:50%;background:rgba(20,20,19,0.12);transition:background 0.25s,transform 0.2s}
 .dot.risky{background:var(--coral);transform:scale(1.25)}
@@ -93,133 +53,69 @@ html,body{min-height:100vh;background:var(--bg);display:flex;align-items:center;
 </head>
 <body>
 <div class="stage"><div class="card">
-
   <div class="top-bar">
     <span class="eyebrow">AI Fluency for K&ndash;12 Educators &nbsp;&middot;&nbsp; Module 2</span>
     <span class="badge">Draft</span>
   </div>
   <div class="title-area">
     <h1 class="headline">Read carefully.</h1>
-    <p class="subhead">A teacher asked AI for advice on writing IEP goals. Click anything you&rsquo;d verify before acting on it. Click again to deselect.</p>
+    <p class="subhead">A teacher asked AI for advice on writing IEP goals. Click anything you would verify before acting on it. Click again to deselect.</p>
   </div>
-
   <div class="nudge">
-    <strong>What&rsquo;s worth flagging:</strong> specific numbers, named sources, or anything you couldn&rsquo;t easily check yourself.
+    <strong>What is worth flagging:</strong> specific numbers, named sources, or anything you could not easily check yourself.
   </div>
-
   <div class="para-wrap">
     <div class="para-label">AI-generated response</div>
     <p class="paragraph" id="para"></p>
   </div>
-
-  <div class="reveal" id="reveal">
-    <div class="reveal-inner">
+  <div class="reveal-zone">
+    <div class="reveal-inner" id="reveal">
       <span class="reveal-tag" id="rtag"></span>
       <p class="reveal-text" id="rtext"></p>
     </div>
   </div>
-
   <div class="dots" id="dots"></div>
   <div class="foot" id="foot">Click any sentence to begin.</div>
-
 </div></div>
-
 <script>
-var data=[
-  {
-    t:"When writing IEP goals, the SMART framework â Specific, Measurable, Achievable, Relevant, and Time-bound â is widely accepted as best practice across special education.",
-    type:"safe",
-    tag:"This one holds up.",
-    body:"SMART goals are genuinely standard practice in special education. The instinct to check is still the right one â even solid claims deserve a second look."
-  },
-  {
-    t:"Research from the National Center for Learning Disabilities found that students with clearly measurable IEP goals make 34% more academic progress than those without.",
-    type:"risky",
-    tag:"Good instinct.",
-    body:"That specific figure â 34%, that source â is fabricated. AI generates authoritative-sounding statistics that donât exist. <strong>Always search for the actual study before citing it.</strong>"
-  },
-  {
-    t:"Goals should reference the general education curriculum and connect to grade-level standards wherever possible, per IDEA requirements.",
-    type:"safe",
-    tag:"This one holds up.",
-    body:"IDEA does require IEP goals to connect to the general curriculum. Solid ground here â keep reading."
-  },
-  {
-    t:"A 2021 Harvard study found that IEP goals written collaboratively with families are met at twice the rate of those written by teachers alone.",
-    type:"risky",
-    tag:"Strong instinct.",
-    body:"That study doesnât exist. â2021 Harvardâ is a classic hallucination pattern â prestigious institution, recent year, specific ratio. <strong>AI is most confident when itâs most wrong.</strong>"
-  },
-  {
-    t:"Progress should be reported to families at least as often as report cards are issued for non-disabled students â a federal requirement under IDEA.",
-    type:"amber",
-    tag:"Worth a quick check.",
-    body:"Broadly accurate, but exact interpretation varies by state and district. Close enough to verify before citing it in a meeting."
-  },
-  {
-    t:"Avoid vague language like âwill improveâ â instead specify the skill, the condition, and the criteria for mastery.",
-    type:"safe",
-    tag:"This one holds up.",
-    body:"Solid goal-writing guidance, consistent with how most districts and the research frame measurable IEP goals."
-  }
+var data = [
+  {t:"When writing IEP goals, the SMART framework - Specific, Measurable, Achievable, Relevant, and Time-bound - is widely accepted as best practice across special education.",type:"safe",tag:"This one holds up.",body:"SMART goals are genuinely standard practice in special education. The instinct to check is still the right one - even solid claims deserve a second look."},
+  {t:"Research from the National Center for Learning Disabilities found that students with clearly measurable IEP goals make 34% more academic progress than those without.",type:"risky",tag:"Good instinct.",body:"That specific figure - 34%, that source - is fabricated. AI generates authoritative-sounding statistics that do not exist. <strong>Always search for the actual study before citing it.</strong>"},
+  {t:"Goals should reference the general education curriculum and connect to grade-level standards wherever possible, per IDEA requirements.",type:"safe",tag:"This one holds up.",body:"IDEA does require IEP goals to connect to the general curriculum. Solid ground here - keep reading."},
+  {t:"A 2021 Harvard study found that IEP goals written collaboratively with families are met at twice the rate of those written by teachers alone.",type:"risky",tag:"Strong instinct.",body:"That study does not exist. '2021 Harvard' is a classic hallucination pattern - prestigious institution, recent year, specific ratio. <strong>AI is most confident when it is most wrong.</strong>"},
+  {t:"Progress should be reported to families at least as often as report cards are issued for non-disabled students - a federal requirement under IDEA.",type:"amber",tag:"Worth a quick check.",body:"Broadly accurate, but exact interpretation varies by state and district. Close enough to verify before citing it in a meeting."},
+  {t:"Avoid vague language like 'will improve' - instead specify the skill, the condition, and the criteria for mastery.",type:"safe",tag:"This one holds up.",body:"Solid goal-writing guidance, consistent with how most districts and the research frame measurable IEP goals."}
 ];
-
-var state={};
-var activeIdx=null;
-
+var state={},activeIdx=null;
 function build(){
-  var p=document.getElementById('para');
-  var d=document.getElementById('dots');
+  var p=document.getElementById('para'),d=document.getElementById('dots');
   data.forEach(function(s,i){
-    if(i>0) p.appendChild(document.createTextNode(' '));
-    var sp=document.createElement('span');
-    sp.className='s';
-    sp.dataset.i=i;
-    sp.textContent=s.t;
-    sp.addEventListener('click',function(){tap(i);});
-    p.appendChild(sp);
-    var dot=document.createElement('div');
-    dot.className='dot';dot.id='dot'+i;
-    d.appendChild(dot);
+    if(i>0)p.appendChild(document.createTextNode(' '));
+    var sp=document.createElement('span');sp.className='s';sp.dataset.i=i;sp.textContent=s.t;
+    sp.addEventListener('click',function(){tap(i);});p.appendChild(sp);
+    var dot=document.createElement('div');dot.className='dot';dot.id='dot'+i;d.appendChild(dot);
   });
 }
-
 function tap(i){
-  var isOn=state[i];
-  var s=data[i];
-  var sp=document.querySelector('[data-i="'+i+'"]');
-  var rev=document.getElementById('reveal');
-
+  var isOn=state[i],s=data[i],sp=document.querySelector('[data-i="'+i+'"]'),rev=document.getElementById('reveal');
   if(isOn){
-    state[i]=false;
-    sp.classList.remove('risky','safe','amber');
+    state[i]=false;sp.classList.remove('risky','safe','amber');
     document.getElementById('dot'+i).className='dot';
-    if(activeIdx===i){
-      rev.classList.remove('open','risky','safe','amber');
-      activeIdx=null;
-    }
+    if(activeIdx===i){rev.classList.remove('show','risky','safe','amber');activeIdx=null;}
   } else {
-    state[i]=true;
-    sp.classList.remove('risky','safe','amber');
-    void sp.offsetWidth;
-    sp.classList.add(s.type);
+    state[i]=true;sp.classList.remove('risky','safe','amber');void sp.offsetWidth;sp.classList.add(s.type);
     document.getElementById('dot'+i).className='dot '+s.type;
-    rev.classList.remove('open','risky','safe','amber');
+    rev.classList.remove('show','risky','safe','amber');
     document.getElementById('rtag').textContent=s.tag;
     document.getElementById('rtext').innerHTML=s.body;
-    void rev.offsetWidth;
-    rev.classList.add(s.type,'open');
-    activeIdx=i;
+    void rev.offsetWidth;rev.classList.add(s.type,'show');activeIdx=i;
   }
-
-  var n=Object.keys(state).filter(function(k){return state[k];}).length;
-  var f=document.getElementById('foot');
+  var n=Object.keys(state).filter(function(k){return state[k];}).length,f=document.getElementById('foot');
   if(n>=5){f.textContent='This is what AI output looks like under close reading.';f.style.color='rgba(20,20,19,0.7)';}
   else if(n>=3){f.textContent=n+' of 6 examined.';}
   else if(n>0){f.textContent=n+' examined. Keep reading.';}
   else{f.textContent='Click any sentence to begin.';}
 }
-
 build();
 </script>
 </body></html>
