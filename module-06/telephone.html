@@ -64,160 +64,128 @@ var parts=[];
 var act=[false,false,false,false,false];
 var actN=0;
 
-// Particle bands: each click owns a slice of the particle array
-// Slice 0: always wandering (first ~5%)
-// Slice 1 (0-24%): click 1 recruits
-// Slice 2 (24-44%): click 2 recruits
-// Slice 3 (44-62%): click 3 recruits
-// Slice 4 (62-80%): click 4 recruits
-// Slice 5 (80-86%): 5th click pencil
-// Slice 6 (86-92%): 5th click apple
-// Slice 7 (92-98%): 5th click star
-// Slice 8 (98-100%): always wandering (ambient)
+// ---- Lightbulb geometry (verified canvas coords) ----
+// Canvas: y increases DOWNWARD. (cx,cy) is bulb center.
+// Dome = upper semicircle = angles PI to 2*PI (passes through TOP at 3PI/2)
+// Neck hangs below center (cy + positive values)
 
-var BANDS=[
-  {start:0.00,end:0.24,shape:0},  // click 1 -> bulb outer arc
-  {start:0.24,end:0.44,shape:0},  // click 2 -> bulb rays+neck
-  {start:0.44,end:0.62,shape:0},  // click 3 -> bulb fill
-  {start:0.62,end:0.80,shape:0},  // click 4 -> bulb detail
-  {start:0.80,end:0.87,shape:1},  // 5th -> pencil
-  {start:0.87,end:0.94,shape:2},  // 5th -> apple
-  {start:0.94,end:1.00,shape:3}   // 5th -> star
-];
-
-// Shape outlines
-function bulbArc(cx,cy,R){
-  // Dome: upper semicircle, dome UP (arc from PI to 2PI = lower half = wrong)
-  // Lightbulb: dome at TOP, neck at BOTTOM
-  // So dome arc goes from ~210deg to ~330deg in standard math (top of circle)
-  // In canvas: y increases downward. Dome should be the upper part.
-  // Arc from PI (left) going counterclockwise through top to 0 (right)
-  // = angles from PI down to 0, which is the top half
+function makeDome(cx,cy,R){
+  // Outer glass dome: arc from PI to 2*PI (upper half of circle, dome faces UP)
   var p=[];
-  // Top dome arc (upper half of circle = angles PI to 0, i.e. the arc that goes THROUGH top)
-  for(var i=0;i<=500;i++){
-    var a=Math.PI - i/500*Math.PI; // PI down to 0 = top semicircle
-    p.push({x:cx+R*Math.cos(a), y:cy+R*Math.sin(a)});
+  for(var i=0;i<=600;i++){
+    var a=Math.PI+i/600*Math.PI; // PI to 2*PI = upper semicircle
+    p.push({x:cx+R*Math.cos(a),y:cy+R*Math.sin(a)});
+  }
+  // Lower sides of dome curving inward toward neck
+  // Left side: from angle PI (leftmost) curving down to neck left
+  for(var i=0;i<=80;i++){
+    var f=i/80;
+    p.push({x:cx-R*(1-f*0.77),y:cy+f*R*0.52});
+  }
+  // Right side
+  for(var i=0;i<=80;i++){
+    var f=i/80;
+    p.push({x:cx+R*(1-f*0.77),y:cy+f*R*0.52});
   }
   return p;
 }
 
-function bulbNeckAndRays(cx,cy,R){
+function makeNeck(cx,cy,R){
+  // Neck socket below center
   var p=[];
-  // Lower sides: from angle 0 curving down to neck
-  for(var i=0;i<=80;i++){var f=i/80; p.push({x:cx+R*(1-f*0.77),y:cy+f*R*0.50});}
-  for(var i=0;i<=80;i++){var f=i/80; p.push({x:cx-R*(1-f*0.77),y:cy+f*R*0.50});}
-  // Neck horizontals
-  for(var j=0;j<3;j++){var ny=cy+R*(0.52+j*0.14); for(var i=0;i<=60;i++){p.push({x:cx-R*0.23+i/60*R*0.46,y:ny});}}
-  // Neck verticals
-  for(var i=0;i<=30;i++){var f=i/30; p.push({x:cx-R*0.23,y:cy+R*(0.50+f*0.42)}); p.push({x:cx+R*0.23,y:cy+R*(0.50+f*0.42)});}
-  // Bottom base
-  for(var i=0;i<=40;i++){p.push({x:cx-R*0.23+i/40*R*0.46,y:cy+R*0.94});}
+  // Three horizontal bands (socket lines)
+  for(var j=0;j<3;j++){
+    var ny=cy+R*(0.54+j*0.15);
+    for(var i=0;i<=80;i++){p.push({x:cx-R*0.24+i/80*R*0.48,y:ny});}
+  }
+  // Left and right neck verticals
+  for(var i=0;i<=50;i++){
+    var f=i/50;
+    p.push({x:cx-R*0.24,y:cy+R*(0.52+f*0.48)});
+    p.push({x:cx+R*0.24,y:cy+R*(0.52+f*0.48)});
+  }
+  // Bottom base line
+  for(var i=0;i<=60;i++){p.push({x:cx-R*0.24+i/60*R*0.48,y:cy+R*1.0});}
   return p;
 }
 
-function bulbFill(cx,cy,R){
-  // Interior filaments / detail inside dome
+function makeCore(cx,cy,R){
+  // Inner filament and inner arcs - the glowing heart
   var p=[];
-  // Filament S-curve inside bulb
-  for(var i=0;i<=80;i++){var f=i/80*Math.PI; p.push({x:cx+R*0.18*Math.cos(f*3),y:cy-R*0.25+R*0.4*(f/Math.PI)});}
-  // Two inner arcs
-  for(var i=0;i<=60;i++){var a=Math.PI-i/60*Math.PI; p.push({x:cx+R*0.55*Math.cos(a),y:cy+R*0.55*Math.sin(a)});}
-  for(var i=0;i<=60;i++){var a=Math.PI-i/60*Math.PI; p.push({x:cx+R*0.35*Math.cos(a),y:cy+R*0.35*Math.sin(a)});}
-  return p;
-}
-
-function bulbRays(cx,cy,R){
-  // 7 rays emanating outward from dome
-  var p=[];
-  for(var k=0;k<7;k++){
-    var ra=Math.PI-(k/(6))*Math.PI; // spread from 180deg to 0deg (top arc)
-    for(var i=0;i<=18;i++){var r=R*(1.06+i*0.038); p.push({x:cx+r*Math.cos(ra),y:cy+r*Math.sin(ra)});}
+  // Inner dome arc (smaller, inside the glass)
+  for(var i=0;i<=200;i++){
+    var a=Math.PI+i/200*Math.PI;
+    p.push({x:cx+R*0.58*Math.cos(a),y:cy+R*0.58*Math.sin(a)});
+  }
+  // Second inner arc
+  for(var i=0;i<=150;i++){
+    var a=Math.PI+i/150*Math.PI;
+    p.push({x:cx+R*0.36*Math.cos(a),y:cy+R*0.36*Math.sin(a)});
+  }
+  // Filament: S-curve in the lower dome area
+  for(var i=0;i<=120;i++){
+    var f=i/120;
+    var fx=cx+R*0.18*Math.sin(f*Math.PI*2.5);
+    var fy=cy-R*0.02+f*R*0.42;
+    p.push({x:fx,y:fy});
+  }
+  // Vertical stem of filament
+  for(var i=0;i<=60;i++){
+    p.push({x:cx,y:cy-R*0.05+i/60*R*0.48});
   }
   return p;
 }
 
-function pencilOutline(cx,cy,R){
+function makeRays(cx,cy,R){
+  // Light rays emanating from dome - 9 spokes
   var p=[];
-  var w=R*0.28,h=R*1.0;
-  // Left and right long edges
-  for(var i=0;i<=250;i++){var f=i/250; p.push({x:cx-w,y:cy-h+f*h*1.5}); p.push({x:cx+w,y:cy-h+f*h*1.5});}
-  // Top flat
-  for(var i=0;i<=60;i++){p.push({x:cx-w+i/60*w*2,y:cy-h});}
-  // Eraser band
-  for(var i=0;i<=60;i++){p.push({x:cx-w+i/60*w*2,y:cy-h+R*0.2});}
-  // Tip converging lines
-  for(var i=0;i<=100;i++){var f=i/100; p.push({x:cx-w+f*w,y:cy+h*0.55+f*h*0.45}); p.push({x:cx+w-f*w,y:cy+h*0.55+f*h*0.45});}
-  // Wood reveal line
-  for(var i=0;i<=60;i++){p.push({x:cx-w+i/60*w*2,y:cy+h*0.55});}
-  return p;
-}
-
-function appleOutline(cx,cy,R){
-  var p=[];
-  for(var i=0;i<=700;i++){
-    var a=i/700*Math.PI*2;
-    var rx=R*(0.88+0.08*Math.cos(a*2+0.3));
-    var ry=R*(0.82+0.06*Math.sin(a));
-    var dip=0;
-    if(a>Math.PI*1.25&&a<Math.PI*1.75){dip=-R*0.20*Math.pow(Math.sin((a-Math.PI*1.25)/0.5*Math.PI),0.5);}
-    p.push({x:cx+rx*Math.cos(a),y:cy+ry*Math.sin(a)+dip});
-  }
-  for(var i=0;i<=35;i++){var f=i/35; p.push({x:cx+f*R*0.08,y:cy-R*0.80-f*R*0.25});}
-  for(var i=0;i<=80;i++){var la=i/80*Math.PI; p.push({x:cx+R*0.10+R*0.28*Math.cos(la),y:cy-R*0.82-R*0.16*Math.sin(la)});}
-  for(var i=0;i<=25;i++){p.push({x:cx+R*0.10+i/25*R*0.26,y:cy-R*0.82});}
-  return p;
-}
-
-function starOutline(cx,cy,R){
-  var p=[];
-  for(var k=0;k<10;k++){
-    var a0=(k/10)*Math.PI*2-Math.PI/2;
-    var a1=((k+1)/10)*Math.PI*2-Math.PI/2;
-    var r0=k%2===0?R:R*0.42;
-    var r1=k%2===0?R*0.42:R;
-    for(var j=0;j<=50;j++){var f=j/50; p.push({x:cx+(r0+f*(r1-r0))*Math.cos(a0+f*(a1-a0)),y:cy+(r0+f*(r1-r0))*Math.sin(a0+f*(a1-a0))});}
+  for(var k=0;k<9;k++){
+    // Rays spread from leftmost to rightmost, through top (PI to 2*PI range)
+    var ra=Math.PI+(k/8)*Math.PI; // PI to 2*PI
+    for(var i=0;i<=22;i++){
+      var r=R*(1.08+i*0.042);
+      p.push({x:cx+r*Math.cos(ra),y:cy+r*Math.sin(ra)});
+    }
   }
   return p;
 }
 
-// Pre-baked shape point arrays (filled when W/H known)
-var shapeCache=[null,null,null,null,null,null,null]; // 7 sub-shapes
+// Sub-shape cache (4 bands)
+var cache=[null,null,null,null];
 
 function buildCache(){
-  var bx=W*0.50,by=H*0.44,bR=Math.min(W,H)*0.26;
-  shapeCache[0]=bulbArc(bx,by,bR);
-  shapeCache[1]=bulbNeckAndRays(bx,by,bR);
-  shapeCache[2]=bulbFill(bx,by,bR);
-  shapeCache[3]=bulbRays(bx,by,bR);
-  var pR=Math.min(W,H)*0.16;
-  shapeCache[4]=pencilOutline(W*0.15,H*0.50,pR);
-  shapeCache[5]=appleOutline(W*0.85,H*0.50,pR);
-  shapeCache[6]=starOutline(W*0.50,H*0.84,Math.min(W,H)*0.10);
+  var cx=W*0.50, cy=H*0.46, R=Math.min(W,H)*0.28;
+  cache[0]=makeDome(cx,cy,R);
+  cache[1]=makeNeck(cx,cy,R);
+  cache[2]=makeCore(cx,cy,R);
+  cache[3]=makeRays(cx,cy,R);
 }
 
-function ptFrom(cacheIdx){
-  var arr=shapeCache[cacheIdx];
-  if(!arr||arr.length===0)return {x:W/2,y:H/2};
+function ptFrom(ci){
+  var arr=cache[ci];
+  if(!arr||!arr.length)return {x:W/2,y:H/2};
   var p=arr[Math.floor(Math.random()*arr.length)];
   return {x:p.x+(Math.random()-0.5)*2,y:p.y+(Math.random()-0.5)*2};
 }
 
-// Map band index to cache index based on which buttons are pressed
-// band 0-3 = bulb sub-shapes 0,1,2,3
-// band 4 = pencil (cache 4), band 5 = apple (cache 5), band 6 = star (cache 6)
-function cacheForBand(bi){return bi<=3?bi:(bi+1);}
+// Bands: each click owns a permanent slice of particle array
+// 0-24%: band 0 (dome)
+// 24-48%: band 1 (neck)
+// 48-72%: band 2 (core)
+// 72-96%: band 3 (rays)
+// 96-100%: always ambient
+var BAND_START=[0.00,0.24,0.48,0.72];
+var BAND_END  =[0.24,0.48,0.72,0.96];
 
 function initParts(){
   parts=[];
   for(var i=0;i<N;i++){
-    var ang=Math.random()*Math.PI*2,spd=0.12+Math.random()*0.15;
+    var ang=Math.random()*Math.PI*2,spd=0.12+Math.random()*0.14;
     parts.push({
-      x:Math.random()*W, y:Math.random()*H,
-      vx:Math.cos(ang)*spd, vy:Math.sin(ang)*spd,
-      wx:Math.random()*W, wy:Math.random()*H,
-      tx:0, ty:0,
-      shaped:false, bandIdx:-1,
+      x:Math.random()*W,y:Math.random()*H,
+      vx:Math.cos(ang)*spd,vy:Math.sin(ang)*spd,
+      wx:Math.random()*W,wy:Math.random()*H,
+      tx:0,ty:0,shaped:false,band:-1,
       sz:Math.random()*1.4+0.8,
       alpha:0.10+Math.random()*0.12,
       talpha:0.10+Math.random()*0.12,
@@ -227,49 +195,39 @@ function initParts(){
 }
 
 function activateBand(bi){
-  // Recruit particles in the band range into their shape - ONLY if not already shaped
-  var band=BANDS[bi];
-  var start=Math.floor(band.start*N);
-  var end=Math.floor(band.end*N);
-  var ci=cacheForBand(bi);
-  for(var i=start;i<end;i++){
+  var s=Math.floor(BAND_START[bi]*N),e=Math.floor(BAND_END[bi]*N);
+  for(var i=s;i<e;i++){
     var p=parts[i];
-    if(p.shaped&&p.bandIdx===bi) continue; // already placed, leave it
-    var pt=ptFrom(ci);
-    p.tx=pt.x; p.ty=pt.y;
-    p.shaped=true; p.bandIdx=bi;
-    p.talpha=0.60+Math.random()*0.38;
+    if(p.shaped&&p.band===bi)continue; // already placed - leave it
+    var pt=ptFrom(bi);
+    p.tx=pt.x;p.ty=pt.y;
+    p.shaped=true;p.band=bi;
+    p.talpha=0.58+Math.random()*0.40;
   }
 }
 
 function deactivateBand(bi){
-  var band=BANDS[bi];
-  var start=Math.floor(band.start*N);
-  var end=Math.floor(band.end*N);
-  for(var i=start;i<end;i++){
+  var s=Math.floor(BAND_START[bi]*N),e=Math.floor(BAND_END[bi]*N);
+  for(var i=s;i<e;i++){
     var p=parts[i];
-    p.shaped=false; p.bandIdx=-1;
+    p.shaped=false;p.band=-1;
     p.talpha=0.07+Math.random()*0.09;
-    p.wx=Math.random()*W; p.wy=Math.random()*H;
+    p.wx=Math.random()*W;p.wy=Math.random()*H;
   }
 }
 
 function resize(){
   dpr=window.devicePixelRatio||1;
   var r=wrap.getBoundingClientRect();
-  W=r.width; H=Math.round(W*0.54);
-  CV.width=Math.round(W*dpr); CV.height=Math.round(H*dpr);
-  CV.style.width=W+'px'; CV.style.height=H+'px';
+  W=r.width;H=Math.round(W*0.54);
+  CV.width=Math.round(W*dpr);CV.height=Math.round(H*dpr);
+  CV.style.width=W+'px';CV.style.height=H+'px';
   CTX.setTransform(dpr,0,0,dpr,0,0);
-  if(parts.length>0){buildCache(); rebuildAll();}
-}
-
-function rebuildAll(){
-  // Recompute targets for all currently active bands using new cache
-  for(var bi=0;bi<4;bi++){
-    if(act[bi]) activateBand(bi);
+  if(parts.length>0){
+    buildCache();
+    // Rebuild all active bands with new positions
+    for(var bi=0;bi<4;bi++){if(act[bi])activateBand(bi);}
   }
-  if(act[4]){activateBand(4);activateBand(5);activateBand(6);}
 }
 
 function loop(){
@@ -279,26 +237,26 @@ function loop(){
   CTX.clearRect(0,0,W,H);
   parts.forEach(function(p){
     if(p.shaped){
-      p.vx+=(p.tx-p.x)*0.003; p.vy+=(p.ty-p.y)*0.003;
-      p.vx+=(Math.random()-0.5)*0.010; p.vy+=(Math.random()-0.5)*0.010;
-      p.vx*=0.86; p.vy*=0.86;
+      p.vx+=(p.tx-p.x)*0.003;p.vy+=(p.ty-p.y)*0.003;
+      p.vx+=(Math.random()-0.5)*0.010;p.vy+=(Math.random()-0.5)*0.010;
+      p.vx*=0.86;p.vy*=0.86;
     } else {
-      p.vx+=(p.wx-p.x)*0.0005; p.vy+=(p.wy-p.y)*0.0005;
-      p.vx+=(Math.random()-0.5)*0.025; p.vy+=(Math.random()-0.5)*0.025;
-      p.vx*=0.94; p.vy*=0.94;
-      var ddx=p.wx-p.x,ddy=p.wy-p.y;
-      if(ddx*ddx+ddy*ddy<300){p.wx=Math.random()*W;p.wy=Math.random()*H;}
+      p.vx+=(p.wx-p.x)*0.0005;p.vy+=(p.wy-p.y)*0.0005;
+      p.vx+=(Math.random()-0.5)*0.025;p.vy+=(Math.random()-0.5)*0.025;
+      p.vx*=0.94;p.vy*=0.94;
+      var dx=p.wx-p.x,dy=p.wy-p.y;
+      if(dx*dx+dy*dy<300){p.wx=Math.random()*W;p.wy=Math.random()*H;}
     }
     var spd=Math.sqrt(p.vx*p.vx+p.vy*p.vy);
-    var maxS=p.shaped?1.8:0.7;
-    if(spd>maxS){var sc=maxS/spd;p.vx*=sc;p.vy*=sc;}
+    var mx=p.shaped?1.8:0.7;
+    if(spd>mx){var sc=mx/spd;p.vx*=sc;p.vy*=sc;}
     if(spd>0.005&&spd<0.08){var sm=0.08/spd;p.vx*=sm;p.vy*=sm;}
-    p.x+=p.vx; p.y+=p.vy;
-    if(p.x<-12)p.x=W+12; if(p.x>W+12)p.x=-12;
-    if(p.y<-12)p.y=H+12; if(p.y>H+12)p.y=-12;
+    p.x+=p.vx;p.y+=p.vy;
+    if(p.x<-12)p.x=W+12;if(p.x>W+12)p.x=-12;
+    if(p.y<-12)p.y=H+12;if(p.y>H+12)p.y=-12;
     p.alpha+=(p.talpha-p.alpha)*0.020;
     var pulse=p.shaped?Math.sin(tick*1.9+p.phase)*0.04:0;
-    var sz=p.sz+(p.shaped?actN*0.07:0);
+    var sz=p.sz+(p.shaped?actN*0.08:0);
     CTX.beginPath();
     CTX.arc(p.x,p.y,Math.max(0.4,sz),0,Math.PI*2);
     CTX.fillStyle='rgba(217,119,87,'+Math.min(1,Math.max(0,p.alpha+pulse))+')';
@@ -308,24 +266,29 @@ function loop(){
 
 var footEl=document.getElementById('foot');
 var fifthBtn=document.getElementById('fifthbtn');
-var msgs=['Start by adding context. Each one matters.','Something is stirring.','The shape is finding itself.','Almost there.','There it is. Now add what only you know.','This is what description does. The more you bring, the more it becomes yours.'];
+var msgs=[
+  'Start by adding context. Each one matters.',
+  'The outline is forming.',
+  'The structure is taking hold.',
+  'The idea is almost whole.',
+  'There it is. Now add what only you know.',
+  'This is what description does. The more you bring, the more it becomes yours.'
+];
 
 document.querySelectorAll('.ctx-btn').forEach(function(btn){
   btn.addEventListener('click',function(){
     var i=parseInt(btn.getAttribute('data-i'));
     act[i]=!act[i];
     btn.classList.toggle('active',act[i]);
-
     if(i<4){
       actN=act.slice(0,4).filter(Boolean).length;
-      if(act[i]){activateBand(i);}
-      else{deactivateBand(i);}
+      if(act[i])activateBand(i);
+      else deactivateBand(i);
     } else {
-      if(act[4]){activateBand(4);activateBand(5);activateBand(6);}
-      else{deactivateBand(4);deactivateBand(5);deactivateBand(6);}
+      // 5th button: activate band 3 (rays) extra dense + glow
+      if(act[4])activateBand(3);
     }
-
-    if(actN>=4) fifthBtn.classList.add('show');
+    if(actN>=4)fifthBtn.classList.add('show');
     var mi=act[4]?5:actN;
     footEl.textContent=msgs[Math.min(mi,5)];
     footEl.style.color=mi>=5?'rgba(20,20,19,0.78)':mi>=4?'rgba(20,20,19,0.62)':'rgba(20,20,19,0.42)';
@@ -333,10 +296,10 @@ document.querySelectorAll('.ctx-btn').forEach(function(btn){
 });
 
 window.addEventListener('load',function(){requestAnimationFrame(function(){requestAnimationFrame(function(){
-  resize(); initParts(); buildCache(); loop();
+  resize();initParts();buildCache();loop();
 });});});
-window.addEventListener('resize',function(){resize();});
-if(window.ResizeObserver){new ResizeObserver(function(){resize();}).observe(wrap);}
+window.addEventListener('resize',resize);
+if(window.ResizeObserver){new ResizeObserver(resize).observe(wrap);}
 </script>
 </body>
 </html>
