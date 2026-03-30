@@ -3,236 +3,338 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>The Telephone - Module 6 - AI Fluency for K-12 Educators</title>
+<title>The Symphony - Module 6 - AI Fluency for K-12 Educators</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,300;8..60,400;8..60,600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,300;8..60,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --bg:#faf9f5;--surface:#f0eee6;--dark:#141413;--muted:rgba(20,20,19,0.42);
-  --border:rgba(20,20,19,0.1);--coral:#d97757;--sans:'DM Sans',Arial,sans-serif;
-  --serif:'Source Serif 4',Georgia,serif
-}
+:root{--bg:#faf9f5;--surface:#f0eee6;--dark:#141413;--muted:rgba(20,20,19,0.42);--border:rgba(20,20,19,0.1);--coral:#d97757;--sans:'DM Sans',Arial,sans-serif;--serif:'Source Serif 4',Georgia,serif}
 html,body{min-height:100vh;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:2rem 1rem;font-family:var(--sans);color:var(--dark)}
-.stage{width:100%;max-width:740px;position:relative}
+.stage{width:100%;max-width:760px;position:relative}
 .status-badge{position:absolute;top:0;right:0;z-index:10;font-size:9.5px;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;background:var(--surface);border:0.5px solid var(--border);color:var(--muted);padding:4px 12px;border-radius:0 6px 0 4px}
 .card{background:var(--bg);border:0.5px solid var(--border);border-radius:6px;overflow:hidden}
 .top-bar{padding:1.75rem 2rem 0;padding-right:8rem}
 .eyebrow{font-size:10px;font-weight:500;letter-spacing:0.16em;text-transform:uppercase;color:var(--muted)}
 .title-area{padding:0.75rem 2rem 0.25rem}
 .headline{font-family:var(--sans);font-size:clamp(20px,3.2vw,28px);font-weight:600;color:var(--dark);line-height:1.2;margin-bottom:0.25rem;letter-spacing:-0.02em}
-.subhead{font-size:13px;font-weight:400;color:var(--muted);line-height:1.5}
-
-.text-zone{
-  padding:2rem 2rem 1.5rem;
-  border-top:0.5px solid var(--border);
-  margin-top:1rem;
-  background:var(--surface);
-  min-height:280px;
-  position:relative;
+.subhead{font-size:13px;color:var(--muted);line-height:1.5}
+.field-wrap{position:relative;background:var(--surface);border-top:0.5px solid var(--border);border-bottom:0.5px solid var(--border)}
+canvas{display:block;width:100%;cursor:default}
+.controls{padding:1.25rem 2rem 1.5rem;background:var(--bg)}
+.controls-label{font-size:10px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);margin-bottom:0.85rem;display:block}
+.btn-row{display:flex;gap:0.5rem;flex-wrap:wrap}
+.ctx-btn{
+  font-family:var(--sans);font-size:12px;font-weight:500;
+  padding:0.45rem 1rem;border-radius:3px;cursor:pointer;
+  border:0.5px solid var(--border);background:var(--bg);color:var(--muted);
+  transition:all 0.2s;letter-spacing:0.02em;user-select:none;
 }
-
-.stage-label{
-  font-size:10px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;
-  margin-bottom:1rem;display:flex;align-items:center;justify-content:space-between;
+.ctx-btn:hover{border-color:rgba(217,119,87,0.4);color:var(--dark)}
+.ctx-btn.active{background:var(--coral);border-color:var(--coral);color:#fff;box-shadow:0 2px 8px rgba(217,119,87,0.3)}
+.fifth-row{margin-top:0.6rem;display:flex;align-items:center;gap:0.75rem;opacity:0;transition:opacity 0.5s}
+.fifth-row.show{opacity:1}
+.fifth-label{font-size:12px;font-weight:400;color:var(--muted);white-space:nowrap}
+input.fifth-input{
+  flex:1;font-family:var(--sans);font-size:12px;font-weight:400;
+  padding:0.45rem 0.85rem;border-radius:3px;border:0.5px solid var(--border);
+  background:var(--bg);color:var(--dark);outline:none;
+  transition:border-color 0.2s;
 }
-.stage-name{color:var(--coral)}
-.stage-num{color:var(--muted)}
-
-.text-block{
-  position:absolute;top:0;left:0;right:0;padding:2rem 2rem 1.5rem;
-  opacity:0;transition:opacity 0.45s ease;pointer-events:none;
+input.fifth-input:focus{border-color:rgba(217,119,87,0.5)}
+input.fifth-input::placeholder{color:var(--muted)}
+.go-btn{
+  font-family:var(--sans);font-size:12px;font-weight:600;
+  padding:0.45rem 1rem;border-radius:3px;cursor:pointer;
+  background:var(--coral);border:none;color:#fff;
+  opacity:0.5;transition:opacity 0.2s,box-shadow 0.2s;
 }
-.text-block.active{opacity:1;pointer-events:auto;position:relative}
-
-.text-prompt{
-  font-size:11px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;
-  color:var(--muted);margin-bottom:0.6rem;display:block;
-}
-.prompt-text{
-  font-size:12px;font-weight:400;color:var(--muted);
-  background:rgba(20,20,19,0.04);border-radius:3px;
-  padding:0.5rem 0.75rem;margin-bottom:1.25rem;
-  border-left:2px solid var(--border);font-family:var(--sans);
-  line-height:1.55;
-}
-.prompt-text em{font-style:normal;color:var(--coral);font-weight:500}
-
-.output-label{
-  font-size:10px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;
-  color:var(--muted);margin-bottom:0.75rem;display:block;
-}
-.output-text{
-  font-family:var(--serif);font-size:15.5px;font-weight:400;
-  color:var(--dark);line-height:1.85;
-}
-.output-text strong{font-weight:600}
-
-.missing-note{
-  font-size:11.5px;font-weight:400;color:var(--coral);
-  margin-top:1rem;line-height:1.5;
-  padding-top:0.85rem;border-top:0.5px solid rgba(217,119,87,0.2);
-}
-.missing-note strong{font-weight:600}
-
-/* Slider zone */
-.slider-zone{
-  padding:1.5rem 2rem 0.5rem;background:var(--bg);
-  border-top:0.5px solid var(--border);
-}
-.slider-track-wrap{position:relative;margin-bottom:0.5rem}
-.slider-labels{display:flex;justify-content:space-between;margin-bottom:0.5rem}
-.slider-label{font-size:10px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted)}
-.slider-label.right{color:var(--coral)}
-
-input[type=range]{
-  width:100%;
-  -webkit-appearance:none;appearance:none;
-  height:2px;background:var(--border);border-radius:2px;outline:none;cursor:pointer;
-}
-input[type=range]::-webkit-slider-thumb{
-  -webkit-appearance:none;appearance:none;
-  width:18px;height:18px;border-radius:50%;
-  background:var(--coral);border:2px solid var(--bg);
-  box-shadow:0 0 0 1px var(--coral),0 2px 6px rgba(217,119,87,0.3);
-  cursor:pointer;transition:transform 0.15s;
-}
-input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.15)}
-input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:var(--coral);border:2px solid var(--bg);cursor:pointer}
-
-.progress-pips{display:flex;justify-content:space-between;margin-top:0.5rem}
-.pip{width:6px;height:6px;border-radius:50%;background:var(--border);transition:background 0.3s,transform 0.3s}
-.pip.lit{background:var(--coral);transform:scale(1.3)}
-
-.foot{
-  text-align:center;font-size:11px;font-weight:400;color:var(--muted);
-  padding:0.75rem 0 1.1rem;border-top:0.5px solid var(--border);
-  background:var(--surface);transition:color 0.4s;letter-spacing:0.02em;
-}
-
-@media(max-width:540px){.text-zone{min-height:320px}.output-text{font-size:14.5px}}
+.go-btn.ready{opacity:1;box-shadow:0 2px 8px rgba(217,119,87,0.3)}
+.foot{text-align:center;font-size:11px;font-weight:400;color:var(--muted);padding:0.6rem 0 1rem;border-top:0.5px solid var(--border);background:var(--surface);transition:color 0.4s;letter-spacing:0.02em}
+@media(max-width:500px){.btn-row{gap:0.4rem}.ctx-btn{font-size:11px;padding:0.4rem 0.75rem}}
 </style>
 </head>
 <body>
 <div class="stage">
   <div class="status-badge">Draft &middot; Module 6</div>
   <div class="card">
-    <div class="top-bar">
-      <span class="eyebrow">AI Fluency for K&ndash;12 Educators &nbsp;&middot;&nbsp; Module 6</span>
-    </div>
+    <div class="top-bar"><span class="eyebrow">AI Fluency for K&ndash;12 Educators &nbsp;&middot;&nbsp; Module 6</span></div>
     <div class="title-area">
-      <h1 class="headline">The Telephone.</h1>
-      <p class="subhead">Drag left to watch a good output collapse into a bad one. The prompt is what changed.</p>
+      <h1 class="headline">Conduct the symphony.</h1>
+      <p class="subhead">Each piece of context you give AI is a note. Add them all and watch what takes shape.</p>
     </div>
-
-    <div class="text-zone" id="textzone">
-
-      <div class="text-block active" id="block0">
-        <span class="text-prompt">The prompt that started it all:</span>
-        <div class="prompt-text">Write a reading passage about organ systems.</div>
-        <span class="output-label">AI output:</span>
-        <p class="output-text">The human body contains several organ systems. The circulatory system pumps blood through the body. The respiratory system helps us breathe. These systems work together to keep the body functioning. Each organ system has specific organs that carry out its functions.</p>
-        <p class="missing-note"><strong>What is missing:</strong> Everything. Grade level. Students. Purpose. Format. This is what AI does with nothing to work with.</p>
+    <div class="field-wrap"><canvas id="c"></canvas></div>
+    <div class="controls">
+      <span class="controls-label">Add context &mdash; watch the field respond</span>
+      <div class="btn-row">
+        <button class="ctx-btn" data-i="0">Grade level</button>
+        <button class="ctx-btn" data-i="1">Topic</button>
+        <button class="ctx-btn" data-i="2">Purpose</button>
+        <button class="ctx-btn" data-i="3">Your students</button>
       </div>
-
-      <div class="text-block" id="block1">
-        <span class="text-prompt">Add the grade and topic:</span>
-        <div class="prompt-text">Write a reading passage about the circulatory and respiratory systems for <em>7th grade science</em>.</div>
-        <span class="output-label">AI output:</span>
-        <p class="output-text">The circulatory and respiratory systems are two of the most important organ systems in the human body. The circulatory system consists of the heart, blood vessels, and blood, which work together to transport oxygen and nutrients to cells throughout the body. The respiratory system, which includes the lungs and airways, is responsible for gas exchange. When you breathe in, oxygen enters the lungs and is transferred to the bloodstream. Carbon dioxide, a waste product, is removed when you exhale.</p>
-        <p class="missing-note"><strong>Still missing:</strong> Reading level. Student vocabulary range. What students will do with this text. It is a competent paragraph. It is not a teaching tool.</p>
+      <div class="fifth-row" id="fifthrow">
+        <span class="fifth-label">One more thing &mdash;</span>
+        <input class="fifth-input" id="fifthinput" placeholder="What do your students actually need?" maxlength="60">
+        <button class="go-btn" id="gobtn">+</button>
       </div>
-
-      <div class="text-block" id="block2">
-        <span class="text-prompt">Specify the output format:</span>
-        <div class="prompt-text">Write a <em>one-page informational text</em> on how the circulatory and respiratory systems work together for 7th grade science. <em>Bold and define five vocabulary terms in context. Use short paragraphs.</em></div>
-        <span class="output-label">AI output:</span>
-        <p class="output-text">Your heart and lungs are in constant conversation. Every time your lungs take in air, they are sending a message to your blood: there is oxygen ready for pickup. And every time your heart beats, it is answering: the delivery is on its way.<br><br>This exchange depends on two organ systems working as partners. The <strong>respiratory system</strong> (the network of airways and lungs that moves air in and out of your body) brings oxygen in and pushes carbon dioxide out. The <strong>circulatory system</strong> (the heart, blood, and blood vessels) carries that oxygen to every cell in your body and returns carbon dioxide to the lungs to be exhaled.</p>
-        <p class="missing-note"><strong>Getting closer - but missing:</strong> Who these students are. What they already know. What they are building toward. The text is cleaner, but it could belong to any 7th grade classroom anywhere.</p>
-      </div>
-
-      <div class="text-block" id="block3">
-        <span class="text-prompt">Add context about the students and unit:</span>
-        <div class="prompt-text">Write a one-page informational text on how the circulatory and respiratory systems work together for 7th grade science. Bold and define five vocabulary terms in context. Use short paragraphs and <em>concrete, familiar analogies.</em> Students are <em>reading between 3rd and 9th grade level</em> and the text should <em>build toward a claim-evidence-reasoning writing task.</em></div>
-        <span class="output-label">AI output:</span>
-        <p class="output-text">Think of your circulatory system as a delivery service and your respiratory system as the warehouse that keeps it stocked.<br><br>The <strong>respiratory system</strong> (the network of airways, lungs, and muscles that moves air in and out of your body) is where your blood picks up its cargo. When you breathe in, tiny air sacs called <strong>alveoli</strong> (small pouches in your lungs where oxygen and carbon dioxide are exchanged) act like loading docks. Oxygen passes through their thin walls directly into your blood.<br><br>From there, the <strong>circulatory system</strong> (the heart, blood vessels, and blood that move materials through your body) takes over. Your heart pumps oxygen-rich blood outward through <strong>arteries</strong> (blood vessels that carry blood away from the heart) and receives it back through <strong>veins</strong> (blood vessels that return blood to the heart). Every cell in your body gets a delivery. Every cell sends its waste - carbon dioxide - back the same way.</p>
-        <p class="missing-note"><strong>Almost there - but missing:</strong> How this text fits the teacher's voice. The specific summative task students are working toward. That last mile of judgment that only she has.</p>
-      </div>
-
-      <div class="text-block" id="block4">
-        <span class="text-prompt">The full description - product, process, performance:</span>
-        <div class="prompt-text">Write a one-page informational text on how the circulatory and respiratory systems interact for 7th grade science, aligned to NGSS. Bold and define five vocabulary terms in context. Use short paragraphs and concrete, familiar analogies. Students are reading between 3rd and 9th grade level; aim for 6th grade Flesch-Kincaid. <em>Build toward a claim-evidence-reasoning task</em> - include one sentence near the end that explicitly models a claim supported by evidence. <em>Act as a curriculum collaborator, not a textbook.</em></div>
-        <span class="output-label">AI output:</span>
-        <p class="output-text">Think of your circulatory system as a delivery service and your respiratory system as the warehouse that keeps it stocked. They work so closely together that disrupting one immediately affects the other - which is exactly what makes them worth studying as a pair.<br><br>The <strong>respiratory system</strong> (the network of airways, lungs, and muscles that moves air in and out of your body) is where your blood picks up oxygen. Tiny pouches called <strong>alveoli</strong> (air sacs in your lungs built for gas exchange) act like loading docks. Oxygen passes through their thin walls directly into your bloodstream. Carbon dioxide - the waste your cells produce - travels the reverse route, crossing back into the alveoli to be exhaled.<br><br>The <strong>circulatory system</strong> (your heart, blood, and blood vessels working together to move materials through your body) carries that oxygen to every cell. Your heart pumps oxygen-rich blood outward through <strong>arteries</strong> and receives it back through <strong>veins</strong> once cells have used what they need.<br><br>Here is the claim the evidence supports: when your breathing rate increases during exercise, your heart rate increases too - because the two systems are calibrated to each other. More oxygen demand means more delivery, which means more pickup. You cannot push one system harder without pushing them both.</p>
-        <div style="margin-top:1rem;padding:0.75rem 1rem;background:rgba(217,119,87,0.07);border-radius:4px;border-left:2px solid rgba(217,119,87,0.4)">
-          <span style="font-size:10px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--coral);display:block;margin-bottom:3px">This is what description does.</span>
-          <span style="font-size:12px;font-weight:400;color:var(--dark);line-height:1.6">Same task. Same AI. Same sixty seconds. The prompt is the whole difference. Put your name on this one.</span>
-        </div>
-      </div>
-
     </div>
-
-    <div class="slider-zone">
-      <div class="slider-labels">
-        <span class="slider-label">Vague prompt</span>
-        <span class="slider-label right">Full description</span>
-      </div>
-      <input type="range" id="slider" min="0" max="4" step="1" value="4">
-      <div class="progress-pips" id="pips"></div>
-    </div>
-
-    <div class="foot" id="foot">Drag left to watch the output collapse.</div>
+    <div class="foot" id="foot">Start by adding context. Each one matters.</div>
   </div>
 </div>
-
 <script>
-var stages = [
-  "Stage 1 of 5 - No description",
-  "Stage 2 of 5 - Topic and grade only",
-  "Stage 3 of 5 - Format specified",
-  "Stage 4 of 5 - Students and purpose added",
-  "Stage 5 of 5 - Full description"
-];
+var canvas=document.getElementById('c'),ctx=canvas.getContext('2d');
+var W=0,H=0,dpr=1;
+var activeCount=0;
+var fifthDone=false;
+var particles=[];
+var N=260;
+var t=0;
 
-var hints = [
-  "Drag right to see what description can do.",
-  "Better. Still missing the students, the purpose, the craft.",
-  "Cleaner. But it could belong to any classroom anywhere.",
-  "Almost. One more layer and it becomes genuinely yours.",
-  "Same task. Same AI. The prompt is the whole difference."
-];
-
-var slider = document.getElementById('slider');
-var foot = document.getElementById('foot');
-var pipsEl = document.getElementById('pips');
-var blocks = document.querySelectorAll('.text-block');
-var current = 4;
-
-// Build pips
-for(var i=0;i<5;i++){
-  var pip=document.createElement('div');
-  pip.className='pip'+(i<=current?' lit':'');
-  pipsEl.appendChild(pip);
+// Shape point generators
+function lightbulbPts(cx,cy,r){
+  var pts=[];
+  // Bulb circle top
+  for(var a=0;a<Math.PI;a+=0.12){pts.push({x:cx+r*0.6*Math.cos(a-Math.PI*0.5),y:cy-r*0.18+r*0.6*Math.sin(a-Math.PI*0.5)});}
+  // Sides tapering to base
+  var sides=8;
+  for(var i=0;i<=sides;i++){var frac=i/sides;pts.push({x:cx-r*0.25+frac*r*0.5,y:cy+r*0.18+frac*r*0.28});}
+  // Base lines
+  for(var j=0;j<3;j++){var yy=cy+r*0.5+j*r*0.1;pts.push({x:cx-r*0.18,y:yy});pts.push({x:cx+r*0.18,y:yy});}
+  // Rays
+  var rays=6;
+  for(var k=0;k<rays;k++){var ra=(k/rays)*Math.PI*2-Math.PI/2;var rd=r*0.82;pts.push({x:cx+rd*Math.cos(ra),y:cy-r*0.18+rd*Math.sin(ra)});}
+  return pts;
 }
 
-function goTo(val){
-  blocks[current].classList.remove('active');
-  current=val;
-  blocks[current].classList.add('active');
-  var allPips=pipsEl.querySelectorAll('.pip');
-  allPips.forEach(function(p,i){
-    p.className='pip'+(i<=current?' lit':'');
+function pencilPts(cx,cy,r){
+  var pts=[];
+  var w=r*0.22,h=r*1.1;
+  // Body rectangle
+  for(var i=0;i<30;i++){var frac=i/29;pts.push({x:cx-w+frac*w*2,y:cy-h*0.5+frac*h*0.5});}
+  for(var i=0;i<30;i++){var frac=i/29;pts.push({x:cx-w+frac*w*2,y:cy+frac*h*0.5});}
+  // Tip triangle
+  for(var i=0;i<12;i++){var frac=i/11;pts.push({x:cx-w+frac*w*2*(1-frac),y:cy+h*0.5+frac*h*0.35});}
+  // Eraser top
+  for(var i=0;i<8;i++){var frac=i/7;pts.push({x:cx-w+frac*w*2,y:cy-h*0.5-r*0.12});}
+  return pts;
+}
+
+function applePts(cx,cy,r){
+  var pts=[];
+  var steps=80;
+  for(var i=0;i<steps;i++){
+    var a=(i/steps)*Math.PI*2;
+    var bumpTop=a>Math.PI*1.3&&a<Math.PI*1.7?r*0.12:0;
+    var rx=r*0.55*(1+0.12*Math.cos(a*2));
+    var ry=r*0.52*(1+0.08*Math.sin(a));
+    pts.push({x:cx+rx*Math.cos(a),y:cy+ry*Math.sin(a)-bumpTop});
+  }
+  // Stem
+  for(var i=0;i<10;i++){pts.push({x:cx+i*0.5,y:cy-r*0.5-i*r*0.05});}
+  // Leaf
+  for(var i=0;i<12;i++){var a2=i/11*Math.PI;pts.push({x:cx+r*0.15+r*0.18*Math.cos(a2),y:cy-r*0.55-r*0.1*Math.sin(a2)});}
+  return pts;
+}
+
+function starPts(cx,cy,r){
+  var pts=[];
+  var n=5;
+  for(var i=0;i<n*2;i++){
+    var a=i*Math.PI/n-Math.PI/2;
+    var rr=i%2===0?r*0.6:r*0.26;
+    pts.push({x:cx+rr*Math.cos(a),y:cy+rr*Math.sin(a)});
+  }
+  // Fill with interior points
+  for(var i=0;i<40;i++){var a=Math.random()*Math.PI*2;var rr=Math.random()*r*0.3;pts.push({x:cx+rr*Math.cos(a),y:cy+rr*Math.sin(a)});}
+  return pts;
+}
+
+// Shapes config: [centerX fraction, centerY fraction, radius fraction, generator]
+var shapeDefs=[
+  {fxc:0.5,fyc:0.5,fr:0.28,gen:lightbulbPts},   // center: lightbulb
+  {fxc:0.2,fyc:0.5,fr:0.14,gen:pencilPts},        // left: pencil
+  {fxc:0.8,fyc:0.5,fr:0.14,gen:applePts},          // right: apple
+  {fxc:0.5,fyc:0.82,fr:0.1,gen:starPts}            // bottom: star
+];
+
+function getShapeTargets(shapeIdx,cx,cy,r,count){
+  var pts=shapeDefs[shapeIdx].gen(cx,cy,r);
+  var targets=[];
+  for(var i=0;i<count;i++){
+    var p=pts[i%pts.length];
+    targets.push({x:p.x+( Math.random()-0.5)*4,y:p.y+(Math.random()-0.5)*4});
+  }
+  return targets;
+}
+
+function initParticles(){
+  particles=[];
+  for(var i=0;i<N;i++){
+    particles.push({
+      x:Math.random()*W,y:Math.random()*H,
+      vx:(Math.random()-0.5)*0.6,vy:(Math.random()-0.5)*0.6,
+      tx:Math.random()*W,ty:Math.random()*H,
+      size:Math.random()*1.8+0.8,
+      alpha:0.15+Math.random()*0.2,
+      targetAlpha:0.15+Math.random()*0.2,
+      phase:Math.random()*Math.PI*2,
+      shapeW:0  // 0=free, >0=shaped
+    });
+  }
+}
+
+function assignShapeTargets(shapesMask,fifth){
+  // shapesMask: bitmask of which of the 4 shapes to show
+  // Partition particles among active shapes
+  var activeShapes=[];
+  if(shapesMask&1){activeShapes.push(0);}  // lightbulb always when >=1 btn active
+  if(fifth){activeShapes.push(1);activeShapes.push(2);activeShapes.push(3);}
+
+  var total=particles.length;
+  particles.forEach(function(p,i){
+    if(activeShapes.length===0){
+      p.tx=Math.random()*W;p.ty=Math.random()*H;
+      p.shapeW=0;p.targetAlpha=0.12+Math.random()*0.18;
+      return;
+    }
+    // Weight: lightbulb gets most particles
+    var si,shape;
+    if(!fifth){
+      // only lightbulb - assign all
+      si=0;
+    } else {
+      // lightbulb gets 60%, others split 40%
+      var r2=Math.random();
+      if(r2<0.58){si=0;}
+      else if(r2<0.72){si=1;}
+      else if(r2<0.86){si=2;}
+      else{si=3;}
+    }
+    shape=shapeDefs[si];
+    var cx=shape.fxc*W,cy=shape.fyc*H,r=shape.fr*Math.min(W,H);
+    var pts=shape.gen(cx,cy,r);
+    var pt=pts[Math.floor(Math.random()*pts.length)];
+    p.tx=pt.x+(Math.random()-0.5)*3;
+    p.ty=pt.y+(Math.random()-0.5)*3;
+    p.shapeW=1;
+    p.targetAlpha=0.5+Math.random()*0.45;
   });
-  foot.textContent=hints[current];
-  foot.style.color=current===4?'rgba(20,20,19,0.7)':'rgba(20,20,19,0.42)';
 }
 
-slider.addEventListener('input',function(){goTo(parseInt(this.value));});
+function scatter(){
+  particles.forEach(function(p){
+    p.tx=Math.random()*W;p.ty=Math.random()*H;
+    p.shapeW=0;p.targetAlpha=0.1+Math.random()*0.15;
+  });
+}
 
-// Init
-goTo(4);
-foot.textContent='Drag left to watch the output collapse.';
+var pull=0; // 0=free, 1=fully shaped
+
+function resize(){
+  dpr=window.devicePixelRatio||1;
+  var rect=canvas.parentElement.getBoundingClientRect();
+  W=rect.width;H=Math.round(W*0.52);
+  canvas.width=Math.round(W*dpr);canvas.height=Math.round(H*dpr);
+  canvas.style.width=W+'px';canvas.style.height=H+'px';
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  if(particles.length>0){
+    // reassign targets for new size
+    updateShapes();
+  }
+}
+
+function updateShapes(){
+  if(activeCount===0&&!fifthDone){scatter();pull=0;return;}
+  assignShapeTargets(1,fifthDone);
+  pull=Math.min(1,(activeCount/4)*0.7+(fifthDone?0.3:0));
+}
+
+function draw(){
+  requestAnimationFrame(draw);
+  if(W===0){resize();return;}
+  t+=0.012;
+  ctx.clearRect(0,0,W,H);
+
+  particles.forEach(function(p){
+    // Drift toward target
+    var strength=p.shapeW>0?(0.025+pull*0.055):0.008;
+    p.vx+=(p.tx-p.x)*strength;
+    p.vy+=(p.ty-p.y)*strength;
+    // Gentle noise when free
+    if(p.shapeW===0){
+      p.vx+=(Math.random()-0.5)*0.08;
+      p.vy+=(Math.random()-0.5)*0.08;
+    }
+    p.vx*=0.88;p.vy*=0.88;
+    p.x+=p.vx;p.y+=p.vy;
+    // Alpha lerp
+    p.alpha+=(p.targetAlpha-p.alpha)*0.04;
+    // Pulse when shaped
+    var pulse=p.shapeW>0?Math.sin(t*1.8+p.phase)*0.08:0;
+    var sz=p.size+(p.shapeW>0?pull*0.6:0);
+    ctx.beginPath();
+    ctx.arc(p.x,p.y,sz,0,Math.PI*2);
+    ctx.fillStyle='rgba(217,119,87,'+(Math.min(1,p.alpha+pulse))+')';
+    ctx.fill();
+  });
+}
+
+// Button logic
+var btns=document.querySelectorAll('.ctx-btn');
+var footEl=document.getElementById('foot');
+var fifthRow=document.getElementById('fifthrow');
+var fifthInput=document.getElementById('fifthinput');
+var goBtn=document.getElementById('gobtn');
+
+var footTexts=[
+  'Start by adding context. Each one matters.',
+  'Something is stirring. Keep going.',
+  'The shape is finding itself.',
+  'One more and it arrives.',
+  'There it is. Now add what only you know.'
+];
+
+btns.forEach(function(btn){
+  btn.addEventListener('click',function(){
+    var wasActive=btn.classList.contains('active');
+    if(!wasActive){
+      btn.classList.add('active');
+      activeCount++;
+    } else {
+      btn.classList.remove('active');
+      activeCount--;
+    }
+    updateShapes();
+    footEl.textContent=footTexts[Math.min(activeCount,4)];
+    footEl.style.color=activeCount>=4?'rgba(20,20,19,0.7)':'rgba(20,20,19,0.42)';
+    if(activeCount>=4){
+      fifthRow.classList.add('show');
+    }
+  });
+});
+
+fifthInput.addEventListener('input',function(){
+  goBtn.classList.toggle('ready',fifthInput.value.trim().length>2);
+});
+
+goBtn.addEventListener('click',function(){
+  if(fifthInput.value.trim().length<=2)return;
+  fifthDone=true;
+  goBtn.style.background='var(--dark)';
+  updateShapes();
+  footEl.textContent='This is what description does. The more you bring, the more it becomes yours.';
+  footEl.style.color='rgba(20,20,19,0.75)';
+});
+
+window.addEventListener('load',function(){
+  requestAnimationFrame(function(){requestAnimationFrame(function(){
+    resize();
+    initParticles();
+    draw();
+  });});
+});
+window.addEventListener('resize',function(){resize();updateShapes();});
+if(window.ResizeObserver){new ResizeObserver(function(){resize();updateShapes();}).observe(canvas.parentElement);}
 </script>
 </body>
 </html>
