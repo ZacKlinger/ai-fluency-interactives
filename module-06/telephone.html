@@ -50,7 +50,7 @@ canvas{display:block;width:100%}
         <button class="ctx-btn" data-i="1">Topic</button>
         <button class="ctx-btn" data-i="2">Purpose</button>
         <button class="ctx-btn" data-i="3">Your students</button>
-        <button class="ctx-btn fifth" data-i="4" id="fifthbtn">What only you know</button>
+        <button class="ctx-btn fifth" id="fifthbtn" data-i="4">What only you know</button>
       </div>
     </div>
     <div class="foot" id="foot">Start by adding context. Each one matters.</div>
@@ -59,161 +59,186 @@ canvas{display:block;width:100%}
 <script>
 var CV=document.getElementById('c'),CTX=CV.getContext('2d'),wrap=document.getElementById('wrap');
 var W=0,H=0,dpr=1,tick=0;
-var N=900;
-var pts=[];
-var active=[false,false,false,false,false];
-var activeN=0;
+var N=1000;
+var parts=[];
+var act=[false,false,false,false,false];
+var actN=0;
 
-/* ---- shape generators: return array of {x,y} in canvas coords ---- */
+// ---- Pure outline generators - NO interior fill ----
+// Each returns a dense array of {x,y} points along the outline only
+
 function genBulb(cx,cy,R){
   var p=[];
-  // Glass bulb - dense arc
-  for(var i=0;i<200;i++){var a=Math.PI*1.05+i/200*Math.PI*0.9;p.push({x:cx+R*0.58*Math.cos(a),y:cy-R*0.05+R*0.58*Math.sin(a)});}
-  // Right and left lower curve
-  for(var i=0;i<60;i++){var a=-0.32+i/60*0.64;p.push({x:cx+R*0.58*Math.cos(a),y:cy-R*0.05+R*0.58*Math.sin(a)});}
-  // Fill interior of bulb with some dots
-  for(var i=0;i<120;i++){var a2=Math.random()*Math.PI*2;var r2=Math.random()*R*0.45;p.push({x:cx+r2*Math.cos(a2),y:cy-R*0.05+r2*Math.sin(a2)});}
-  // Neck - three horizontal bands
-  var neckY=[R*0.56,R*0.64,R*0.72];
-  neckY.forEach(function(dy){for(var i=0;i<28;i++){var t=i/27;p.push({x:cx-R*0.2+t*R*0.4,y:cy+dy});}});
-  // Rays emanating outward - 8 directions
+  // Main glass dome - upper arc, very dense
+  var arcSteps=320;
+  for(var i=0;i<=arcSteps;i++){
+    var a=Math.PI*0.02+i/arcSteps*Math.PI*0.96;
+    p.push({x:cx+R*0.62*Math.cos(a),y:cy+R*0.62*Math.sin(a)});
+  }
+  // Lower pinch curves (where bulb meets neck)
+  for(var i=0;i<=60;i++){
+    var a2=-0.28+i/60*0.56;
+    p.push({x:cx+R*0.62*Math.cos(a2),y:cy+R*0.62*Math.sin(a2)});
+  }
+  // Left neck side
+  for(var i=0;i<=40;i++){
+    var f=i/40;
+    p.push({x:cx-R*0.2+f*0.04*R,y:cy+R*0.48+f*R*0.28});
+  }
+  // Right neck side
+  for(var i=0;i<=40;i++){
+    var f=i/40;
+    p.push({x:cx+R*0.2-f*0.04*R,y:cy+R*0.48+f*R*0.28});
+  }
+  // 3 horizontal base lines
+  for(var j=0;j<3;j++){
+    var y=cy+R*0.5+j*R*0.12;
+    for(var i=0;i<=30;i++){p.push({x:cx-R*0.18+i/30*R*0.36,y:y});}
+  }
+  // 8 rays
   for(var k=0;k<8;k++){
     var ra=(k/8)*Math.PI*2-Math.PI/2;
-    for(var j=0;j<10;j++){var r=R*0.65+j*R*0.025;p.push({x:cx+r*Math.cos(ra),y:cy-R*0.05+r*Math.sin(ra)});}
+    for(var i=0;i<14;i++){
+      var r=R*0.70+i*R*0.025;
+      p.push({x:cx+r*Math.cos(ra),y:cy+r*Math.sin(ra)});
+    }
   }
   return p;
 }
 
 function genPencil(cx,cy,R){
   var p=[];
-  var w=R*0.18,h=R*0.82;
-  // Body - dense fill
-  for(var i=0;i<180;i++){p.push({x:cx-w+Math.random()*w*2,y:cy-h+Math.random()*h*1.35});}
-  // Left and right edges
-  for(var i=0;i<40;i++){var f=i/39;p.push({x:cx-w,y:cy-h+f*h*1.35});p.push({x:cx+w,y:cy-h+f*h*1.35});}
-  // Tip
-  for(var i=0;i<35;i++){var f=i/34;p.push({x:cx-w*(1-f)+w*(1-f)*0,y:cy+h*0.35+f*h*0.45});}
-  for(var i=0;i<35;i++){var f=i/34;p.push({x:cx+w*(1-f),y:cy+h*0.35+f*h*0.45});}
-  // Eraser
-  for(var i=0;i<30;i++){p.push({x:cx-w+Math.random()*w*2,y:cy-h-Math.random()*R*0.15});}
+  var w=R*0.22,h=R*0.88;
+  var steps=60;
+  // Left edge
+  for(var i=0;i<=steps;i++){var f=i/steps;p.push({x:cx-w,y:cy-h+f*h*1.3});}
+  // Right edge
+  for(var i=0;i<=steps;i++){var f=i/steps;p.push({x:cx+w,y:cy-h+f*h*1.3});}
+  // Left tip to point
+  for(var i=0;i<=28;i++){var f=i/28;p.push({x:cx-w*(1-f),y:cy+h*0.3+f*h*0.5});}
+  // Right tip to point
+  for(var i=0;i<=28;i++){var f=i/28;p.push({x:cx+w*(1-f),y:cy+h*0.3+f*h*0.5});}
+  // Eraser top
+  for(var i=0;i<=20;i++){p.push({x:cx-w+i/20*w*2,y:cy-h});}
+  // Eraser band (line across)
+  for(var i=0;i<=20;i++){p.push({x:cx-w+i/20*w*2,y:cy-h+R*0.15});}
+  // Top of eraser (filled rectangle outline)
+  for(var i=0;i<=16;i++){var f=i/16;p.push({x:cx-w+f*w*2,y:cy-h-R*0.1});}
+  for(var i=0;i<=8;i++){p.push({x:cx-w,y:cy-h-i/8*R*0.1});p.push({x:cx+w,y:cy-h-i/8*R*0.1});}
+  // Pencil tip point accent
+  for(var i=0;i<6;i++){p.push({x:cx+(Math.random()-0.5)*R*0.08,y:cy+h*0.82+Math.random()*R*0.06});}
   return p;
 }
 
 function genApple(cx,cy,R){
   var p=[];
-  // Body
-  for(var i=0;i<240;i++){
-    var a=i/240*Math.PI*2;
-    var rx=R*0.5*(1+0.08*Math.cos(a*2+0.5));
-    var ry=R*0.48*(1+0.05*Math.sin(a));
-    var dip=(a>Math.PI*1.3&&a<Math.PI*1.7)?-R*0.14*Math.sin((a-Math.PI*1.3)/0.4*Math.PI):0;
+  // Main body outline - very dense
+  var steps=300;
+  for(var i=0;i<=steps;i++){
+    var a=i/steps*Math.PI*2;
+    var rx=R*0.55*(1+0.08*Math.cos(a*2+0.4));
+    var ry=R*0.52*(1+0.05*Math.sin(a));
+    // Indent at top center
+    var dip=0;
+    if(a>Math.PI*1.28&&a<Math.PI*1.72){
+      dip=-R*0.16*Math.pow(Math.sin((a-Math.PI*1.28)/(0.44)*Math.PI),0.5);
+    }
     p.push({x:cx+rx*Math.cos(a),y:cy+ry*Math.sin(a)+dip});
   }
-  // Fill interior
-  for(var i=0;i<80;i++){var a2=Math.random()*Math.PI*2;var r2=Math.random()*R*0.38;p.push({x:cx+r2*Math.cos(a2),y:cy+r2*Math.sin(a2)});}
-  // Stem
-  for(var i=0;i<18;i++){p.push({x:cx+i*0.5-4,y:cy-R*0.44-i*R*0.055});}
-  // Leaf
-  for(var i=0;i<30;i++){var a3=i/29*Math.PI;p.push({x:cx+R*0.1+R*0.2*Math.cos(a3),y:cy-R*0.5-R*0.11*Math.sin(a3)});}
+  // Stem - curved
+  for(var i=0;i<=20;i++){
+    var f=i/20;
+    p.push({x:cx+f*R*0.06,y:cy-R*0.5-f*R*0.18});
+  }
+  // Leaf outline
+  var leafSteps=40;
+  for(var i=0;i<=leafSteps;i++){
+    var la=i/leafSteps*Math.PI;
+    p.push({x:cx+R*0.08+R*0.24*Math.cos(la),y:cy-R*0.54-R*0.13*Math.sin(la)});
+  }
+  // Leaf vein
+  for(var i=0;i<=12;i++){
+    p.push({x:cx+R*0.08+i/12*R*0.22,y:cy-R*0.54});
+  }
   return p;
 }
 
 function genStar(cx,cy,R){
   var p=[];
   var n=5;
-  // Outline
+  // Outline - trace every edge
   for(var k=0;k<n*2;k++){
-    var a0=k/n/2*Math.PI*2-Math.PI/2;
-    var a1=(k+1)/n/2*Math.PI*2-Math.PI/2;
-    var r0=k%2===0?R*0.55:R*0.23;
-    var r1=k%2===0?R*0.23:R*0.55;
-    for(var j=0;j<18;j++){var f=j/17;p.push({x:cx+(r0+f*(r1-r0))*Math.cos(a0+f*(a1-a0)),y:cy+(r0+f*(r1-r0))*Math.sin(a0+f*(a1-a0))});}
+    var a0=(k/(n*2))*Math.PI*2-Math.PI/2;
+    var a1=((k+1)/(n*2))*Math.PI*2-Math.PI/2;
+    var r0=k%2===0?R*0.58:R*0.25;
+    var r1=k%2===0?R*0.25:R*0.58;
+    for(var j=0;j<=22;j++){
+      var f=j/22;
+      p.push({x:cx+(r0+f*(r1-r0))*Math.cos(a0+f*(a1-a0)),y:cy+(r0+f*(r1-r0))*Math.sin(a0+f*(a1-a0))});
+    }
   }
-  // Fill core
-  for(var i=0;i<60;i++){var a4=Math.random()*Math.PI*2;var r4=Math.random()*R*0.18;p.push({x:cx+r4*Math.cos(a4),y:cy+r4*Math.sin(a4)});}
   return p;
 }
 
-// Shape layout - positions as fractions of W,H
 var shapes=[
-  {fxc:0.5,fyc:0.47,fr:0.28,gen:genBulb},     // lightbulb center
-  {fxc:0.18,fyc:0.5,fr:0.13,gen:genPencil},     // pencil left
-  {fxc:0.82,fyc:0.5,fr:0.13,gen:genApple},      // apple right
-  {fxc:0.5,fyc:0.83,fr:0.10,gen:genStar}        // star bottom
+  {fxc:0.5, fyc:0.46, fr:0.30, gen:genBulb},    // lightbulb - center, large
+  {fxc:0.16,fyc:0.50, fr:0.14, gen:genPencil},    // pencil - left
+  {fxc:0.84,fyc:0.50, fr:0.14, gen:genApple},     // apple - right
+  {fxc:0.5, fyc:0.83, fr:0.10, gen:genStar}       // star - bottom
 ];
 
-function shapeTargets(si){
+function getShapePts(si){
   var s=shapes[si];
   var cx=s.fxc*W,cy=s.fyc*H,R=s.fr*Math.min(W,H);
   return s.gen(cx,cy,R);
 }
 
-function initPts(){
-  pts=[];
+function initParts(){
+  parts=[];
   for(var i=0;i<N;i++){
-    var ang=Math.random()*Math.PI*2;
-    var spd=0.15+Math.random()*0.2;
-    pts.push({
+    var ang=Math.random()*Math.PI*2,spd=0.14+Math.random()*0.18;
+    parts.push({
       x:Math.random()*W, y:Math.random()*H,
       vx:Math.cos(ang)*spd, vy:Math.sin(ang)*spd,
-      wx:Math.random()*W, wy:Math.random()*H, // wander target - stable
+      wx:Math.random()*W, wy:Math.random()*H,
       tx:0, ty:0,
       shaped:false,
-      sz:Math.random()*1.8+0.8,
-      alpha:0.12+Math.random()*0.14,
-      talpha:0.12+Math.random()*0.14,
+      sz:Math.random()*1.6+0.85,
+      alpha:0.1+Math.random()*0.14,
+      talpha:0.1+Math.random()*0.14,
       phase:Math.random()*Math.PI*2
     });
   }
 }
 
 function assignTargets(){
-  var n=activeN, fifth=active[4];
+  var n=actN, fifth=act[4];
+  // Bulb grows: 0=0, 1=28%, 2=44%, 3=60%, 4=80%
+  var bulkF=[0,0.28,0.44,0.60,0.80][Math.min(n,4)];
+  var satF=0.06; // per satellite
 
-  // Shares: bulb grows 0->80%, satellites appear on 5th click
-  var bulbFrac=[0,0.28,0.44,0.60,0.78,0.78][Math.min(n,5)];
-  var satFrac=fifth?0.06:0; // per satellite (3 satellites)
-
-  pts.forEach(function(p,idx){
+  parts.forEach(function(p,idx){
     var roll=idx/N;
-    var inBulb=roll<bulbFrac;
-    var inP=!inBulb&&fifth&&roll<bulbFrac+satFrac;
-    var inA=!inBulb&&!inP&&fifth&&roll<bulbFrac+satFrac*2;
-    var inS=!inBulb&&!inP&&!inA&&fifth&&roll<bulbFrac+satFrac*3;
-
     if(n===0&&!fifth){
-      // fully free - don't reassign wx/wy, let them wander to existing target
-      p.shaped=false;
-      p.talpha=0.1+Math.random()*0.12;
-    } else if(inBulb){
-      var sp=shapeTargets(0);
-      var pt=sp[Math.floor(Math.random()*sp.length)];
-      p.tx=pt.x; p.ty=pt.y;
-      p.shaped=true;
-      p.talpha=0.5+Math.random()*0.45;
-    } else if(inP){
-      var sp2=shapeTargets(1);
-      var pt2=sp2[Math.floor(Math.random()*sp2.length)];
-      p.tx=pt2.x; p.ty=pt2.y;
-      p.shaped=true;
-      p.talpha=0.38+Math.random()*0.4;
-    } else if(inA){
-      var sp3=shapeTargets(2);
-      var pt3=sp3[Math.floor(Math.random()*sp3.length)];
-      p.tx=pt3.x; p.ty=pt3.y;
-      p.shaped=true;
-      p.talpha=0.38+Math.random()*0.4;
-    } else if(inS){
-      var sp4=shapeTargets(3);
-      var pt4=sp4[Math.floor(Math.random()*sp4.length)];
-      p.tx=pt4.x; p.ty=pt4.y;
-      p.shaped=true;
-      p.talpha=0.35+Math.random()*0.38;
+      p.shaped=false; p.talpha=0.08+Math.random()*0.1;
+    } else if(roll<bulkF){
+      var sp=getShapePts(0); var pt=sp[Math.floor(Math.random()*sp.length)];
+      p.tx=pt.x+(Math.random()-0.5)*2; p.ty=pt.y+(Math.random()-0.5)*2;
+      p.shaped=true; p.talpha=0.55+Math.random()*0.42;
+    } else if(fifth&&roll<bulkF+satF){
+      var sp2=getShapePts(1); var pt2=sp2[Math.floor(Math.random()*sp2.length)];
+      p.tx=pt2.x+(Math.random()-0.5)*2; p.ty=pt2.y+(Math.random()-0.5)*2;
+      p.shaped=true; p.talpha=0.45+Math.random()*0.38;
+    } else if(fifth&&roll<bulkF+satF*2){
+      var sp3=getShapePts(2); var pt3=sp3[Math.floor(Math.random()*sp3.length)];
+      p.tx=pt3.x+(Math.random()-0.5)*2; p.ty=pt3.y+(Math.random()-0.5)*2;
+      p.shaped=true; p.talpha=0.45+Math.random()*0.38;
+    } else if(fifth&&roll<bulkF+satF*3){
+      var sp4=getShapePts(3); var pt4=sp4[Math.floor(Math.random()*sp4.length)];
+      p.tx=pt4.x+(Math.random()-0.5)*2; p.ty=pt4.y+(Math.random()-0.5)*2;
+      p.shaped=true; p.talpha=0.40+Math.random()*0.35;
     } else {
-      // unshaped - give them a calm fixed wander target so they dont rush
-      // only reassign wander target if they've arrived (to prevent velocity build-up)
-      p.shaped=false;
-      p.talpha=0.08+Math.random()*0.1;
+      p.shaped=false; p.talpha=0.07+Math.random()*0.09;
     }
   });
 }
@@ -225,11 +250,7 @@ function resize(){
   CV.width=Math.round(W*dpr); CV.height=Math.round(H*dpr);
   CV.style.width=W+'px'; CV.style.height=H+'px';
   CTX.setTransform(dpr,0,0,dpr,0,0);
-  if(pts.length>0){
-    // Rescale wander targets
-    pts.forEach(function(p){p.wx=Math.random()*W;p.wy=Math.random()*H;});
-    assignTargets();
-  }
+  if(parts.length>0){parts.forEach(function(p){p.wx=Math.random()*W;p.wy=Math.random()*H;});assignTargets();}
 }
 
 function loop(){
@@ -238,52 +259,41 @@ function loop(){
   tick+=0.007;
   CTX.clearRect(0,0,W,H);
 
-  // Very gentle spring: 0.003 for shaped, pure wander for free
-  var spring=0.003;
-
-  pts.forEach(function(p){
+  parts.forEach(function(p){
     if(p.shaped){
-      // Soft pull toward shape target
-      p.vx+=(p.tx-p.x)*spring;
-      p.vy+=(p.ty-p.y)*spring;
-      // Tiny wander overlay so they never freeze
-      p.vx+=(Math.random()-0.5)*0.015;
-      p.vy+=(Math.random()-0.5)*0.015;
+      // Gentle spring pull
+      p.vx+=(p.tx-p.x)*0.003;
+      p.vy+=(p.ty-p.y)*0.003;
+      // Tiny wander so they breathe
+      p.vx+=(Math.random()-0.5)*0.012;
+      p.vy+=(Math.random()-0.5)*0.012;
+      p.vx*=0.86; p.vy*=0.86;
     } else {
-      // Pure slow wander - pull toward calm wander target
-      p.vx+=(p.wx-p.x)*0.0008;
-      p.vy+=(p.wy-p.y)*0.0008;
-      p.vx+=(Math.random()-0.5)*0.04;
-      p.vy+=(Math.random()-0.5)*0.04;
-      // Occasionally pick new wander target when close
-      var dwx=p.wx-p.x,dwy=p.wy-p.y;
-      if(dwx*dwx+dwy*dwy<100){p.wx=Math.random()*W;p.wy=Math.random()*H;}
+      // Slow calm drift toward personal wander target
+      p.vx+=(p.wx-p.x)*0.0006;
+      p.vy+=(p.wy-p.y)*0.0006;
+      p.vx+=(Math.random()-0.5)*0.03;
+      p.vy+=(Math.random()-0.5)*0.03;
+      p.vx*=0.93; p.vy*=0.93;
+      // Pick new wander target when close
+      var dx=p.wx-p.x,dy=p.wy-p.y;
+      if(dx*dx+dy*dy<400){p.wx=Math.random()*W;p.wy=Math.random()*H;}
     }
 
-    // Damping - key: unshaped gets more damping to prevent runaway
-    p.vx*=p.shaped?0.86:0.92;
-    p.vy*=p.shaped?0.86:0.92;
-
-    // Speed clamp - max speed to prevent chaos on 5th click
+    // Hard speed clamp - prevents runaway
     var spd=Math.sqrt(p.vx*p.vx+p.vy*p.vy);
-    var maxSpd=p.shaped?2.5:1.2;
-    if(spd>maxSpd){var sc=maxSpd/spd;p.vx*=sc;p.vy*=sc;}
-    // Min speed so they always drift
-    var minSpd=0.12;
-    if(spd>0.01&&spd<minSpd){var sm=minSpd/spd;p.vx*=sm;p.vy*=sm;}
+    var maxS=p.shaped?2.2:0.9;
+    if(spd>maxS){var sc=maxS/spd;p.vx*=sc;p.vy*=sc;}
+    // Keep them alive with min speed
+    if(spd>0.01&&spd<0.1){var sm=0.1/spd;p.vx*=sm;p.vy*=sm;}
 
     p.x+=p.vx; p.y+=p.vy;
+    if(p.x<-10)p.x=W+10; if(p.x>W+10)p.x=-10;
+    if(p.y<-10)p.y=H+10; if(p.y>H+10)p.y=-10;
 
-    // Soft wrap
-    if(p.x<-8)p.x=W+8; if(p.x>W+8)p.x=-8;
-    if(p.y<-8)p.y=H+8; if(p.y>H+8)p.y=-8;
-
-    // Alpha lerp
-    p.alpha+=(p.talpha-p.alpha)*0.025;
-
-    var pulse=p.shaped?Math.sin(tick*1.8+p.phase)*0.055:0;
-    var sz=p.sz+(p.shaped?activeN*0.12:0);
-
+    p.alpha+=(p.talpha-p.alpha)*0.022;
+    var pulse=p.shaped?Math.sin(tick*1.9+p.phase)*0.05:0;
+    var sz=p.sz+(p.shaped?actN*0.1:0);
     CTX.beginPath();
     CTX.arc(p.x,p.y,Math.max(0.5,sz),0,Math.PI*2);
     CTX.fillStyle='rgba(217,119,87,'+Math.min(1,Math.max(0,p.alpha+pulse))+')';
@@ -291,31 +301,25 @@ function loop(){
   });
 }
 
-// Controls
 var footEl=document.getElementById('foot');
 var fifthBtn=document.getElementById('fifthbtn');
-var footTexts=['Start by adding context. Each one matters.','Something is stirring.','The shape is finding itself.','Almost there.','There it is. Now add what only you know.','This is what description does. The more you bring, the more it becomes yours.'];
+var msgs=['Start by adding context. Each one matters.','Something is stirring.','The shape is finding itself.','Almost there.','There it is. Now add what only you know.','This is what description does. The more you bring, the more it becomes yours.'];
 
 document.querySelectorAll('.ctx-btn').forEach(function(btn){
   btn.addEventListener('click',function(){
     var i=parseInt(btn.getAttribute('data-i'));
-    var was=btn.classList.contains('active');
-    active[i]=!was;
-    btn.classList.toggle('active',!was);
-    activeN=active.slice(0,4).filter(Boolean).length;
+    act[i]=!act[i];
+    btn.classList.toggle('active',act[i]);
+    actN=act.slice(0,4).filter(Boolean).length;
     assignTargets();
-    if(activeN>=4&&!active[4]) fifthBtn.classList.add('show');
-    var fi=active[4]?5:activeN;
-    footEl.textContent=footTexts[Math.min(fi,5)];
-    footEl.style.color=fi>=5?'rgba(20,20,19,0.75)':fi>=4?'rgba(20,20,19,0.6)':'rgba(20,20,19,0.42)';
+    if(actN>=4) fifthBtn.classList.add('show');
+    var mi=act[4]?5:actN;
+    footEl.textContent=msgs[Math.min(mi,5)];
+    footEl.style.color=mi>=5?'rgba(20,20,19,0.78)':mi>=4?'rgba(20,20,19,0.62)':'rgba(20,20,19,0.42)';
   });
 });
 
-window.addEventListener('load',function(){
-  requestAnimationFrame(function(){requestAnimationFrame(function(){
-    resize(); initPts(); assignTargets(); loop();
-  });});
-});
+window.addEventListener('load',function(){requestAnimationFrame(function(){requestAnimationFrame(function(){resize();initParts();assignTargets();loop();});});});
 window.addEventListener('resize',function(){resize();assignTargets();});
 if(window.ResizeObserver){new ResizeObserver(function(){resize();assignTargets();}).observe(wrap);}
 </script>
