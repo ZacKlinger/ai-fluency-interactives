@@ -59,153 +59,121 @@ canvas{display:block;width:100%}
 <script>
 var CV=document.getElementById('c'),CTX=CV.getContext('2d'),wrap=document.getElementById('wrap');
 var W=0,H=0,dpr=1,tick=0;
-var N=1000;
+var N=2500;
 var parts=[];
 var act=[false,false,false,false,false];
 var actN=0;
 
-// ---- Pure outline generators - NO interior fill ----
-// Each returns a dense array of {x,y} points along the outline only
+// Dense outline sampler: given a list of {x,y} outline points, repeat to fill count
+function densify(pts, count){
+  var out=[];
+  for(var i=0;i<count;i++){
+    var p=pts[Math.floor(Math.random()*pts.length)];
+    out.push({x:p.x+(Math.random()-0.5)*1.5, y:p.y+(Math.random()-0.5)*1.5});
+  }
+  return out;
+}
 
-function genBulb(cx,cy,R){
+// ---- LIGHTBULB (outline only) ----
+function bulbOutline(cx,cy,R){
   var p=[];
-  // Main glass dome - upper arc, very dense
-  var arcSteps=320;
-  for(var i=0;i<=arcSteps;i++){
-    var a=Math.PI*0.02+i/arcSteps*Math.PI*0.96;
-    p.push({x:cx+R*0.62*Math.cos(a),y:cy+R*0.62*Math.sin(a)});
-  }
-  // Lower pinch curves (where bulb meets neck)
-  for(var i=0;i<=60;i++){
-    var a2=-0.28+i/60*0.56;
-    p.push({x:cx+R*0.62*Math.cos(a2),y:cy+R*0.62*Math.sin(a2)});
-  }
-  // Left neck side
-  for(var i=0;i<=40;i++){
-    var f=i/40;
-    p.push({x:cx-R*0.2+f*0.04*R,y:cy+R*0.48+f*R*0.28});
-  }
-  // Right neck side
-  for(var i=0;i<=40;i++){
-    var f=i/40;
-    p.push({x:cx+R*0.2-f*0.04*R,y:cy+R*0.48+f*R*0.28});
-  }
-  // 3 horizontal base lines
-  for(var j=0;j<3;j++){
-    var y=cy+R*0.5+j*R*0.12;
-    for(var i=0;i<=30;i++){p.push({x:cx-R*0.18+i/30*R*0.36,y:y});}
-  }
-  // 8 rays
-  for(var k=0;k<8;k++){
-    var ra=(k/8)*Math.PI*2-Math.PI/2;
-    for(var i=0;i<14;i++){
-      var r=R*0.70+i*R*0.025;
-      p.push({x:cx+r*Math.cos(ra),y:cy+r*Math.sin(ra)});
-    }
+  // Upper dome arc (180 deg)
+  for(var i=0;i<=500;i++){var a=Math.PI*0.01+i/500*Math.PI*0.98; p.push({x:cx+R*Math.cos(a),y:cy+R*Math.sin(a)});}
+  // Lower sides curving inward to neck
+  for(var i=0;i<=80;i++){var f=i/80; p.push({x:cx-R*(0.98-f*0.75),y:cy+R*(0.02+f*0.48)});}
+  for(var i=0;i<=80;i++){var f=i/80; p.push({x:cx+R*(0.98-f*0.75),y:cy+R*(0.02+f*0.48)});}
+  // Neck - 3 horizontal bands
+  for(var j=0;j<3;j++){var ny=cy+R*(0.52+j*0.14); for(var i=0;i<=60;i++){p.push({x:cx-R*0.23+i/60*R*0.46,y:ny});}}
+  // Neck verticals
+  for(var i=0;i<=30;i++){var f=i/30; p.push({x:cx-R*0.23,y:cy+R*(0.50+f*0.45)}); p.push({x:cx+R*0.23,y:cy+R*(0.50+f*0.45)});}
+  // Rays - 7 outward spokes
+  for(var k=0;k<7;k++){
+    var ra=(k/7)*Math.PI*1.0+Math.PI*0.0;
+    for(var i=0;i<=20;i++){var r=R*(1.08+i*0.04); p.push({x:cx+r*Math.cos(ra),y:cy+r*Math.sin(ra)});}
   }
   return p;
 }
 
-function genPencil(cx,cy,R){
+// ---- PENCIL (outline only) ----
+function pencilOutline(cx,cy,R){
   var p=[];
-  var w=R*0.22,h=R*0.88;
-  var steps=60;
-  // Left edge
-  for(var i=0;i<=steps;i++){var f=i/steps;p.push({x:cx-w,y:cy-h+f*h*1.3});}
-  // Right edge
-  for(var i=0;i<=steps;i++){var f=i/steps;p.push({x:cx+w,y:cy-h+f*h*1.3});}
-  // Left tip to point
-  for(var i=0;i<=28;i++){var f=i/28;p.push({x:cx-w*(1-f),y:cy+h*0.3+f*h*0.5});}
-  // Right tip to point
-  for(var i=0;i<=28;i++){var f=i/28;p.push({x:cx+w*(1-f),y:cy+h*0.3+f*h*0.5});}
-  // Eraser top
-  for(var i=0;i<=20;i++){p.push({x:cx-w+i/20*w*2,y:cy-h});}
-  // Eraser band (line across)
-  for(var i=0;i<=20;i++){p.push({x:cx-w+i/20*w*2,y:cy-h+R*0.15});}
-  // Top of eraser (filled rectangle outline)
-  for(var i=0;i<=16;i++){var f=i/16;p.push({x:cx-w+f*w*2,y:cy-h-R*0.1});}
-  for(var i=0;i<=8;i++){p.push({x:cx-w,y:cy-h-i/8*R*0.1});p.push({x:cx+w,y:cy-h-i/8*R*0.1});}
-  // Pencil tip point accent
-  for(var i=0;i<6;i++){p.push({x:cx+(Math.random()-0.5)*R*0.08,y:cy+h*0.82+Math.random()*R*0.06});}
+  var w=R*0.28, h=R*0.95;
+  // Long body - left and right edges, very dense
+  for(var i=0;i<=200;i++){var f=i/200; p.push({x:cx-w,y:cy-h+f*h*1.55}); p.push({x:cx+w,y:cy-h+f*h*1.55});}
+  // Top of body (flat top edge)
+  for(var i=0;i<=50;i++){p.push({x:cx-w+i/50*w*2,y:cy-h});}
+  // Eraser band (line across partway down from top)
+  for(var i=0;i<=50;i++){p.push({x:cx-w+i/50*w*2,y:cy-h+R*0.18});}
+  // Tip - two converging lines to a point
+  for(var i=0;i<=80;i++){var f=i/80; p.push({x:cx-w+f*w,y:cy+h*0.60+f*h*0.40}); p.push({x:cx+w-f*w,y:cy+h*0.60+f*h*0.40});}
+  // Tip wood reveal band
+  for(var i=0;i<=50;i++){p.push({x:cx-w+i/50*w*2,y:cy+h*0.60});}
   return p;
 }
 
-function genApple(cx,cy,R){
+// ---- APPLE (outline only) ----
+function appleOutline(cx,cy,R){
   var p=[];
-  // Main body outline - very dense
-  var steps=300;
-  for(var i=0;i<=steps;i++){
-    var a=i/steps*Math.PI*2;
-    var rx=R*0.55*(1+0.08*Math.cos(a*2+0.4));
-    var ry=R*0.52*(1+0.05*Math.sin(a));
-    // Indent at top center
+  // Body - very dense parametric outline
+  for(var i=0;i<=600;i++){
+    var a=i/600*Math.PI*2;
+    var rx=R*(0.88+0.08*Math.cos(a*2+0.3));
+    var ry=R*(0.82+0.06*Math.sin(a));
+    // Top center dip
     var dip=0;
-    if(a>Math.PI*1.28&&a<Math.PI*1.72){
-      dip=-R*0.16*Math.pow(Math.sin((a-Math.PI*1.28)/(0.44)*Math.PI),0.5);
-    }
-    p.push({x:cx+rx*Math.cos(a),y:cy+ry*Math.sin(a)+dip});
+    if(a>Math.PI*1.25&&a<Math.PI*1.75){dip=-R*0.22*Math.pow(Math.sin((a-Math.PI*1.25)/0.5*Math.PI),0.6);}
+    p.push({x:cx+rx*Math.cos(a), y:cy+ry*Math.sin(a)+dip});
   }
-  // Stem - curved
-  for(var i=0;i<=20;i++){
-    var f=i/20;
-    p.push({x:cx+f*R*0.06,y:cy-R*0.5-f*R*0.18});
-  }
+  // Stem
+  for(var i=0;i<=35;i++){var f=i/35; p.push({x:cx+f*R*0.1,y:cy-R*0.80-f*R*0.28});}
   // Leaf outline
-  var leafSteps=40;
-  for(var i=0;i<=leafSteps;i++){
-    var la=i/leafSteps*Math.PI;
-    p.push({x:cx+R*0.08+R*0.24*Math.cos(la),y:cy-R*0.54-R*0.13*Math.sin(la)});
-  }
-  // Leaf vein
-  for(var i=0;i<=12;i++){
-    p.push({x:cx+R*0.08+i/12*R*0.22,y:cy-R*0.54});
-  }
+  for(var i=0;i<=80;i++){var la=i/80*Math.PI; p.push({x:cx+R*0.1+R*0.32*Math.cos(la),y:cy-R*0.88-R*0.18*Math.sin(la)});}
+  // Leaf center vein
+  for(var i=0;i<=25;i++){p.push({x:cx+R*0.1+i/25*R*0.30,y:cy-R*0.88});}
   return p;
 }
 
-function genStar(cx,cy,R){
+// ---- STAR (outline only) ----
+function starOutline(cx,cy,R){
   var p=[];
   var n=5;
-  // Outline - trace every edge
   for(var k=0;k<n*2;k++){
     var a0=(k/(n*2))*Math.PI*2-Math.PI/2;
     var a1=((k+1)/(n*2))*Math.PI*2-Math.PI/2;
-    var r0=k%2===0?R*0.58:R*0.25;
-    var r1=k%2===0?R*0.25:R*0.58;
-    for(var j=0;j<=22;j++){
-      var f=j/22;
-      p.push({x:cx+(r0+f*(r1-r0))*Math.cos(a0+f*(a1-a0)),y:cy+(r0+f*(r1-r0))*Math.sin(a0+f*(a1-a0))});
-    }
+    var r0=k%2===0?R:R*0.42;
+    var r1=k%2===0?R*0.42:R;
+    for(var j=0;j<=40;j++){var f=j/40; p.push({x:cx+(r0+f*(r1-r0))*Math.cos(a0+f*(a1-a0)),y:cy+(r0+f*(r1-r0))*Math.sin(a0+f*(a1-a0))});}
   }
   return p;
 }
 
-var shapes=[
-  {fxc:0.5, fyc:0.46, fr:0.30, gen:genBulb},    // lightbulb - center, large
-  {fxc:0.16,fyc:0.50, fr:0.14, gen:genPencil},    // pencil - left
-  {fxc:0.84,fyc:0.50, fr:0.14, gen:genApple},     // apple - right
-  {fxc:0.5, fyc:0.83, fr:0.10, gen:genStar}       // star - bottom
+// Layout - larger radii, better positions
+// [fxc, fyc, fr_of_minDim]
+var layouts=[
+  [0.50, 0.44, 0.30],  // lightbulb center - large
+  [0.15, 0.50, 0.16],  // pencil left
+  [0.85, 0.50, 0.16],  // apple right
+  [0.50, 0.84, 0.12]   // star bottom center
 ];
+var generators=[bulbOutline,pencilOutline,appleOutline,starOutline];
 
-function getShapePts(si){
-  var s=shapes[si];
-  var cx=s.fxc*W,cy=s.fyc*H,R=s.fr*Math.min(W,H);
-  return s.gen(cx,cy,R);
+function getOutline(si){
+  var l=layouts[si], cx=l[0]*W, cy=l[1]*H, R=l[2]*Math.min(W,H);
+  return generators[si](cx,cy,R);
 }
 
 function initParts(){
   parts=[];
   for(var i=0;i<N;i++){
-    var ang=Math.random()*Math.PI*2,spd=0.14+Math.random()*0.18;
+    var ang=Math.random()*Math.PI*2, spd=0.12+Math.random()*0.15;
     parts.push({
       x:Math.random()*W, y:Math.random()*H,
       vx:Math.cos(ang)*spd, vy:Math.sin(ang)*spd,
       wx:Math.random()*W, wy:Math.random()*H,
-      tx:0, ty:0,
-      shaped:false,
-      sz:Math.random()*1.6+0.85,
-      alpha:0.1+Math.random()*0.14,
-      talpha:0.1+Math.random()*0.14,
+      tx:0, ty:0, shaped:false,
+      sz:Math.random()*1.4+0.8,
+      alpha:0.1+Math.random()*0.12,
+      talpha:0.1+Math.random()*0.12,
       phase:Math.random()*Math.PI*2
     });
   }
@@ -213,32 +181,39 @@ function initParts(){
 
 function assignTargets(){
   var n=actN, fifth=act[4];
-  // Bulb grows: 0=0, 1=28%, 2=44%, 3=60%, 4=80%
-  var bulkF=[0,0.28,0.44,0.60,0.80][Math.min(n,4)];
-  var satF=0.06; // per satellite
+  // Bulb share grows with each click
+  var bf=[0,0.30,0.46,0.62,0.82][Math.min(n,4)];
+  // Satellites: each gets equal share of remaining 18%
+  var sf=0.06;
+
+  // Pre-compute outlines once (expensive)
+  var ol0=n>0||fifth?getOutline(0):null;
+  var ol1=fifth?getOutline(1):null;
+  var ol2=fifth?getOutline(2):null;
+  var ol3=fifth?getOutline(3):null;
 
   parts.forEach(function(p,idx){
     var roll=idx/N;
     if(n===0&&!fifth){
-      p.shaped=false; p.talpha=0.08+Math.random()*0.1;
-    } else if(roll<bulkF){
-      var sp=getShapePts(0); var pt=sp[Math.floor(Math.random()*sp.length)];
-      p.tx=pt.x+(Math.random()-0.5)*2; p.ty=pt.y+(Math.random()-0.5)*2;
-      p.shaped=true; p.talpha=0.55+Math.random()*0.42;
-    } else if(fifth&&roll<bulkF+satF){
-      var sp2=getShapePts(1); var pt2=sp2[Math.floor(Math.random()*sp2.length)];
-      p.tx=pt2.x+(Math.random()-0.5)*2; p.ty=pt2.y+(Math.random()-0.5)*2;
-      p.shaped=true; p.talpha=0.45+Math.random()*0.38;
-    } else if(fifth&&roll<bulkF+satF*2){
-      var sp3=getShapePts(2); var pt3=sp3[Math.floor(Math.random()*sp3.length)];
-      p.tx=pt3.x+(Math.random()-0.5)*2; p.ty=pt3.y+(Math.random()-0.5)*2;
-      p.shaped=true; p.talpha=0.45+Math.random()*0.38;
-    } else if(fifth&&roll<bulkF+satF*3){
-      var sp4=getShapePts(3); var pt4=sp4[Math.floor(Math.random()*sp4.length)];
-      p.tx=pt4.x+(Math.random()-0.5)*2; p.ty=pt4.y+(Math.random()-0.5)*2;
-      p.shaped=true; p.talpha=0.40+Math.random()*0.35;
-    } else {
       p.shaped=false; p.talpha=0.07+Math.random()*0.09;
+    } else if(roll<bf){
+      var pt=ol0[Math.floor(Math.random()*ol0.length)];
+      p.tx=pt.x+(Math.random()-0.5)*1.8; p.ty=pt.y+(Math.random()-0.5)*1.8;
+      p.shaped=true; p.talpha=0.60+Math.random()*0.38;
+    } else if(fifth&&roll<bf+sf){
+      var pt2=ol1[Math.floor(Math.random()*ol1.length)];
+      p.tx=pt2.x+(Math.random()-0.5)*1.5; p.ty=pt2.y+(Math.random()-0.5)*1.5;
+      p.shaped=true; p.talpha=0.52+Math.random()*0.35;
+    } else if(fifth&&roll<bf+sf*2){
+      var pt3=ol2[Math.floor(Math.random()*ol2.length)];
+      p.tx=pt3.x+(Math.random()-0.5)*1.5; p.ty=pt3.y+(Math.random()-0.5)*1.5;
+      p.shaped=true; p.talpha=0.52+Math.random()*0.35;
+    } else if(fifth&&roll<bf+sf*3){
+      var pt4=ol3[Math.floor(Math.random()*ol4.length)];
+      p.tx=pt4.x+(Math.random()-0.5)*1.5; p.ty=pt4.y+(Math.random()-0.5)*1.5;
+      p.shaped=true; p.talpha=0.48+Math.random()*0.32;
+    } else {
+      p.shaped=false; p.talpha=0.06+Math.random()*0.08;
     }
   });
 }
@@ -246,7 +221,7 @@ function assignTargets(){
 function resize(){
   dpr=window.devicePixelRatio||1;
   var r=wrap.getBoundingClientRect();
-  W=r.width; H=Math.round(W*0.52);
+  W=r.width; H=Math.round(W*0.54);
   CV.width=Math.round(W*dpr); CV.height=Math.round(H*dpr);
   CV.style.width=W+'px'; CV.style.height=H+'px';
   CTX.setTransform(dpr,0,0,dpr,0,0);
@@ -258,44 +233,30 @@ function loop(){
   if(W===0){resize();return;}
   tick+=0.007;
   CTX.clearRect(0,0,W,H);
-
   parts.forEach(function(p){
     if(p.shaped){
-      // Gentle spring pull
-      p.vx+=(p.tx-p.x)*0.003;
-      p.vy+=(p.ty-p.y)*0.003;
-      // Tiny wander so they breathe
-      p.vx+=(Math.random()-0.5)*0.012;
-      p.vy+=(Math.random()-0.5)*0.012;
+      p.vx+=(p.tx-p.x)*0.003; p.vy+=(p.ty-p.y)*0.003;
+      p.vx+=(Math.random()-0.5)*0.010; p.vy+=(Math.random()-0.5)*0.010;
       p.vx*=0.86; p.vy*=0.86;
     } else {
-      // Slow calm drift toward personal wander target
-      p.vx+=(p.wx-p.x)*0.0006;
-      p.vy+=(p.wy-p.y)*0.0006;
-      p.vx+=(Math.random()-0.5)*0.03;
-      p.vy+=(Math.random()-0.5)*0.03;
-      p.vx*=0.93; p.vy*=0.93;
-      // Pick new wander target when close
-      var dx=p.wx-p.x,dy=p.wy-p.y;
-      if(dx*dx+dy*dy<400){p.wx=Math.random()*W;p.wy=Math.random()*H;}
+      p.vx+=(p.wx-p.x)*0.0005; p.vy+=(p.wy-p.y)*0.0005;
+      p.vx+=(Math.random()-0.5)*0.028; p.vy+=(Math.random()-0.5)*0.028;
+      p.vx*=0.94; p.vy*=0.94;
+      var ddx=p.wx-p.x,ddy=p.wy-p.y;
+      if(ddx*ddx+ddy*ddy<200){p.wx=Math.random()*W;p.wy=Math.random()*H;}
     }
-
-    // Hard speed clamp - prevents runaway
     var spd=Math.sqrt(p.vx*p.vx+p.vy*p.vy);
-    var maxS=p.shaped?2.2:0.9;
+    var maxS=p.shaped?1.8:0.7;
     if(spd>maxS){var sc=maxS/spd;p.vx*=sc;p.vy*=sc;}
-    // Keep them alive with min speed
-    if(spd>0.01&&spd<0.1){var sm=0.1/spd;p.vx*=sm;p.vy*=sm;}
-
+    if(spd>0.005&&spd<0.08){var sm=0.08/spd;p.vx*=sm;p.vy*=sm;}
     p.x+=p.vx; p.y+=p.vy;
-    if(p.x<-10)p.x=W+10; if(p.x>W+10)p.x=-10;
-    if(p.y<-10)p.y=H+10; if(p.y>H+10)p.y=-10;
-
-    p.alpha+=(p.talpha-p.alpha)*0.022;
-    var pulse=p.shaped?Math.sin(tick*1.9+p.phase)*0.05:0;
-    var sz=p.sz+(p.shaped?actN*0.1:0);
+    if(p.x<-12)p.x=W+12; if(p.x>W+12)p.x=-12;
+    if(p.y<-12)p.y=H+12; if(p.y>H+12)p.y=-12;
+    p.alpha+=(p.talpha-p.alpha)*0.02;
+    var pulse=p.shaped?Math.sin(tick*1.9+p.phase)*0.04:0;
+    var sz=p.sz+(p.shaped?actN*0.08:0);
     CTX.beginPath();
-    CTX.arc(p.x,p.y,Math.max(0.5,sz),0,Math.PI*2);
+    CTX.arc(p.x,p.y,Math.max(0.4,sz),0,Math.PI*2);
     CTX.fillStyle='rgba(217,119,87,'+Math.min(1,Math.max(0,p.alpha+pulse))+')';
     CTX.fill();
   });
@@ -308,8 +269,7 @@ var msgs=['Start by adding context. Each one matters.','Something is stirring.',
 document.querySelectorAll('.ctx-btn').forEach(function(btn){
   btn.addEventListener('click',function(){
     var i=parseInt(btn.getAttribute('data-i'));
-    act[i]=!act[i];
-    btn.classList.toggle('active',act[i]);
+    act[i]=!act[i]; btn.classList.toggle('active',act[i]);
     actN=act.slice(0,4).filter(Boolean).length;
     assignTargets();
     if(actN>=4) fifthBtn.classList.add('show');
