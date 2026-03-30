@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The shape of it — Module 2 · AI Fluency for K–12 Educators</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@300;400;600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#faf9f5;--surface:#f0eee6;--dark:#141413;--muted:rgba(20,20,19,0.45);--border:rgba(20,20,19,0.1);--coral:#d97757;--sans:'DM Sans',Arial,sans-serif;--serif:'Source Serif 4',Georgia,serif}
+html,body{min-height:100vh;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:2rem 1rem;font-family:var(--sans);color:var(--dark)}
+.stage{width:100%;max-width:860px}
+.card{background:var(--bg);border:0.5px solid var(--border);border-radius:6px;overflow:hidden}
+.top-bar{padding:1.5rem 2rem 0;display:flex;justify-content:space-between;align-items:center}
+.eyebrow{font-size:10px;font-weight:500;letter-spacing:0.16em;text-transform:uppercase;color:var(--muted)}
+.badge{font-size:9px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;border:0.5px solid var(--border);color:var(--muted);padding:3px 10px;border-radius:2px}
+.title-area{padding:0.75rem 2rem 0}
+.headline{font-family:var(--sans);font-size:clamp(22px,3.5vw,32px);font-weight:600;color:var(--dark);line-height:1.2;margin-bottom:0.25rem;letter-spacing:-0.02em}
+.subhead{font-size:13px;font-weight:400;color:var(--muted)}
+.chart-wrap{position:relative;width:100%;background:var(--surface);border-top:0.5px solid var(--border);border-bottom:0.5px solid var(--border);margin-top:0.75rem;cursor:crosshair;user-select:none;-webkit-user-select:none}
+canvas{display:block;width:100%;height:100%}
+.panel{padding:1.25rem 2rem 1.75rem;min-height:88px;background:var(--bg)}
+.panel-inner{display:grid;grid-template-columns:140px 1fr;gap:1.5rem;align-items:start;opacity:0;transition:opacity 0.3s}
+.panel-inner.show{opacity:1}
+.pyear{font-family:var(--sans);font-size:36px;font-weight:600;color:var(--dark);letter-spacing:-0.03em;line-height:1}
+.pcant{font-size:11px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-top:4px}
+.pcan{font-family:var(--serif);font-size:16px;font-weight:400;color:var(--dark);line-height:1.65;margin-bottom:0.4rem}
+.pnote{font-size:12px;font-weight:500;color:var(--coral);letter-spacing:0.01em}
+.hint-bar{text-align:center;font-size:11px;font-weight:400;color:var(--muted);padding:0.6rem 0 1.1rem;border-top:0.5px solid var(--border);background:var(--surface)}
+@media(max-width:520px){.panel-inner{grid-template-columns:1fr}.chart-wrap{height:220px!important}.pyear{font-size:28px}}
+</style>
+</head>
+<body>
+<div class="stage">
+  <div class="card">
+    <div class="top-bar">
+      <span class="eyebrow">AI Fluency for K&ndash;12 Educators &nbsp;&middot;&nbsp; Module 2</span>
+      <span class="badge">Draft</span>
+    </div>
+    <div class="title-area">
+      <h1 class="headline">The shape of it.</h1>
+      <p class="subhead">Drag across the timeline. Watch what changes.</p>
+    </div>
+    <div class="chart-wrap" id="wrap"><canvas id="c"></canvas></div>
+    <div class="panel">
+      <div class="panel-inner" id="pi">
+        <div>
+          <div class="pyear" id="pyear"></div>
+          <div class="pcant" id="pcant"></div>
+        </div>
+        <div>
+          <p class="pcan" id="pcan"></p>
+          <span class="pnote" id="pnote"></span>
+        </div>
+      </div>
+    </div>
+    <div class="hint-bar" id="hint">Drag left to right to move through time.</div>
+  </div>
+</div>
+<script>
+var canvas=document.getElementById('c'),ctx=canvas.getContext('2d'),wrap=document.getElementById('wrap');
+var W=0,H=0,dpr=1,dragging=false,progress=0;
+
+var milestones=[
+  {year:1952,p:0.02,
+   can:"Learned to play checkers by practicing against itself.",
+   cant:"Everything else.",
+   note:""},
+  {year:1956,p:0.05,
+   can:"Named itself. “Artificial Intelligence” coined at Dartmouth.",
+   cant:"Prove it deserved the name.",
+   note:""},
+  {year:1966,p:0.08,
+   can:"Hold a scripted conversation about feelings. Fooled some people.",
+   cant:"Understand a single word it was saying.",
+   note:"ELIZA — the first chatbot"},
+  {year:1980,p:0.11,
+   can:"Follow rules written by human experts to diagnose illness.",
+   cant:"Learn anything on its own.",
+   note:"The era of rule-based systems"},
+  {year:1987,p:0.13,
+   can:"Nothing new. Funding dried up. Labs went quiet.",
+   cant:"Live up to the hype.",
+   note:"First AI Winter"},
+  {year:1997,p:0.20,
+   can:"Beat the world chess champion.",
+   cant:"Hold a conversation. Write a sentence. Recognize a face.",
+   note:"Deep Blue defeats Kasparov"},
+  {year:2006,p:0.27,
+   can:"Start to recognize cats in photos, after seeing millions of them.",
+   cant:"Explain what a cat is.",
+   note:"Deep learning begins"},
+  {year:2011,p:0.35,
+   can:"Win Jeopardy against the best human players ever.",
+   cant:"Write a paragraph. Have a conversation.",
+   note:"IBM Watson"},
+  {year:2012,p:0.38,
+   can:"Identify a cat in a YouTube video, after watching 10 million of them.",
+   cant:"Tell you what to do with a cat.",
+   note:"ImageNet breakthrough — deep learning arrives"},
+  {year:2016,p:0.44,
+   can:"Beat the world’s best Go player — a game with more moves than atoms in the universe.",
+   cant:"Write a coherent email.",
+   note:"AlphaGo — a milestone nobody expected so soon"},
+  {year:2017,p:0.50,
+   can:"Process language in a fundamentally new way. Everything changes.",
+   cant:"Nobody knew yet how much.",
+   note:"Attention Is All You Need — the transformer paper"},
+  {year:2018,p:0.56,
+   can:"Read, summarize, translate. Starting to feel different.",
+   cant:"Hold context across a long conversation.",
+   note:"BERT and GPT-1"},
+  {year:2020,p:0.64,
+   can:"Write a cover letter. Draft an email. Explain photosynthesis to a 5th grader.",
+   cant:"Reliably tell you if what it said was true.",
+   note:"GPT-3 — 175 billion parameters"},
+  {year:2022,p:0.74,
+   can:"Talk to anyone about almost anything, in any language, for free.",
+   cant:"Know where its knowledge ended.",
+   note:"ChatGPT — 100 million users in 2 months"},
+  {year:2023,p:0.82,
+   can:"Pass the bar exam. Write working code. Analyze a student’s essay.",
+   cant:"Tell you what happened last week.",
+   note:"GPT-4, Claude, Gemini"},
+  {year:2024,p:0.90,
+   can:"Help drive a rover on Mars. Build software from scratch. Read medical scans.",
+   cant:"Be fully trusted without a human in the loop.",
+   note:"Claude helps NASA’s Perseverance rover"},
+  {year:2025,p:0.97,
+   can:"Reason through hard problems. Write, code, analyze, create — all at once.",
+   cant:"Stop surprising people.",
+   note:"The line keeps going."}
+];
+
+function getCapabilityAt(p){
+  for(var i=milestones.length-1;i>=0;i--){if(p>=milestones[i].p)return milestones[i];}
+  return milestones[0];
+}
+
+function buildCurve(){
+  var pts=[];
+  for(var i=0;i<=200;i++){
+    var t=i/200;
+    var y;
+    if(t<0.48){y=0.88-t*0.3;}
+    else if(t<0.52){var r=(t-0.48)/0.04;y=(0.88-0.48*0.3)*(1-r*r*r)+(0.12)*(r*r*r);}
+    else{var r2=(t-0.52)/0.48;y=0.12-r2*r2*0.10;}
+    pts.push({x:t,y:Math.max(0.02,Math.min(0.96,y))});
+  }
+  return pts;
+}
+
+var curve=buildCurve();
+
+function getCurveY(px){
+  var idx=Math.round(px*200);
+  idx=Math.max(0,Math.min(200,idx));
+  return curve[idx].y;
+}
+
+function resize(){
+  dpr=window.devicePixelRatio||1;
+  var rect=wrap.getBoundingClientRect();
+  W=rect.width;H=rect.height;
+  if(W===0)W=wrap.offsetWidth;
+  if(H===0)H=wrap.offsetHeight;
+  canvas.width=Math.round(W*dpr);
+  canvas.height=Math.round(H*dpr);
+  canvas.style.width=W+'px';canvas.style.height=H+'px';
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+}
+
+function draw(){
+  requestAnimationFrame(draw);
+  if(W===0||H===0){resize();return;}
+  ctx.clearRect(0,0,W,H);
+
+  var PAD_L=48,PAD_R=32,PAD_T=24,PAD_B=40;
+  var CW=W-PAD_L-PAD_R,CH=H-PAD_T-PAD_B;
+
+  // Year axis labels
+  ctx.font='400 10px "DM Sans",Arial,sans-serif';
+  ctx.fillStyle='rgba(20,20,19,0.3)';
+  ctx.textAlign='center';
+  var years=[1952,1970,1990,2010,2020,2025];
+  years.forEach(function(yr){
+    var p=(yr-1950)/(2025-1950);
+    var x=PAD_L+p*CW;
+    ctx.fillText(yr,x,H-10);
+  });
+
+  // Left axis hint
+  ctx.font='400 9px "DM Sans",Arial,sans-serif';
+  ctx.fillStyle='rgba(20,20,19,0.25)';
+  ctx.textAlign='right';
+  ctx.fillText('capability',PAD_L-6,PAD_T+8);
+
+  // Winter bands
+  var winters=[{s:1974,e:1980},{s:1987,e:1993}];
+  winters.forEach(function(w){
+    var x1=PAD_L+((w.s-1950)/(2025-1950))*CW;
+    var x2=PAD_L+((w.e-1950)/(2025-1950))*CW;
+    ctx.fillStyle='rgba(20,20,19,0.03)';
+    ctx.fillRect(x1,PAD_T,x2-x1,CH);
+  });
+
+  // Full curve (light)
+  ctx.beginPath();
+  curve.forEach(function(pt,i){
+    var x=PAD_L+pt.x*CW;
+    var y=PAD_T+pt.y*CH;
+    if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);
+  });
+  ctx.strokeStyle='rgba(20,20,19,0.1)';ctx.lineWidth=1.5;
+  ctx.stroke();
+
+  // Filled curve up to progress
+  ctx.beginPath();
+  var started=false;
+  curve.forEach(function(pt){
+    if(pt.x>progress+0.001)return;
+    var x=PAD_L+pt.x*CW;
+    var y=PAD_T+pt.y*CH;
+    if(!started){ctx.moveTo(x,y);started=true;}
+    else ctx.lineTo(x,y);
+  });
+  ctx.strokeStyle='rgba(217,119,87,0.85)';ctx.lineWidth=2.5;
+  ctx.stroke();
+
+  // Milestone dots
+  milestones.forEach(function(m){
+    var x=PAD_L+m.p*CW;
+    var cy=PAD_T+getCurveY(m.p)*CH;
+    var isCurrent=Math.abs(m.p-progress)<0.04;
+    var isPast=m.p<=progress+0.001;
+    ctx.beginPath();ctx.arc(x,cy,isCurrent?5:3,0,Math.PI*2);
+    ctx.fillStyle=isPast?(isCurrent?'#d97757':'rgba(217,119,87,0.5)'):'rgba(20,20,19,0.15)';
+    ctx.fill();
+  });
+
+  // Scrubber head
+  if(progress>0){
+    var hx=PAD_L+progress*CW;
+    var hy=PAD_T+getCurveY(progress)*CH;
+    ctx.beginPath();ctx.arc(hx,hy,7,0,Math.PI*2);
+    ctx.fillStyle='#d97757';ctx.fill();
+    ctx.strokeStyle='var(--bg)';ctx.lineWidth=2;ctx.stroke();
+    // vertical line
+    ctx.beginPath();ctx.moveTo(hx,PAD_T);ctx.lineTo(hx,H-PAD_B);
+    ctx.strokeStyle='rgba(217,119,87,0.18)';ctx.lineWidth=1;
+    ctx.setLineDash([3,4]);ctx.stroke();ctx.setLineDash([]);
+  }
+
+  // Off-chart arrow at right edge
+  if(progress>0.93){
+    ctx.font='500 11px "DM Sans",Arial,sans-serif';
+    ctx.fillStyle='rgba(217,119,87,0.6)';
+    ctx.textAlign='left';
+    ctx.fillText('still going →',W-PAD_R+4,PAD_T+getCurveY(1)*CH+4);
+  }
+}
+
+function setProgress(p){
+  progress=Math.max(0,Math.min(1,p));
+  var m=getCapabilityAt(progress);
+  document.getElementById('pyear').textContent=m.year;
+  document.getElementById('pcan').textContent=m.can;
+  document.getElementById('pcant').textContent='still couldn’t: '+m.cant;
+  document.getElementById('pnote').textContent=m.note;
+  var pi=document.getElementById('pi');
+  pi.classList.remove('show');void pi.offsetWidth;pi.classList.add('show');
+  var c=Math.round(progress*100);
+  var h=document.getElementById('hint');
+  if(progress>0.96)h.textContent='The line keeps going off the chart.';
+  else if(progress>0.49&&progress<0.54)h.textContent='2017. This is the moment everything changed.';
+  else h.textContent=c+'% through the timeline.';
+}
+
+function evtX(e){
+  var r=wrap.getBoundingClientRect();
+  return(e.touches?e.touches[0].clientX:e.clientX)-r.left;
+}
+
+function xToProgress(x){
+  var PAD_L=48,PAD_R=32;
+  return(x-PAD_L)/((W||1)-PAD_L-PAD_R);
+}
+
+wrap.addEventListener('mousedown',function(e){dragging=true;setProgress(xToProgress(evtX(e)));e.preventDefault();});
+window.addEventListener('mousemove',function(e){if(!dragging)return;setProgress(xToProgress(evtX(e)));});
+window.addEventListener('mouseup',function(){dragging=false;});
+wrap.addEventListener('touchstart',function(e){dragging=true;setProgress(xToProgress(evtX(e)));e.preventDefault();},{passive:false});
+window.addEventListener('touchmove',function(e){if(!dragging)return;setProgress(xToProgress(evtX(e)));e.preventDefault();},{passive:false});
+window.addEventListener('touchend',function(){dragging=false;});
+
+window.addEventListener('load',function(){
+  requestAnimationFrame(function(){requestAnimationFrame(function(){
+    resize();
+    wrap.style.height=Math.round(W*0.42)+'px';
+    resize();
+    draw();
+    setTimeout(function(){setProgress(0.02);},300);
+  });});
+});
+window.addEventListener('resize',function(){
+  resize();
+  wrap.style.height=Math.round(W*0.42)+'px';
+  resize();
+});
+if(window.ResizeObserver){new ResizeObserver(function(){
+  resize();
+  wrap.style.height=Math.round(W*0.42)+'px';
+  resize();
+}).observe(wrap);}
+</script>
+</body>
+</html>
