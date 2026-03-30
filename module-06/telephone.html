@@ -70,9 +70,9 @@ function makeDome(cx,cy,R){
 }
 
 function makeNeck(cx,cy,R){
-  var p=[],nW=R*0.30,nT=cy+R*0.55,nB=cy+R*1.00;
-  for(var j=0;j<4;j++){var y=nT+j/3*(nB-nT),w=nW*(1-j*0.05);for(var i=0;i<=90;i++)p.push({x:cx-w+i/90*w*2,y:y});}
-  var bW=nW*0.76;for(var i=0;i<=60;i++)p.push({x:cx-bW+i/60*bW*2,y:nB});
+  var p=[],nW=R*0.30,nT=cy+R*0.55,nB=cy+R*1.35;
+  for(var j=0;j<5;j++){var y=nT+j/4*(nB-nT),w=nW*(1-j*0.04);for(var i=0;i<=90;i++)p.push({x:cx-w+i/90*w*2,y:y});}
+  var bW=nW*0.72;for(var i=0;i<=60;i++)p.push({x:cx-bW+i/60*bW*2,y:nB});
   return p;
 }
 
@@ -92,7 +92,7 @@ function makeRays(cx,cy,R){
 }
 
 function buildCache(){
-  var R=Math.min(H*0.72/2.58,W*0.228),cx=W*0.50,cy=H/2+R*0.29;
+  var R=Math.min(H*0.80/2.93,W*0.20),cx=W*0.50,cy=H/2+R*0.115;
   cache[0]=makeDome(cx,cy,R);cache[1]=makeNeck(cx,cy,R);cache[2]=makeFilament(cx,cy,R);cache[3]=makeRays(cx,cy,R);
 }
 
@@ -102,22 +102,11 @@ var BS=[0.00,0.24,0.48,0.72],BE=[0.24,0.48,0.72,0.96];
 
 function initParts(){parts=[];for(var i=0;i<N;i++){var ang=Math.random()*Math.PI*2,spd=0.12+Math.random()*0.14;parts.push({x:Math.random()*W,y:Math.random()*H,vx:Math.cos(ang)*spd,vy:Math.sin(ang)*spd,wx:Math.random()*W,wy:Math.random()*H,tx:0,ty:0,shaped:false,band:-1,sz:Math.random()*1.4+0.9,alpha:0.10+Math.random()*0.12,talpha:0.10+Math.random()*0.12,phase:Math.random()*Math.PI*2});}}
 
-function activateBand(bi){
-  var s=Math.floor(BS[bi]*N),e=Math.floor(BE[bi]*N);
-  for(var i=s;i<e;i++){var p=parts[i];if(p.shaped&&p.band===bi)continue;var pt=ptFrom(bi);p.tx=pt.x;p.ty=pt.y;p.shaped=true;p.band=bi;p.talpha=0.60+Math.random()*0.35;}
-}
+function activateBand(bi){var s=Math.floor(BS[bi]*N),e=Math.floor(BE[bi]*N);for(var i=s;i<e;i++){var p=parts[i];if(p.shaped&&p.band===bi)continue;var pt=ptFrom(bi);p.tx=pt.x;p.ty=pt.y;p.shaped=true;p.band=bi;p.talpha=0.60+Math.random()*0.35;}}
 
-function deactivateBand(bi){
-  var s=Math.floor(BS[bi]*N),e=Math.floor(BE[bi]*N);
-  for(var i=s;i<e;i++){var p=parts[i];p.shaped=false;p.band=-1;p.talpha=0.07+Math.random()*0.09;p.wx=Math.random()*W;p.wy=Math.random()*H;}
-}
+function deactivateBand(bi){var s=Math.floor(BS[bi]*N),e=Math.floor(BE[bi]*N);for(var i=s;i<e;i++){var p=parts[i];p.shaped=false;p.band=-1;p.talpha=0.07+Math.random()*0.09;p.wx=Math.random()*W;p.wy=Math.random()*H;}}
 
-function resize(){
-  dpr=window.devicePixelRatio||1;var r=wrap.getBoundingClientRect();W=r.width;H=Math.round(W*0.56);
-  CV.width=Math.round(W*dpr);CV.height=Math.round(H*dpr);CV.style.width=W+'px';CV.style.height=H+'px';
-  CTX.setTransform(dpr,0,0,dpr,0,0);
-  if(parts.length>0){buildCache();for(var bi=0;bi<4;bi++){if(act[bi])activateBand(bi);}}
-}
+function resize(){dpr=window.devicePixelRatio||1;var r=wrap.getBoundingClientRect();W=r.width;H=Math.round(W*0.58);CV.width=Math.round(W*dpr);CV.height=Math.round(H*dpr);CV.style.width=W+'px';CV.style.height=H+'px';CTX.setTransform(dpr,0,0,dpr,0,0);if(parts.length>0){buildCache();for(var bi=0;bi<4;bi++){if(act[bi])activateBand(bi);}}}
 
 function loop(){
   requestAnimationFrame(loop);
@@ -126,18 +115,8 @@ function loop(){
   glowCurrent+=(glowTarget-glowCurrent)*0.018;
   CTX.clearRect(0,0,W,H);
   parts.forEach(function(p){
-    if(p.shaped){
-      p.vx+=(p.tx-p.x)*0.003;p.vy+=(p.ty-p.y)*0.003;
-      p.vx+=(Math.random()-0.5)*0.010;p.vy+=(Math.random()-0.5)*0.010;
-      p.vx*=0.86;p.vy*=0.86;
-      p.talpha=0.60+glowCurrent*0.28;
-    } else {
-      p.vx+=(p.wx-p.x)*0.0005;p.vy+=(p.wy-p.y)*0.0005;
-      p.vx+=(Math.random()-0.5)*0.025;p.vy+=(Math.random()-0.5)*0.025;
-      p.vx*=0.94;p.vy*=0.94;
-      var dx=p.wx-p.x,dy=p.wy-p.y;
-      if(dx*dx+dy*dy<300){p.wx=Math.random()*W;p.wy=Math.random()*H;}
-    }
+    if(p.shaped){p.vx+=(p.tx-p.x)*0.003;p.vy+=(p.ty-p.y)*0.003;p.vx+=(Math.random()-0.5)*0.010;p.vy+=(Math.random()-0.5)*0.010;p.vx*=0.86;p.vy*=0.86;p.talpha=0.60+glowCurrent*0.28;}
+    else{p.vx+=(p.wx-p.x)*0.0005;p.vy+=(p.wy-p.y)*0.0005;p.vx+=(Math.random()-0.5)*0.025;p.vy+=(Math.random()-0.5)*0.025;p.vx*=0.94;p.vy*=0.94;var dx=p.wx-p.x,dy=p.wy-p.y;if(dx*dx+dy*dy<300){p.wx=Math.random()*W;p.wy=Math.random()*H;}}
     var spd=Math.sqrt(p.vx*p.vx+p.vy*p.vy),mx=p.shaped?1.8:0.7;
     if(spd>mx){var sc=mx/spd;p.vx*=sc;p.vy*=sc;}
     if(spd>0.005&&spd<0.08){var sm=0.08/spd;p.vx*=sm;p.vy*=sm;}
@@ -156,23 +135,7 @@ function loop(){
 var footEl=document.getElementById('foot'),fifthBtn=document.getElementById('fifthbtn');
 var msgs=['Start by adding context. Each one matters.','The outline is forming.','The structure is taking hold.','The idea is almost whole.','There it is. Now illuminate it.','This is what description does. The more you bring, the more it becomes yours.'];
 
-document.querySelectorAll('.ctx-btn').forEach(function(btn){
-  btn.addEventListener('click',function(){
-    var i=parseInt(btn.getAttribute('data-i'));
-    act[i]=!act[i];btn.classList.toggle('active',act[i]);
-    if(i<4){
-      actN=act.slice(0,4).filter(Boolean).length;
-      if(act[i])activateBand(i);else deactivateBand(i);
-      if(actN>=4)fifthBtn.classList.add('ready');
-      else{fifthBtn.classList.remove('ready');if(act[4]){act[4]=false;fifthBtn.classList.remove('active');glowTarget=0;}}
-    } else {
-      glowTarget=act[4]?1:0;
-    }
-    var mi=act[4]?5:actN;
-    footEl.textContent=msgs[Math.min(mi,5)];
-    footEl.style.color=mi>=5?'rgba(20,20,19,0.78)':mi>=4?'rgba(20,20,19,0.62)':'rgba(20,20,19,0.42)';
-  });
-});
+document.querySelectorAll('.ctx-btn').forEach(function(btn){btn.addEventListener('click',function(){var i=parseInt(btn.getAttribute('data-i'));act[i]=!act[i];btn.classList.toggle('active',act[i]);if(i<4){actN=act.slice(0,4).filter(Boolean).length;if(act[i])activateBand(i);else deactivateBand(i);if(actN>=4)fifthBtn.classList.add('ready');else{fifthBtn.classList.remove('ready');if(act[4]){act[4]=false;fifthBtn.classList.remove('active');glowTarget=0;}}}else{glowTarget=act[4]?1:0;}var mi=act[4]?5:actN;footEl.textContent=msgs[Math.min(mi,5)];footEl.style.color=mi>=5?'rgba(20,20,19,0.78)':mi>=4?'rgba(20,20,19,0.62)':'rgba(20,20,19,0.42)';}});});
 
 window.addEventListener('load',function(){requestAnimationFrame(function(){requestAnimationFrame(function(){resize();initParts();buildCache();loop();});});});
 window.addEventListener('resize',resize);
