@@ -14,13 +14,13 @@ html,body{min-height:100vh;background:#0f0f0e;display:flex;align-items:center;ju
 .stage::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 50% 30% at 80% 10%,rgba(217,119,87,0.06) 0%,transparent 60%),radial-gradient(ellipse 35% 50% at 15% 90%,rgba(106,155,204,0.04) 0%,transparent 60%);pointer-events:none;z-index:0}
 .card{position:relative;z-index:1;background:rgba(240,236,224,0.02);border:0.5px solid rgba(240,236,224,0.1);border-radius:4px;overflow:hidden;color:#f0ece0}
 .status-badge{position:absolute;top:-12px;right:24px;font-size:9.5px;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;background:#1a1a18;border:0.5px solid rgba(240,236,224,0.12);color:rgba(240,236,224,0.35);padding:4px 12px;border-radius:2px}
-.top-bar{padding:1.75rem 2rem 0;display:flex;justify-content:space-between;align-items:center}
+.top-bar{padding:1.75rem 2rem 0}
 .eyebrow{font-size:10px;font-weight:500;letter-spacing:0.18em;text-transform:uppercase;color:rgba(240,236,224,0.28)}
 .title-area{padding:0.75rem 2rem 0}
 .headline{font-family:'Playfair Display',Georgia,serif;font-size:clamp(20px,3.2vw,28px);font-weight:400;font-style:italic;color:#f0ece0;line-height:1.25;margin-bottom:0.3rem}
 .subhead{font-size:12px;font-weight:300;color:rgba(240,236,224,0.32);letter-spacing:0.03em;line-height:1.5}
 .field-wrap{position:relative;width:100%;height:440px;margin-top:0.5rem;cursor:none}
-canvas{position:absolute;inset:0;width:100%;height:100%}
+canvas{display:block;width:100%;height:100%}
 .panel{padding:1.25rem 2rem 1.75rem;border-top:0.5px solid rgba(240,236,224,0.07);min-height:110px}
 .panel-inner{display:grid;grid-template-columns:1fr 1.65fr;gap:2.25rem;align-items:start;opacity:0;transform:translateY(6px);transition:opacity 0.45s,transform 0.45s}
 .panel-inner.show{opacity:1;transform:translateY(0)}
@@ -38,7 +38,7 @@ canvas{position:absolute;inset:0;width:100%;height:100%}
 .pinsight{font-size:13.5px;font-weight:300;color:rgba(240,236,224,.68);line-height:1.85;margin-bottom:0.85rem}
 .panchor{font-family:'Playfair Display',serif;font-size:12.5px;font-style:italic;color:rgba(217,119,87,.5)}
 .hint-bar{text-align:center;font-size:11.5px;font-weight:300;color:rgba(240,236,224,.16);letter-spacing:0.04em;padding:0 0 1.5rem;transition:color 0.5s}
-@media(max-width:540px){.panel-inner{grid-template-columns:1fr}.pleft{border-right:none;border-bottom:0.5px solid rgba(240,236,224,.07);padding-right:0;padding-bottom:1.1rem}.field-wrap{height:360px}}
+@media(max-width:540px){.panel-inner{grid-template-columns:1fr}.pleft{border-right:none;border-bottom:0.5px solid rgba(240,236,224,.07);padding-right:0;padding-bottom:1.1rem}.field-wrap{height:340px}}
 </style>
 </head>
 <body>
@@ -71,7 +71,7 @@ canvas{position:absolute;inset:0;width:100%;height:100%}
 </div>
 <script>
 var canvas=document.getElementById('c'),ctx=canvas.getContext('2d'),field=document.getElementById('field');
-var W,H,dpr,mx=-999,my=-999,trail=[],activeNode=null,revealedSet={};
+var W=0,H=0,dpr=1,mx=-999,my=-999,trail=[],activeNode=null,revealedSet={};
 var nodes=[
   {l1:"My students always",l2:"know what’s expected",fx:0.18,fy:0.24,name:"You define what good work looks like",desc:"Your rubrics, lesson objectives, and assignments say exactly what you mean. Students know what they’re aiming for because you’ve made success visible and specific.",tags:[["Description","ts"]],d4:"Description",col:"rgba(106,155,204,",insight:"In this course, we call this Description — how you communicate effectively with AI systems. It’s about defining what you want: your outputs, format, audience, and style. Instead of “write a summary,” try “summarize this for a non-technical parent audience, focusing on the three most important findings, in under 200 words.” That specificity is something you already practice every time you write a learning target.",anchor:"Your lesson planning instincts are a prompting superpower."},
   {l1:"I can tell when",l2:"something’s off",fx:0.82,fy:0.21,name:"You catch what isn’t working",desc:"You sense confusion before a hand goes up. You read the energy in the room, notice the student who’s checked out, and adjust before anyone falls behind.",tags:[["Discernment","tc"]],d4:"Discernment",col:"rgba(143,168,112,",insight:"We call this Discernment — the ability to critically evaluate what AI produces. Start with the output: are these facts accurate? Does this language reflect how your students actually talk? Then look deeper: did AI consider all relevant factors, or make assumptions that don’t hold in your context? Discernment is the step most people skip. It’s also the one that separates thoughtful AI use from careless AI use.",anchor:"Your instinct for ‘something’s off’ is your most important AI skill."},
@@ -82,25 +82,90 @@ var nodes=[
   {l1:"My name is on it,",l2:"so I make sure it’s right",fx:0.68,fy:0.79,name:"You stand behind what you send",desc:"When something goes out under your name — to a family, a student, an administrator — you’ve made sure it’s accurate. You don’t pass the blame when something goes sideways.",tags:[["Diligence","tg"],["Delegation","td"]],d4:"Diligence",col:"rgba(197,155,128,",insight:"This is Deployment Diligence — verifying and vouching for everything you use or share. Whether you’re putting a text in front of students or sharing data at a staff meeting, you check every claim, confirm accuracy, and make sure the final product genuinely reflects your goals. AI helps you move faster. But you’re the one who stands behind everything that reaches your students.",anchor:"The work is yours. AI is a tool in service of it."},
   {l1:"I know when to call",l2:"in the right person",fx:0.5,fy:0.51,name:"You recognize the edges of your knowledge",desc:"You know when to bring in the reading specialist, the counselor, the colleague who knows this student better. Asking for the right help at the right moment is a professional strength.",tags:[["Delegation","td"],["Discernment","tc"]],d4:"Delegation + Discernment",col:"rgba(150,158,128,",insight:"Recognizing the edges of your own knowledge — and AI’s — is essential. Discernment isn’t just catching errors. It’s knowing what kind of judgment a task requires and whether you’re the right one to provide it. AI can help you brainstorm and draft, but it can’t tell you what your students need. That call is still yours.",anchor:"Knowing when not to use AI is as important as knowing when to."}
 ];
-function resize(){dpr=window.devicePixelRatio||1;W=field.clientWidth;H=field.clientHeight;canvas.width=W*dpr;canvas.height=H*dpr;canvas.style.width=W+'px';canvas.style.height=H+'px';ctx.setTransform(dpr,0,0,dpr,0,0);nodes.forEach(function(n){n.x=n.fx*W;n.y=n.fy*H;n.r=28;n.pulse=Math.random()*Math.PI*2;});}
-resize();window.addEventListener('resize',resize);
+
+function resize(){
+  dpr=window.devicePixelRatio||1;
+  var rect=field.getBoundingClientRect();
+  W=rect.width;
+  H=rect.height;
+  if(W===0||H===0){W=field.offsetWidth;H=field.offsetHeight;}
+  canvas.width=Math.round(W*dpr);
+  canvas.height=Math.round(H*dpr);
+  canvas.style.width=W+'px';
+  canvas.style.height=H+'px';
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  nodes.forEach(function(n){n.x=n.fx*W;n.y=n.fy*H;if(!n.r)n.r=28;if(n.pulse===undefined)n.pulse=Math.random()*Math.PI*2;});
+}
+
 field.addEventListener('mousemove',function(e){var r=field.getBoundingClientRect();mx=e.clientX-r.left;my=e.clientY-r.top;trail.push({x:mx,y:my,a:1,s:Math.random()*2+1.5});if(trail.length>48)trail.shift();});
 field.addEventListener('mouseleave',function(){mx=-999;my=-999;});
+
 function dist(x1,y1,x2,y2){return Math.sqrt((x2-x1)*(x2-x1)+(y2-y1)*(y2-y1));}
 function getHov(){var b=null,bd=9999;nodes.forEach(function(n){var d=dist(mx,my,n.x,n.y);if(d<bd){bd=d;b=n;}});return b&&bd<(b.r+36)?b:null;}
-function draw(){requestAnimationFrame(draw);ctx.clearRect(0,0,W,H);
-for(var i=0;i<trail.length;i++){var tr=trail[i];tr.a*=0.87;if(tr.a<0.008)continue;ctx.beginPath();ctx.arc(tr.x,tr.y,tr.s*(i/trail.length)+0.5,0,Math.PI*2);ctx.fillStyle='rgba(217,119,87,'+tr.a*0.3+')';ctx.fill();}
-var hov=getHov();
-nodes.forEach(function(n){var isH=hov===n,wasR=revealedSet[n.l1];var tgt=isH?46:(wasR?34:26);n.r=n.r+(tgt-n.r)*0.1;n.pulse+=0.022;var pls=isH?0:Math.sin(n.pulse)*2.5;
-if(isH||wasR){var grd=ctx.createRadialGradient(n.x,n.y,n.r*0.3,n.x,n.y,n.r+22);grd.addColorStop(0,n.col+(isH?0.25:0.1)+')');grd.addColorStop(1,n.col+'0)');ctx.beginPath();ctx.arc(n.x,n.y,n.r+22+pls,0,Math.PI*2);ctx.fillStyle=grd;ctx.fill();}
-ctx.beginPath();ctx.arc(n.x,n.y,n.r+pls,0,Math.PI*2);ctx.fillStyle=n.col+(isH?0.88:(wasR?0.55:0.18))+')';ctx.fill();ctx.strokeStyle=isH?'rgba(240,236,224,0.4)':'rgba(240,236,224,0.07)';ctx.lineWidth=0.5;ctx.stroke();
-if(isH||wasR){ctx.save();ctx.textAlign='center';ctx.textBaseline='middle';var lh=17,yS=n.y-lh/2;[n.l1,n.l2].forEach(function(ln,li){ctx.font=(isH?'500 13px':'400 12px')+' "DM Sans",sans-serif';ctx.fillStyle=isH?'rgba(240,236,224,0.95)':'rgba(240,236,224,0.52)';ctx.fillText(ln,n.x,yS+li*lh);});if(isH){ctx.font='500 9px "DM Sans",sans-serif';ctx.fillStyle='rgba(217,119,87,0.8)';ctx.fillText(n.d4.toUpperCase(),n.x,n.y+n.r+16);}ctx.restore();}
-else{ctx.beginPath();ctx.arc(n.x,n.y,3.5,0,Math.PI*2);ctx.fillStyle='rgba(240,236,224,0.22)';ctx.fill();}});
-if(hov){ctx.beginPath();ctx.moveTo(mx,my);var ex=mx+(hov.x-mx)*0.3,ey=my+(hov.y-my)*0.3;ctx.quadraticCurveTo(ex,ey,hov.x,hov.y);ctx.strokeStyle='rgba(217,119,87,0.14)';ctx.lineWidth=1;ctx.setLineDash([3,5]);ctx.stroke();ctx.setLineDash([]);}
-if(mx>0&&mx<W&&my>0&&my<H){ctx.beginPath();ctx.arc(mx,my,5,0,Math.PI*2);ctx.fillStyle='rgba(240,236,224,0.62)';ctx.fill();ctx.beginPath();ctx.arc(mx,my,11,0,Math.PI*2);ctx.strokeStyle='rgba(240,236,224,0.1)';ctx.lineWidth=0.5;ctx.stroke();}
-if(hov&&hov!==activeNode){activeNode=hov;revealedSet[hov.l1]=true;showNode(hov);}}
-function showNode(n){document.getElementById('pl').textContent='Your strength → '+n.d4;document.getElementById('pn').textContent=n.name;document.getElementById('pd').textContent=n.desc;document.getElementById('pins').textContent=n.insight;document.getElementById('panc').textContent=n.anchor;var tw=document.getElementById('pt');tw.innerHTML='';n.tags.forEach(function(t){var s=document.createElement('span');s.className='tag '+t[1];s.textContent=t[0];tw.appendChild(s);});var pi=document.getElementById('pi');pi.classList.remove('show');void pi.offsetWidth;pi.classList.add('show');var c=Object.keys(revealedSet).length,h=document.getElementById('hint');if(c>=7)h.textContent='You’ve traced the full 4D framework — built entirely from what you already do.';else if(c>=4)h.textContent=c+' of 8 explored. The good news: you already have a head start.';else if(c>=1)h.textContent=c+' explored. Keep moving — there’s no wrong place to go.';h.style.color='rgba(240,236,224,0.35)';}
-draw();
+
+function draw(){
+  requestAnimationFrame(draw);
+  if(W===0||H===0){resize();return;}
+  ctx.clearRect(0,0,W,H);
+  for(var i=0;i<trail.length;i++){var tr=trail[i];tr.a*=0.87;if(tr.a<0.008)continue;ctx.beginPath();ctx.arc(tr.x,tr.y,tr.s*(i/trail.length)+0.5,0,Math.PI*2);ctx.fillStyle='rgba(217,119,87,'+tr.a*0.3+')';ctx.fill();}
+  var hov=getHov();
+  nodes.forEach(function(n){
+    var isH=hov===n,wasR=revealedSet[n.l1];
+    var tgt=isH?46:(wasR?34:26);
+    n.r=n.r+(tgt-n.r)*0.1;
+    n.pulse+=0.022;
+    var pls=isH?0:Math.sin(n.pulse)*2.5;
+    if(isH||wasR){var grd=ctx.createRadialGradient(n.x,n.y,n.r*0.3,n.x,n.y,n.r+22);grd.addColorStop(0,n.col+(isH?0.25:0.1)+')');grd.addColorStop(1,n.col+'0)');ctx.beginPath();ctx.arc(n.x,n.y,n.r+22+pls,0,Math.PI*2);ctx.fillStyle=grd;ctx.fill();}
+    ctx.beginPath();ctx.arc(n.x,n.y,n.r+pls,0,Math.PI*2);ctx.fillStyle=n.col+(isH?0.88:(wasR?0.55:0.18))+')';ctx.fill();
+    ctx.strokeStyle=isH?'rgba(240,236,224,0.4)':'rgba(240,236,224,0.07)';ctx.lineWidth=0.5;ctx.stroke();
+    if(isH||wasR){
+      ctx.save();ctx.textAlign='center';ctx.textBaseline='middle';
+      var lh=17,yS=n.y-lh/2;
+      [n.l1,n.l2].forEach(function(ln,li){ctx.font=(isH?'500 13px':'400 12px')+' "DM Sans",sans-serif';ctx.fillStyle=isH?'rgba(240,236,224,0.95)':'rgba(240,236,224,0.52)';ctx.fillText(ln,n.x,yS+li*lh);});
+      if(isH){ctx.font='500 9px "DM Sans",sans-serif';ctx.fillStyle='rgba(217,119,87,0.8)';ctx.fillText(n.d4.toUpperCase(),n.x,n.y+n.r+16);}
+      ctx.restore();
+    } else {ctx.beginPath();ctx.arc(n.x,n.y,3.5,0,Math.PI*2);ctx.fillStyle='rgba(240,236,224,0.22)';ctx.fill();}
+  });
+  if(hov){ctx.beginPath();ctx.moveTo(mx,my);var ex=mx+(hov.x-mx)*0.3,ey=my+(hov.y-my)*0.3;ctx.quadraticCurveTo(ex,ey,hov.x,hov.y);ctx.strokeStyle='rgba(217,119,87,0.14)';ctx.lineWidth=1;ctx.setLineDash([3,5]);ctx.stroke();ctx.setLineDash([]);}
+  if(mx>0&&mx<W&&my>0&&my<H){ctx.beginPath();ctx.arc(mx,my,5,0,Math.PI*2);ctx.fillStyle='rgba(240,236,224,0.62)';ctx.fill();ctx.beginPath();ctx.arc(mx,my,11,0,Math.PI*2);ctx.strokeStyle='rgba(240,236,224,0.1)';ctx.lineWidth=0.5;ctx.stroke();}
+  if(hov&&hov!==activeNode){activeNode=hov;revealedSet[hov.l1]=true;showNode(hov);}
+}
+
+function showNode(n){
+  document.getElementById('pl').textContent='Your strength → '+n.d4;
+  document.getElementById('pn').textContent=n.name;
+  document.getElementById('pd').textContent=n.desc;
+  document.getElementById('pins').textContent=n.insight;
+  document.getElementById('panc').textContent=n.anchor;
+  var tw=document.getElementById('pt');tw.innerHTML='';
+  n.tags.forEach(function(t){var s=document.createElement('span');s.className='tag '+t[1];s.textContent=t[0];tw.appendChild(s);});
+  var pi=document.getElementById('pi');pi.classList.remove('show');void pi.offsetWidth;pi.classList.add('show');
+  var c=Object.keys(revealedSet).length,h=document.getElementById('hint');
+  if(c>=7)h.textContent='You’ve traced the full 4D framework — built entirely from what you already do.';
+  else if(c>=4)h.textContent=c+' of 8 explored. The good news: you already have a head start.';
+  else if(c>=1)h.textContent=c+' explored. Keep moving — there’s no wrong place to go.';
+  h.style.color='rgba(240,236,224,0.35)';
+}
+
+// Defer resize until after paint so getBoundingClientRect is accurate
+window.addEventListener('load', function() {
+  requestAnimationFrame(function() {
+    requestAnimationFrame(function() {
+      resize();
+      draw();
+    });
+  });
+});
+
+// Also handle window resize
+window.addEventListener('resize', function() {
+  resize();
+});
+
+// ResizeObserver for the field element itself
+if(window.ResizeObserver) {
+  new ResizeObserver(function() { resize(); }).observe(field);
+}
 </script>
 </body>
 </html>
