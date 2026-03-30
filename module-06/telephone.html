@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>The Symphony - Module 6 - AI Fluency for K-12 Educators</title>
+<title>Conduct the Symphony - Module 6 - AI Fluency for K-12 Educators</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,300;8..60,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -20,38 +20,18 @@ html,body{min-height:100vh;background:var(--bg);display:flex;align-items:center;
 .headline{font-family:var(--sans);font-size:clamp(20px,3.2vw,28px);font-weight:600;color:var(--dark);line-height:1.2;margin-bottom:0.25rem;letter-spacing:-0.02em}
 .subhead{font-size:13px;color:var(--muted);line-height:1.5}
 .field-wrap{position:relative;background:var(--surface);border-top:0.5px solid var(--border);border-bottom:0.5px solid var(--border)}
-canvas{display:block;width:100%;cursor:default}
+canvas{display:block;width:100%}
 .controls{padding:1.25rem 2rem 1.5rem;background:var(--bg)}
 .controls-label{font-size:10px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);margin-bottom:0.85rem;display:block}
 .btn-row{display:flex;gap:0.5rem;flex-wrap:wrap}
-.ctx-btn{
-  font-family:var(--sans);font-size:12px;font-weight:500;
-  padding:0.45rem 1rem;border-radius:3px;cursor:pointer;
-  border:0.5px solid var(--border);background:var(--bg);color:var(--muted);
-  transition:all 0.2s;letter-spacing:0.02em;user-select:none;
-}
+.ctx-btn{font-family:var(--sans);font-size:12px;font-weight:500;padding:0.45rem 1rem;border-radius:3px;cursor:pointer;border:0.5px solid var(--border);background:var(--bg);color:var(--muted);transition:all 0.2s;letter-spacing:0.02em;user-select:none}
 .ctx-btn:hover{border-color:rgba(217,119,87,0.4);color:var(--dark)}
 .ctx-btn.active{background:var(--coral);border-color:var(--coral);color:#fff;box-shadow:0 2px 8px rgba(217,119,87,0.3)}
-.fifth-row{margin-top:0.6rem;display:flex;align-items:center;gap:0.75rem;opacity:0;transition:opacity 0.5s}
-.fifth-row.show{opacity:1}
-.fifth-label{font-size:12px;font-weight:400;color:var(--muted);white-space:nowrap}
-input.fifth-input{
-  flex:1;font-family:var(--sans);font-size:12px;font-weight:400;
-  padding:0.45rem 0.85rem;border-radius:3px;border:0.5px solid var(--border);
-  background:var(--bg);color:var(--dark);outline:none;
-  transition:border-color 0.2s;
-}
-input.fifth-input:focus{border-color:rgba(217,119,87,0.5)}
-input.fifth-input::placeholder{color:var(--muted)}
-.go-btn{
-  font-family:var(--sans);font-size:12px;font-weight:600;
-  padding:0.45rem 1rem;border-radius:3px;cursor:pointer;
-  background:var(--coral);border:none;color:#fff;
-  opacity:0.5;transition:opacity 0.2s,box-shadow 0.2s;
-}
-.go-btn.ready{opacity:1;box-shadow:0 2px 8px rgba(217,119,87,0.3)}
+.ctx-btn.fifth{display:none;border-style:dashed;border-color:rgba(217,119,87,0.4);color:rgba(217,119,87,0.8)}
+.ctx-btn.fifth.show{display:inline-block}
+.ctx-btn.fifth.active{border-style:solid}
 .foot{text-align:center;font-size:11px;font-weight:400;color:var(--muted);padding:0.6rem 0 1rem;border-top:0.5px solid var(--border);background:var(--surface);transition:color 0.4s;letter-spacing:0.02em}
-@media(max-width:500px){.btn-row{gap:0.4rem}.ctx-btn{font-size:11px;padding:0.4rem 0.75rem}}
+@media(max-width:500px){.ctx-btn{font-size:11px;padding:0.4rem 0.75rem}}
 </style>
 </head>
 <body>
@@ -63,278 +43,310 @@ input.fifth-input::placeholder{color:var(--muted)}
       <h1 class="headline">Conduct the symphony.</h1>
       <p class="subhead">Each piece of context you give AI is a note. Add them all and watch what takes shape.</p>
     </div>
-    <div class="field-wrap"><canvas id="c"></canvas></div>
+    <div class="field-wrap" id="wrap"><canvas id="c"></canvas></div>
     <div class="controls">
       <span class="controls-label">Add context &mdash; watch the field respond</span>
-      <div class="btn-row">
+      <div class="btn-row" id="btnrow">
         <button class="ctx-btn" data-i="0">Grade level</button>
         <button class="ctx-btn" data-i="1">Topic</button>
         <button class="ctx-btn" data-i="2">Purpose</button>
         <button class="ctx-btn" data-i="3">Your students</button>
-      </div>
-      <div class="fifth-row" id="fifthrow">
-        <span class="fifth-label">One more thing &mdash;</span>
-        <input class="fifth-input" id="fifthinput" placeholder="What do your students actually need?" maxlength="60">
-        <button class="go-btn" id="gobtn">+</button>
+        <button class="ctx-btn fifth" data-i="4" id="fifthbtn">What only you know</button>
       </div>
     </div>
     <div class="foot" id="foot">Start by adding context. Each one matters.</div>
   </div>
 </div>
 <script>
-var canvas=document.getElementById('c'),ctx=canvas.getContext('2d');
-var W=0,H=0,dpr=1;
-var activeCount=0;
-var fifthDone=false;
+var C=document.getElementById('c'),ctx=C.getContext('2d'),wrap=document.getElementById('wrap');
+var W=0,H=0,dpr=1,raf=0,t=0;
+var N=520;
 var particles=[];
-var N=260;
-var t=0;
+var active=[false,false,false,false,false];
+var activeCount=0;
 
-// Shape point generators
-function lightbulbPts(cx,cy,r){
+// ---- Shape generators (return normalized pts, then scaled) ----
+function sampleShape(pts,n){
+  var out=[];
+  for(var i=0;i<n;i++){
+    var p=pts[Math.floor(Math.random()*pts.length)];
+    out.push({x:p.x+(Math.random()-0.5)*3,y:p.y+(Math.random()-0.5)*3});
+  }
+  return out;
+}
+
+function circPts(cx,cy,r,n){
   var pts=[];
-  // Bulb circle top
-  for(var a=0;a<Math.PI;a+=0.12){pts.push({x:cx+r*0.6*Math.cos(a-Math.PI*0.5),y:cy-r*0.18+r*0.6*Math.sin(a-Math.PI*0.5)});}
-  // Sides tapering to base
-  var sides=8;
-  for(var i=0;i<=sides;i++){var frac=i/sides;pts.push({x:cx-r*0.25+frac*r*0.5,y:cy+r*0.18+frac*r*0.28});}
-  // Base lines
-  for(var j=0;j<3;j++){var yy=cy+r*0.5+j*r*0.1;pts.push({x:cx-r*0.18,y:yy});pts.push({x:cx+r*0.18,y:yy});}
+  for(var i=0;i<n;i++){var a=i/n*Math.PI*2;pts.push({x:cx+r*Math.cos(a),y:cy+r*Math.sin(a)});}
+  return pts;
+}
+
+function lightbulbPts(cx,cy,R){
+  var pts=[];
+  // Bulb - upper semicircle
+  for(var i=0;i<80;i++){var a=Math.PI+i/80*Math.PI;pts.push({x:cx+R*0.55*Math.cos(a),y:cy-R*0.1+R*0.55*Math.sin(a)});}
+  // Lower arc connecting to base
+  for(var i=0;i<30;i++){var a=-0.35+i/30*0.7;pts.push({x:cx+R*0.55*Math.cos(a),y:cy-R*0.1+R*0.55*Math.sin(a)});}
+  // Neck
+  for(var i=0;i<20;i++){var frac=i/19;pts.push({x:cx-R*0.22+frac*R*0.44,y:cy+R*0.48+frac*0});}
+  for(var i=0;i<20;i++){var frac=i/19;pts.push({x:cx-R*0.22+frac*R*0.44,y:cy+R*0.56});}
+  for(var i=0;i<20;i++){var frac=i/19;pts.push({x:cx-R*0.22+frac*R*0.44,y:cy+R*0.64});}
   // Rays
-  var rays=6;
-  for(var k=0;k<rays;k++){var ra=(k/rays)*Math.PI*2-Math.PI/2;var rd=r*0.82;pts.push({x:cx+rd*Math.cos(ra),y:cy-r*0.18+rd*Math.sin(ra)});}
+  for(var k=0;k<8;k++){
+    var a=k/8*Math.PI*2-Math.PI/2;
+    var r0=R*0.62,r1=R*0.82;
+    for(var j=0;j<6;j++){var r=r0+j/5*(r1-r0);pts.push({x:cx+r*Math.cos(a),y:cy-R*0.1+r*Math.sin(a)});}
+  }
   return pts;
 }
 
-function pencilPts(cx,cy,r){
+function pencilPts(cx,cy,R){
   var pts=[];
-  var w=r*0.22,h=r*1.1;
-  // Body rectangle
-  for(var i=0;i<30;i++){var frac=i/29;pts.push({x:cx-w+frac*w*2,y:cy-h*0.5+frac*h*0.5});}
-  for(var i=0;i<30;i++){var frac=i/29;pts.push({x:cx-w+frac*w*2,y:cy+frac*h*0.5});}
-  // Tip triangle
-  for(var i=0;i<12;i++){var frac=i/11;pts.push({x:cx-w+frac*w*2*(1-frac),y:cy+h*0.5+frac*h*0.35});}
-  // Eraser top
-  for(var i=0;i<8;i++){var frac=i/7;pts.push({x:cx-w+frac*w*2,y:cy-h*0.5-r*0.12});}
+  var w=R*0.2,h=R*0.85;
+  // Body
+  for(var i=0;i<60;i++){var frac=i/59;pts.push({x:cx-w+Math.random()*w*2,y:cy-h+frac*h*1.4});}
+  // Tip
+  for(var i=0;i<25;i++){var frac=i/24;pts.push({x:cx+(frac-0.5)*w*2*(1-frac),y:cy+h*0.45+frac*h*0.35});}
+  // Eraser
+  for(var i=0;i<18;i++){pts.push({x:cx-w+Math.random()*w*2,y:cy-h-Math.random()*R*0.18});}
   return pts;
 }
 
-function applePts(cx,cy,r){
+function applePts(cx,cy,R){
   var pts=[];
-  var steps=80;
-  for(var i=0;i<steps;i++){
-    var a=(i/steps)*Math.PI*2;
-    var bumpTop=a>Math.PI*1.3&&a<Math.PI*1.7?r*0.12:0;
-    var rx=r*0.55*(1+0.12*Math.cos(a*2));
-    var ry=r*0.52*(1+0.08*Math.sin(a));
-    pts.push({x:cx+rx*Math.cos(a),y:cy+ry*Math.sin(a)-bumpTop});
+  for(var i=0;i<100;i++){
+    var a=i/100*Math.PI*2;
+    var rx=R*0.52*(1+0.1*Math.cos(a*3+1));
+    var ry=R*0.5*(1+0.06*Math.sin(a));
+    var dip=a>Math.PI*1.35&&a<Math.PI*1.65?-R*0.15*Math.sin((a-Math.PI*1.35)/(0.3)*Math.PI):0;
+    pts.push({x:cx+rx*Math.cos(a),y:cy+ry*Math.sin(a)+dip});
   }
   // Stem
-  for(var i=0;i<10;i++){pts.push({x:cx+i*0.5,y:cy-r*0.5-i*r*0.05});}
+  for(var i=0;i<12;i++){pts.push({x:cx+i*0.8-4,y:cy-R*0.48-i*R*0.06});}
   // Leaf
-  for(var i=0;i<12;i++){var a2=i/11*Math.PI;pts.push({x:cx+r*0.15+r*0.18*Math.cos(a2),y:cy-r*0.55-r*0.1*Math.sin(a2)});}
+  for(var i=0;i<18;i++){var a=i/17*Math.PI;pts.push({x:cx+R*0.12+R*0.22*Math.cos(a),y:cy-R*0.52-R*0.12*Math.sin(a)});}
   return pts;
 }
 
-function starPts(cx,cy,r){
+function starPts(cx,cy,R){
   var pts=[];
-  var n=5;
-  for(var i=0;i<n*2;i++){
-    var a=i*Math.PI/n-Math.PI/2;
-    var rr=i%2===0?r*0.6:r*0.26;
-    pts.push({x:cx+rr*Math.cos(a),y:cy+rr*Math.sin(a)});
+  for(var i=0;i<10;i++){
+    var a=i/10*Math.PI*2-Math.PI/2;
+    var r=i%2===0?R*0.52:R*0.22;
+    pts.push({x:cx+r*Math.cos(a),y:cy+r*Math.sin(a)});
   }
-  // Fill with interior points
-  for(var i=0;i<40;i++){var a=Math.random()*Math.PI*2;var rr=Math.random()*r*0.3;pts.push({x:cx+rr*Math.cos(a),y:cy+rr*Math.sin(a)});}
+  // Fill interior
+  for(var i=0;i<50;i++){
+    var a=Math.random()*Math.PI*2;
+    var r=Math.random()*R*0.22;
+    pts.push({x:cx+r*Math.cos(a),y:cy+r*Math.sin(a)});
+  }
+  // Outline density
+  for(var k=0;k<10;k++){
+    var a0=k/10*Math.PI*2-Math.PI/2,a1=(k+1)/10*Math.PI*2-Math.PI/2;
+    var r0=k%2===0?R*0.52:R*0.22,r1=k%2===0?R*0.22:R*0.52;
+    for(var j=0;j<8;j++){var frac=j/7;pts.push({x:cx+(r0+frac*(r1-r0))*Math.cos(a0+frac*(a1-a0)),y:cy+(r0+frac*(r1-r0))*Math.sin(a0+frac*(a1-a0))});}
+  }
   return pts;
 }
 
-// Shapes config: [centerX fraction, centerY fraction, radius fraction, generator]
-var shapeDefs=[
-  {fxc:0.5,fyc:0.5,fr:0.28,gen:lightbulbPts},   // center: lightbulb
-  {fxc:0.2,fyc:0.5,fr:0.14,gen:pencilPts},        // left: pencil
-  {fxc:0.8,fyc:0.5,fr:0.14,gen:applePts},          // right: apple
-  {fxc:0.5,fyc:0.82,fr:0.1,gen:starPts}            // bottom: star
+// Shape configs: {fxc, fyc, fr, gen, particleShare}
+// Stage 0: all scattered
+// Stage 1-4: lightbulb builds up
+// Stage 5: lightbulb + 3 satellites
+var shapes=[
+  {fxc:0.5,fyc:0.48,fr:0.30,gen:lightbulbPts},  // 0: lightbulb (center)
+  {fxc:0.18,fyc:0.5,fr:0.13,gen:pencilPts},       // 1: pencil (left)
+  {fxc:0.82,fyc:0.5,fr:0.13,gen:applePts},         // 2: apple (right)
+  {fxc:0.5,fyc:0.84,fr:0.10,gen:starPts}           // 3: star (bottom)
 ];
 
-function getShapeTargets(shapeIdx,cx,cy,r,count){
-  var pts=shapeDefs[shapeIdx].gen(cx,cy,r);
-  var targets=[];
-  for(var i=0;i<count;i++){
-    var p=pts[i%pts.length];
-    targets.push({x:p.x+( Math.random()-0.5)*4,y:p.y+(Math.random()-0.5)*4});
-  }
-  return targets;
+function makeShapeTargets(shapeIdx){
+  var s=shapes[shapeIdx];
+  var cx=s.fxc*W,cy=s.fyc*H,r=s.fr*Math.min(W,H);
+  return s.gen(cx,cy,r);
 }
 
 function initParticles(){
   particles=[];
   for(var i=0;i<N;i++){
+    var angle=Math.random()*Math.PI*2;
+    var speed=0.25+Math.random()*0.35;
     particles.push({
-      x:Math.random()*W,y:Math.random()*H,
-      vx:(Math.random()-0.5)*0.6,vy:(Math.random()-0.5)*0.6,
-      tx:Math.random()*W,ty:Math.random()*H,
-      size:Math.random()*1.8+0.8,
-      alpha:0.15+Math.random()*0.2,
-      targetAlpha:0.15+Math.random()*0.2,
+      x:Math.random()*W,
+      y:Math.random()*H,
+      vx:Math.cos(angle)*speed,
+      vy:Math.sin(angle)*speed,
+      wanderAngle:Math.random()*Math.PI*2,
+      tx:Math.random()*W,
+      ty:Math.random()*H,
+      sz:Math.random()*2.0+0.9,
+      alpha:0.12+Math.random()*0.16,
+      talpha:0.12+Math.random()*0.16,
       phase:Math.random()*Math.PI*2,
-      shapeW:0  // 0=free, >0=shaped
+      shaped:false,
+      shapeAlpha:0
     });
   }
 }
 
-function assignShapeTargets(shapesMask,fifth){
-  // shapesMask: bitmask of which of the 4 shapes to show
-  // Partition particles among active shapes
-  var activeShapes=[];
-  if(shapesMask&1){activeShapes.push(0);}  // lightbulb always when >=1 btn active
-  if(fifth){activeShapes.push(1);activeShapes.push(2);activeShapes.push(3);}
+function assignTargets(){
+  var count=activeCount;
+  var fifth=active[4];
 
-  var total=particles.length;
+  // Decide allocation
+  // count 0: all scattered
+  // count 1-4: lightbulb gets growing share, rest scatter
+  // fifth: add 3 satellites
+
+  var bulbShare=count===0?0:[0.25,0.45,0.62,0.80,0.80][count];
+  var satShare=fifth?0.20/3:0; // per satellite
+
   particles.forEach(function(p,i){
-    if(activeShapes.length===0){
+    var roll=i/N;
+    if(count===0&&!fifth){
+      // fully scattered - keep wandering
+      p.shaped=false;
+      p.talpha=0.10+Math.random()*0.15;
       p.tx=Math.random()*W;p.ty=Math.random()*H;
-      p.shapeW=0;p.targetAlpha=0.12+Math.random()*0.18;
-      return;
-    }
-    // Weight: lightbulb gets most particles
-    var si,shape;
-    if(!fifth){
-      // only lightbulb - assign all
-      si=0;
+    } else if(roll<bulbShare){
+      var pts=makeShapeTargets(0);
+      var pt=pts[Math.floor(Math.random()*pts.length)];
+      p.tx=pt.x+(Math.random()-0.5)*4;
+      p.ty=pt.y+(Math.random()-0.5)*4;
+      p.shaped=true;
+      p.talpha=0.45+Math.random()*0.50;
+    } else if(fifth&&roll<bulbShare+satShare){
+      var pts2=makeShapeTargets(1);
+      var pt2=pts2[Math.floor(Math.random()*pts2.length)];
+      p.tx=pt2.x+(Math.random()-0.5)*3;p.ty=pt2.y+(Math.random()-0.5)*3;
+      p.shaped=true;p.talpha=0.38+Math.random()*0.42;
+    } else if(fifth&&roll<bulbShare+satShare*2){
+      var pts3=makeShapeTargets(2);
+      var pt3=pts3[Math.floor(Math.random()*pts3.length)];
+      p.tx=pt3.x+(Math.random()-0.5)*3;p.ty=pt3.y+(Math.random()-0.5)*3;
+      p.shaped=true;p.talpha=0.38+Math.random()*0.42;
+    } else if(fifth&&roll<bulbShare+satShare*3){
+      var pts4=makeShapeTargets(3);
+      var pt4=pts4[Math.floor(Math.random()*pts4.length)];
+      p.tx=pt4.x+(Math.random()-0.5)*3;p.ty=pt4.y+(Math.random()-0.5)*3;
+      p.shaped=true;p.talpha=0.35+Math.random()*0.40;
     } else {
-      // lightbulb gets 60%, others split 40%
-      var r2=Math.random();
-      if(r2<0.58){si=0;}
-      else if(r2<0.72){si=1;}
-      else if(r2<0.86){si=2;}
-      else{si=3;}
+      p.shaped=false;
+      p.talpha=0.08+Math.random()*0.12;
+      p.tx=Math.random()*W;p.ty=Math.random()*H;
     }
-    shape=shapeDefs[si];
-    var cx=shape.fxc*W,cy=shape.fyc*H,r=shape.fr*Math.min(W,H);
-    var pts=shape.gen(cx,cy,r);
-    var pt=pts[Math.floor(Math.random()*pts.length)];
-    p.tx=pt.x+(Math.random()-0.5)*3;
-    p.ty=pt.y+(Math.random()-0.5)*3;
-    p.shapeW=1;
-    p.targetAlpha=0.5+Math.random()*0.45;
   });
 }
-
-function scatter(){
-  particles.forEach(function(p){
-    p.tx=Math.random()*W;p.ty=Math.random()*H;
-    p.shapeW=0;p.targetAlpha=0.1+Math.random()*0.15;
-  });
-}
-
-var pull=0; // 0=free, 1=fully shaped
 
 function resize(){
   dpr=window.devicePixelRatio||1;
-  var rect=canvas.parentElement.getBoundingClientRect();
+  var rect=wrap.getBoundingClientRect();
   W=rect.width;H=Math.round(W*0.52);
-  canvas.width=Math.round(W*dpr);canvas.height=Math.round(H*dpr);
-  canvas.style.width=W+'px';canvas.style.height=H+'px';
+  C.width=Math.round(W*dpr);C.height=Math.round(H*dpr);
+  C.style.width=W+'px';C.style.height=H+'px';
   ctx.setTransform(dpr,0,0,dpr,0,0);
-  if(particles.length>0){
-    // reassign targets for new size
-    updateShapes();
-  }
-}
-
-function updateShapes(){
-  if(activeCount===0&&!fifthDone){scatter();pull=0;return;}
-  assignShapeTargets(1,fifthDone);
-  pull=Math.min(1,(activeCount/4)*0.7+(fifthDone?0.3:0));
+  if(particles.length>0)assignTargets();
 }
 
 function draw(){
-  requestAnimationFrame(draw);
+  raf=requestAnimationFrame(draw);
   if(W===0){resize();return;}
-  t+=0.012;
+  t+=0.008;
   ctx.clearRect(0,0,W,H);
 
+  var pullStrength=activeCount===0?0:0.016+activeCount*0.014+(active[4]?0.02:0);
+
   particles.forEach(function(p){
-    // Drift toward target
-    var strength=p.shapeW>0?(0.025+pull*0.055):0.008;
-    p.vx+=(p.tx-p.x)*strength;
-    p.vy+=(p.ty-p.y)*strength;
-    // Gentle noise when free
-    if(p.shapeW===0){
-      p.vx+=(Math.random()-0.5)*0.08;
-      p.vy+=(Math.random()-0.5)*0.08;
+    // Always wander slightly
+    p.wanderAngle+=( Math.random()-0.5)*0.18;
+    var wanderX=Math.cos(p.wanderAngle)*0.18;
+    var wanderY=Math.sin(p.wanderAngle)*0.18;
+
+    if(p.shaped){
+      // Pull toward target + gentle wander overlay
+      var dx=p.tx-p.x,dy=p.ty-p.y;
+      p.vx+=dx*pullStrength+wanderX*0.3;
+      p.vy+=dy*pullStrength+wanderY*0.3;
+    } else {
+      // Pure wander with slow drift
+      p.vx+=wanderX*0.5+(Math.random()-0.5)*0.06;
+      p.vy+=wanderY*0.5+(Math.random()-0.5)*0.06;
     }
-    p.vx*=0.88;p.vy*=0.88;
+
+    p.vx*=0.82;p.vy*=0.82;
+
+    // Clamp speed so they always feel alive
+    var spd=Math.sqrt(p.vx*p.vx+p.vy*p.vy);
+    var minSpd=0.18;
+    if(spd<minSpd&&spd>0){var s=minSpd/spd;p.vx*=s;p.vy*=s;}
+
     p.x+=p.vx;p.y+=p.vy;
+
+    // Wrap edges gently
+    if(p.x<-10)p.x=W+10;if(p.x>W+10)p.x=-10;
+    if(p.y<-10)p.y=H+10;if(p.y>H+10)p.y=-10;
+
     // Alpha lerp
-    p.alpha+=(p.targetAlpha-p.alpha)*0.04;
+    p.alpha+=(p.talpha-p.alpha)*0.035;
+
     // Pulse when shaped
-    var pulse=p.shapeW>0?Math.sin(t*1.8+p.phase)*0.08:0;
-    var sz=p.size+(p.shapeW>0?pull*0.6:0);
+    var pulse=p.shaped?Math.sin(t*2.2+p.phase)*0.06:0;
+    var sz=p.sz+(p.shaped?0.5:0);
+
     ctx.beginPath();
-    ctx.arc(p.x,p.y,sz,0,Math.PI*2);
-    ctx.fillStyle='rgba(217,119,87,'+(Math.min(1,p.alpha+pulse))+')';
+    ctx.arc(p.x,p.y,Math.max(0.5,sz),0,Math.PI*2);
+    ctx.fillStyle='rgba(217,119,87,'+Math.min(1,Math.max(0,p.alpha+pulse))+')';
     ctx.fill();
   });
 }
 
-// Button logic
+// Controls
 var btns=document.querySelectorAll('.ctx-btn');
-var footEl=document.getElementById('foot');
-var fifthRow=document.getElementById('fifthrow');
-var fifthInput=document.getElementById('fifthinput');
-var goBtn=document.getElementById('gobtn');
+var foot=document.getElementById('foot');
+var fifthBtn=document.getElementById('fifthbtn');
 
 var footTexts=[
   'Start by adding context. Each one matters.',
-  'Something is stirring. Keep going.',
+  'Something is stirring.',
   'The shape is finding itself.',
-  'One more and it arrives.',
-  'There it is. Now add what only you know.'
+  'Almost there.',
+  'There it is. Now add what only you know.',
+  'This is what description does. The more you bring, the more it becomes yours.'
 ];
 
 btns.forEach(function(btn){
   btn.addEventListener('click',function(){
+    var i=parseInt(btn.getAttribute('data-i'));
     var wasActive=btn.classList.contains('active');
-    if(!wasActive){
-      btn.classList.add('active');
-      activeCount++;
-    } else {
+    if(wasActive){
+      active[i]=false;
       btn.classList.remove('active');
-      activeCount--;
+    } else {
+      active[i]=true;
+      btn.classList.add('active');
     }
-    updateShapes();
-    footEl.textContent=footTexts[Math.min(activeCount,4)];
-    footEl.style.color=activeCount>=4?'rgba(20,20,19,0.7)':'rgba(20,20,19,0.42)';
-    if(activeCount>=4){
-      fifthRow.classList.add('show');
+    activeCount=active.slice(0,4).filter(Boolean).length;
+    assignTargets();
+    if(activeCount>=4&&!active[4]){
+      fifthBtn.classList.add('show');
+      foot.textContent=footTexts[4];
+    } else if(active[4]){
+      foot.textContent=footTexts[5];
+    } else {
+      foot.textContent=footTexts[activeCount];
     }
+    foot.style.color=active[4]?'rgba(20,20,19,0.75)':activeCount>=4?'rgba(20,20,19,0.65)':'rgba(20,20,19,0.42)';
   });
-});
-
-fifthInput.addEventListener('input',function(){
-  goBtn.classList.toggle('ready',fifthInput.value.trim().length>2);
-});
-
-goBtn.addEventListener('click',function(){
-  if(fifthInput.value.trim().length<=2)return;
-  fifthDone=true;
-  goBtn.style.background='var(--dark)';
-  updateShapes();
-  footEl.textContent='This is what description does. The more you bring, the more it becomes yours.';
-  footEl.style.color='rgba(20,20,19,0.75)';
 });
 
 window.addEventListener('load',function(){
   requestAnimationFrame(function(){requestAnimationFrame(function(){
-    resize();
-    initParticles();
-    draw();
+    resize();initParticles();assignTargets();draw();
   });});
 });
-window.addEventListener('resize',function(){resize();updateShapes();});
-if(window.ResizeObserver){new ResizeObserver(function(){resize();updateShapes();}).observe(canvas.parentElement);}
+window.addEventListener('resize',function(){resize();assignTargets();});
+if(window.ResizeObserver){new ResizeObserver(function(){resize();assignTargets();}).observe(wrap);}
 </script>
 </body>
 </html>
