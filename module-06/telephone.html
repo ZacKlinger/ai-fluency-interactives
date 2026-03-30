@@ -63,98 +63,116 @@ var N=4000;
 var parts=[];
 var act=[false,false,false,false,false];
 var actN=0;
+var cache=[null,null,null,null];
 
-// ---- Lightbulb geometry (verified canvas coords) ----
-// Canvas: y increases DOWNWARD. (cx,cy) is bulb center.
-// Dome = upper semicircle = angles PI to 2*PI (passes through TOP at 3PI/2)
-// Neck hangs below center (cy + positive values)
+// Lightbulb geometry
+// Canvas y increases downward.
+// Dome faces UP = arc passes through top of circle.
+// Top of circle at angle = -PI/2 (or 3PI/2).
+// Upper semicircle = angles PI to 2*PI (passes through 3PI/2 = top).
+// cx,cy = center of the glass globe.
+// R = radius of globe.
+// Total height of bulb: from -R (top of dome) to cy+R*1.05 (base of neck)
+// To fit in canvas with padding, center at H*0.50, R = min(W,H)*0.22
 
 function makeDome(cx,cy,R){
-  // Outer glass dome: arc from PI to 2*PI (upper half of circle, dome faces UP)
   var p=[];
-  for(var i=0;i<=600;i++){
-    var a=Math.PI+i/600*Math.PI; // PI to 2*PI = upper semicircle
-    p.push({x:cx+R*Math.cos(a),y:cy+R*Math.sin(a)});
+  // Outer glass dome arc: upper semicircle PI -> 2*PI
+  for(var i=0;i<=700;i++){
+    var a=Math.PI+i/700*Math.PI;
+    p.push({x:cx+R*Math.cos(a), y:cy+R*Math.sin(a)});
   }
-  // Lower sides of dome curving inward toward neck
-  // Left side: from angle PI (leftmost) curving down to neck left
-  for(var i=0;i<=80;i++){
-    var f=i/80;
-    p.push({x:cx-R*(1-f*0.77),y:cy+f*R*0.52});
+  // Left lower curve from globe to neck (angle PI = leftmost, curve down-inward)
+  for(var i=0;i<=60;i++){
+    var f=i/60;
+    // From (cx-R, cy) curve to neck left (cx-R*0.26, cy+R*0.48)
+    var x=cx-R+(R-R*0.26)*f;
+    var y=cy+R*0.48*f*f; // quadratic so it curves
+    p.push({x:x,y:y});
   }
-  // Right side
-  for(var i=0;i<=80;i++){
-    var f=i/80;
-    p.push({x:cx+R*(1-f*0.77),y:cy+f*R*0.52});
+  // Right lower curve
+  for(var i=0;i<=60;i++){
+    var f=i/60;
+    var x=cx+R-(R-R*0.26)*f;
+    var y=cy+R*0.48*f*f;
+    p.push({x:x,y:y});
   }
   return p;
 }
 
 function makeNeck(cx,cy,R){
-  // Neck socket below center
   var p=[];
-  // Three horizontal bands (socket lines)
-  for(var j=0;j<3;j++){
-    var ny=cy+R*(0.54+j*0.15);
-    for(var i=0;i<=80;i++){p.push({x:cx-R*0.24+i/80*R*0.48,y:ny});}
+  // 4 clean horizontal bands - the socket ridges
+  var neckTop=cy+R*0.48;
+  var neckBot=cy+R*0.95;
+  var neckW=R*0.26;
+  var bands=4;
+  for(var j=0;j<bands;j++){
+    var y=neckTop+j/(bands-1)*(neckBot-neckTop);
+    for(var i=0;i<=80;i++){
+      p.push({x:cx-neckW+i/80*neckW*2, y:y});
+    }
   }
-  // Left and right neck verticals
-  for(var i=0;i<=50;i++){
-    var f=i/50;
-    p.push({x:cx-R*0.24,y:cy+R*(0.52+f*0.48)});
-    p.push({x:cx+R*0.24,y:cy+R*(0.52+f*0.48)});
-  }
-  // Bottom base line
-  for(var i=0;i<=60;i++){p.push({x:cx-R*0.24+i/60*R*0.48,y:cy+R*1.0});}
+  // NO vertical edges on neck - these cause the drip streams
+  // Just a subtle left and right border dot per band already covers it
   return p;
 }
 
 function makeCore(cx,cy,R){
-  // Inner filament and inner arcs - the glowing heart
   var p=[];
-  // Inner dome arc (smaller, inside the glass)
+  // Two concentric inner arcs (filament glow rings)
+  for(var i=0;i<=300;i++){
+    var a=Math.PI+i/300*Math.PI;
+    p.push({x:cx+R*0.60*Math.cos(a), y:cy+R*0.60*Math.sin(a)});
+  }
   for(var i=0;i<=200;i++){
     var a=Math.PI+i/200*Math.PI;
-    p.push({x:cx+R*0.58*Math.cos(a),y:cy+R*0.58*Math.sin(a)});
+    p.push({x:cx+R*0.38*Math.cos(a), y:cy+R*0.38*Math.sin(a)});
   }
-  // Second inner arc
-  for(var i=0;i<=150;i++){
-    var a=Math.PI+i/150*Math.PI;
-    p.push({x:cx+R*0.36*Math.cos(a),y:cy+R*0.36*Math.sin(a)});
-  }
-  // Filament: S-curve in the lower dome area
-  for(var i=0;i<=120;i++){
-    var f=i/120;
-    var fx=cx+R*0.18*Math.sin(f*Math.PI*2.5);
-    var fy=cy-R*0.02+f*R*0.42;
-    p.push({x:fx,y:fy});
-  }
-  // Vertical stem of filament
+  // Classic filament: two loops connected by stem
+  // Left loop
   for(var i=0;i<=60;i++){
-    p.push({x:cx,y:cy-R*0.05+i/60*R*0.48});
+    var a=Math.PI+i/60*Math.PI;
+    p.push({x:cx-R*0.10+R*0.12*Math.cos(a), y:cy+R*0.10+R*0.15*Math.sin(a)});
+  }
+  // Right loop
+  for(var i=0;i<=60;i++){
+    var a=Math.PI+i/60*Math.PI;
+    p.push({x:cx+R*0.10+R*0.12*Math.cos(a), y:cy+R*0.10+R*0.15*Math.sin(a)});
+  }
+  // Central vertical stem
+  for(var i=0;i<=50;i++){
+    p.push({x:cx, y:cy-R*0.05+i/50*R*0.40});
   }
   return p;
 }
 
 function makeRays(cx,cy,R){
-  // Light rays emanating from dome - 9 spokes
   var p=[];
-  for(var k=0;k<9;k++){
-    // Rays spread from leftmost to rightmost, through top (PI to 2*PI range)
-    var ra=Math.PI+(k/8)*Math.PI; // PI to 2*PI
-    for(var i=0;i<=22;i++){
-      var r=R*(1.08+i*0.042);
-      p.push({x:cx+r*Math.cos(ra),y:cy+r*Math.sin(ra)});
+  // 7 rays, spread symmetrically across upper arc (PI to 2*PI)
+  var rayCount=7;
+  for(var k=0;k<rayCount;k++){
+    var ra=Math.PI+(k/(rayCount-1))*Math.PI;
+    var rStart=R*1.10, rEnd=R*1.55;
+    for(var i=0;i<=25;i++){
+      var r=rStart+i/25*(rEnd-rStart);
+      p.push({x:cx+r*Math.cos(ra), y:cy+r*Math.sin(ra)});
     }
   }
   return p;
 }
 
-// Sub-shape cache (4 bands)
-var cache=[null,null,null,null];
-
 function buildCache(){
-  var cx=W*0.50, cy=H*0.46, R=Math.min(W,H)*0.28;
+  // R sized so full bulb (dome top to neck bottom) fits in canvas with margin
+  // dome top = cy - R, neck bottom = cy + R*0.95
+  // total height = R*1.95, want this = H*0.76 => R = H*0.76/1.95
+  // rays extend to R*1.55 from center, want max = H*0.46 from cy => cy = H*0.50
+  // ray top = cy - R*1.55*sin(PI/2) ... at angle 3PI/2 (straight up) = cy - R*1.55
+  // need cy - R*1.55 >= H*0.05 => cy >= R*1.55 + H*0.05
+  // Let R = Math.min(W*0.20, H*0.23)
+  var R=Math.min(W*0.20, H*0.23);
+  var cx=W*0.50;
+  var cy=R*1.60+H*0.04; // rays clear top, neck clears bottom
   cache[0]=makeDome(cx,cy,R);
   cache[1]=makeNeck(cx,cy,R);
   cache[2]=makeCore(cx,cy,R);
@@ -165,15 +183,9 @@ function ptFrom(ci){
   var arr=cache[ci];
   if(!arr||!arr.length)return {x:W/2,y:H/2};
   var p=arr[Math.floor(Math.random()*arr.length)];
-  return {x:p.x+(Math.random()-0.5)*2,y:p.y+(Math.random()-0.5)*2};
+  return {x:p.x+(Math.random()-0.5)*2, y:p.y+(Math.random()-0.5)*2};
 }
 
-// Bands: each click owns a permanent slice of particle array
-// 0-24%: band 0 (dome)
-// 24-48%: band 1 (neck)
-// 48-72%: band 2 (core)
-// 72-96%: band 3 (rays)
-// 96-100%: always ambient
 var BAND_START=[0.00,0.24,0.48,0.72];
 var BAND_END  =[0.24,0.48,0.72,0.96];
 
@@ -186,7 +198,7 @@ function initParts(){
       vx:Math.cos(ang)*spd,vy:Math.sin(ang)*spd,
       wx:Math.random()*W,wy:Math.random()*H,
       tx:0,ty:0,shaped:false,band:-1,
-      sz:Math.random()*1.4+0.8,
+      sz:Math.random()*1.5+0.9,
       alpha:0.10+Math.random()*0.12,
       talpha:0.10+Math.random()*0.12,
       phase:Math.random()*Math.PI*2
@@ -198,11 +210,11 @@ function activateBand(bi){
   var s=Math.floor(BAND_START[bi]*N),e=Math.floor(BAND_END[bi]*N);
   for(var i=s;i<e;i++){
     var p=parts[i];
-    if(p.shaped&&p.band===bi)continue; // already placed - leave it
+    if(p.shaped&&p.band===bi)continue;
     var pt=ptFrom(bi);
     p.tx=pt.x;p.ty=pt.y;
     p.shaped=true;p.band=bi;
-    p.talpha=0.58+Math.random()*0.40;
+    p.talpha=0.65+Math.random()*0.33;
   }
 }
 
@@ -219,13 +231,12 @@ function deactivateBand(bi){
 function resize(){
   dpr=window.devicePixelRatio||1;
   var r=wrap.getBoundingClientRect();
-  W=r.width;H=Math.round(W*0.54);
+  W=r.width;H=Math.round(W*0.56);
   CV.width=Math.round(W*dpr);CV.height=Math.round(H*dpr);
   CV.style.width=W+'px';CV.style.height=H+'px';
   CTX.setTransform(dpr,0,0,dpr,0,0);
   if(parts.length>0){
     buildCache();
-    // Rebuild all active bands with new positions
     for(var bi=0;bi<4;bi++){if(act[bi])activateBand(bi);}
   }
 }
@@ -256,7 +267,7 @@ function loop(){
     if(p.y<-12)p.y=H+12;if(p.y>H+12)p.y=-12;
     p.alpha+=(p.talpha-p.alpha)*0.020;
     var pulse=p.shaped?Math.sin(tick*1.9+p.phase)*0.04:0;
-    var sz=p.sz+(p.shaped?actN*0.08:0);
+    var sz=p.sz+(p.shaped?actN*0.09:0);
     CTX.beginPath();
     CTX.arc(p.x,p.y,Math.max(0.4,sz),0,Math.PI*2);
     CTX.fillStyle='rgba(217,119,87,'+Math.min(1,Math.max(0,p.alpha+pulse))+')';
@@ -285,7 +296,6 @@ document.querySelectorAll('.ctx-btn').forEach(function(btn){
       if(act[i])activateBand(i);
       else deactivateBand(i);
     } else {
-      // 5th button: activate band 3 (rays) extra dense + glow
       if(act[4])activateBand(3);
     }
     if(actN>=4)fifthBtn.classList.add('show');
