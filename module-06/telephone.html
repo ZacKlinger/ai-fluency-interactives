@@ -59,163 +59,199 @@ canvas{display:block;width:100%}
 <script>
 var CV=document.getElementById('c'),CTX=CV.getContext('2d'),wrap=document.getElementById('wrap');
 var W=0,H=0,dpr=1,tick=0;
-var N=2500;
+var N=4000;
 var parts=[];
 var act=[false,false,false,false,false];
 var actN=0;
 
-// Dense outline sampler: given a list of {x,y} outline points, repeat to fill count
-function densify(pts, count){
-  var out=[];
-  for(var i=0;i<count;i++){
-    var p=pts[Math.floor(Math.random()*pts.length)];
-    out.push({x:p.x+(Math.random()-0.5)*1.5, y:p.y+(Math.random()-0.5)*1.5});
+// Particle bands: each click owns a slice of the particle array
+// Slice 0: always wandering (first ~5%)
+// Slice 1 (0-24%): click 1 recruits
+// Slice 2 (24-44%): click 2 recruits
+// Slice 3 (44-62%): click 3 recruits
+// Slice 4 (62-80%): click 4 recruits
+// Slice 5 (80-86%): 5th click pencil
+// Slice 6 (86-92%): 5th click apple
+// Slice 7 (92-98%): 5th click star
+// Slice 8 (98-100%): always wandering (ambient)
+
+var BANDS=[
+  {start:0.00,end:0.24,shape:0},  // click 1 -> bulb outer arc
+  {start:0.24,end:0.44,shape:0},  // click 2 -> bulb rays+neck
+  {start:0.44,end:0.62,shape:0},  // click 3 -> bulb fill
+  {start:0.62,end:0.80,shape:0},  // click 4 -> bulb detail
+  {start:0.80,end:0.87,shape:1},  // 5th -> pencil
+  {start:0.87,end:0.94,shape:2},  // 5th -> apple
+  {start:0.94,end:1.00,shape:3}   // 5th -> star
+];
+
+// Shape outlines
+function bulbArc(cx,cy,R){
+  // Dome: upper semicircle, dome UP (arc from PI to 2PI = lower half = wrong)
+  // Lightbulb: dome at TOP, neck at BOTTOM
+  // So dome arc goes from ~210deg to ~330deg in standard math (top of circle)
+  // In canvas: y increases downward. Dome should be the upper part.
+  // Arc from PI (left) going counterclockwise through top to 0 (right)
+  // = angles from PI down to 0, which is the top half
+  var p=[];
+  // Top dome arc (upper half of circle = angles PI to 0, i.e. the arc that goes THROUGH top)
+  for(var i=0;i<=500;i++){
+    var a=Math.PI - i/500*Math.PI; // PI down to 0 = top semicircle
+    p.push({x:cx+R*Math.cos(a), y:cy+R*Math.sin(a)});
   }
-  return out;
+  return p;
 }
 
-// ---- LIGHTBULB (outline only) ----
-function bulbOutline(cx,cy,R){
+function bulbNeckAndRays(cx,cy,R){
   var p=[];
-  // Upper dome arc (180 deg)
-  for(var i=0;i<=500;i++){var a=Math.PI*0.01+i/500*Math.PI*0.98; p.push({x:cx+R*Math.cos(a),y:cy+R*Math.sin(a)});}
-  // Lower sides curving inward to neck
-  for(var i=0;i<=80;i++){var f=i/80; p.push({x:cx-R*(0.98-f*0.75),y:cy+R*(0.02+f*0.48)});}
-  for(var i=0;i<=80;i++){var f=i/80; p.push({x:cx+R*(0.98-f*0.75),y:cy+R*(0.02+f*0.48)});}
-  // Neck - 3 horizontal bands
+  // Lower sides: from angle 0 curving down to neck
+  for(var i=0;i<=80;i++){var f=i/80; p.push({x:cx+R*(1-f*0.77),y:cy+f*R*0.50});}
+  for(var i=0;i<=80;i++){var f=i/80; p.push({x:cx-R*(1-f*0.77),y:cy+f*R*0.50});}
+  // Neck horizontals
   for(var j=0;j<3;j++){var ny=cy+R*(0.52+j*0.14); for(var i=0;i<=60;i++){p.push({x:cx-R*0.23+i/60*R*0.46,y:ny});}}
   // Neck verticals
-  for(var i=0;i<=30;i++){var f=i/30; p.push({x:cx-R*0.23,y:cy+R*(0.50+f*0.45)}); p.push({x:cx+R*0.23,y:cy+R*(0.50+f*0.45)});}
-  // Rays - 7 outward spokes
+  for(var i=0;i<=30;i++){var f=i/30; p.push({x:cx-R*0.23,y:cy+R*(0.50+f*0.42)}); p.push({x:cx+R*0.23,y:cy+R*(0.50+f*0.42)});}
+  // Bottom base
+  for(var i=0;i<=40;i++){p.push({x:cx-R*0.23+i/40*R*0.46,y:cy+R*0.94});}
+  return p;
+}
+
+function bulbFill(cx,cy,R){
+  // Interior filaments / detail inside dome
+  var p=[];
+  // Filament S-curve inside bulb
+  for(var i=0;i<=80;i++){var f=i/80*Math.PI; p.push({x:cx+R*0.18*Math.cos(f*3),y:cy-R*0.25+R*0.4*(f/Math.PI)});}
+  // Two inner arcs
+  for(var i=0;i<=60;i++){var a=Math.PI-i/60*Math.PI; p.push({x:cx+R*0.55*Math.cos(a),y:cy+R*0.55*Math.sin(a)});}
+  for(var i=0;i<=60;i++){var a=Math.PI-i/60*Math.PI; p.push({x:cx+R*0.35*Math.cos(a),y:cy+R*0.35*Math.sin(a)});}
+  return p;
+}
+
+function bulbRays(cx,cy,R){
+  // 7 rays emanating outward from dome
+  var p=[];
   for(var k=0;k<7;k++){
-    var ra=(k/7)*Math.PI*1.0+Math.PI*0.0;
-    for(var i=0;i<=20;i++){var r=R*(1.08+i*0.04); p.push({x:cx+r*Math.cos(ra),y:cy+r*Math.sin(ra)});}
+    var ra=Math.PI-(k/(6))*Math.PI; // spread from 180deg to 0deg (top arc)
+    for(var i=0;i<=18;i++){var r=R*(1.06+i*0.038); p.push({x:cx+r*Math.cos(ra),y:cy+r*Math.sin(ra)});}
   }
   return p;
 }
 
-// ---- PENCIL (outline only) ----
 function pencilOutline(cx,cy,R){
   var p=[];
-  var w=R*0.28, h=R*0.95;
-  // Long body - left and right edges, very dense
-  for(var i=0;i<=200;i++){var f=i/200; p.push({x:cx-w,y:cy-h+f*h*1.55}); p.push({x:cx+w,y:cy-h+f*h*1.55});}
-  // Top of body (flat top edge)
-  for(var i=0;i<=50;i++){p.push({x:cx-w+i/50*w*2,y:cy-h});}
-  // Eraser band (line across partway down from top)
-  for(var i=0;i<=50;i++){p.push({x:cx-w+i/50*w*2,y:cy-h+R*0.18});}
-  // Tip - two converging lines to a point
-  for(var i=0;i<=80;i++){var f=i/80; p.push({x:cx-w+f*w,y:cy+h*0.60+f*h*0.40}); p.push({x:cx+w-f*w,y:cy+h*0.60+f*h*0.40});}
-  // Tip wood reveal band
-  for(var i=0;i<=50;i++){p.push({x:cx-w+i/50*w*2,y:cy+h*0.60});}
+  var w=R*0.28,h=R*1.0;
+  // Left and right long edges
+  for(var i=0;i<=250;i++){var f=i/250; p.push({x:cx-w,y:cy-h+f*h*1.5}); p.push({x:cx+w,y:cy-h+f*h*1.5});}
+  // Top flat
+  for(var i=0;i<=60;i++){p.push({x:cx-w+i/60*w*2,y:cy-h});}
+  // Eraser band
+  for(var i=0;i<=60;i++){p.push({x:cx-w+i/60*w*2,y:cy-h+R*0.2});}
+  // Tip converging lines
+  for(var i=0;i<=100;i++){var f=i/100; p.push({x:cx-w+f*w,y:cy+h*0.55+f*h*0.45}); p.push({x:cx+w-f*w,y:cy+h*0.55+f*h*0.45});}
+  // Wood reveal line
+  for(var i=0;i<=60;i++){p.push({x:cx-w+i/60*w*2,y:cy+h*0.55});}
   return p;
 }
 
-// ---- APPLE (outline only) ----
 function appleOutline(cx,cy,R){
   var p=[];
-  // Body - very dense parametric outline
-  for(var i=0;i<=600;i++){
-    var a=i/600*Math.PI*2;
+  for(var i=0;i<=700;i++){
+    var a=i/700*Math.PI*2;
     var rx=R*(0.88+0.08*Math.cos(a*2+0.3));
     var ry=R*(0.82+0.06*Math.sin(a));
-    // Top center dip
     var dip=0;
-    if(a>Math.PI*1.25&&a<Math.PI*1.75){dip=-R*0.22*Math.pow(Math.sin((a-Math.PI*1.25)/0.5*Math.PI),0.6);}
-    p.push({x:cx+rx*Math.cos(a), y:cy+ry*Math.sin(a)+dip});
+    if(a>Math.PI*1.25&&a<Math.PI*1.75){dip=-R*0.20*Math.pow(Math.sin((a-Math.PI*1.25)/0.5*Math.PI),0.5);}
+    p.push({x:cx+rx*Math.cos(a),y:cy+ry*Math.sin(a)+dip});
   }
-  // Stem
-  for(var i=0;i<=35;i++){var f=i/35; p.push({x:cx+f*R*0.1,y:cy-R*0.80-f*R*0.28});}
-  // Leaf outline
-  for(var i=0;i<=80;i++){var la=i/80*Math.PI; p.push({x:cx+R*0.1+R*0.32*Math.cos(la),y:cy-R*0.88-R*0.18*Math.sin(la)});}
-  // Leaf center vein
-  for(var i=0;i<=25;i++){p.push({x:cx+R*0.1+i/25*R*0.30,y:cy-R*0.88});}
+  for(var i=0;i<=35;i++){var f=i/35; p.push({x:cx+f*R*0.08,y:cy-R*0.80-f*R*0.25});}
+  for(var i=0;i<=80;i++){var la=i/80*Math.PI; p.push({x:cx+R*0.10+R*0.28*Math.cos(la),y:cy-R*0.82-R*0.16*Math.sin(la)});}
+  for(var i=0;i<=25;i++){p.push({x:cx+R*0.10+i/25*R*0.26,y:cy-R*0.82});}
   return p;
 }
 
-// ---- STAR (outline only) ----
 function starOutline(cx,cy,R){
   var p=[];
-  var n=5;
-  for(var k=0;k<n*2;k++){
-    var a0=(k/(n*2))*Math.PI*2-Math.PI/2;
-    var a1=((k+1)/(n*2))*Math.PI*2-Math.PI/2;
+  for(var k=0;k<10;k++){
+    var a0=(k/10)*Math.PI*2-Math.PI/2;
+    var a1=((k+1)/10)*Math.PI*2-Math.PI/2;
     var r0=k%2===0?R:R*0.42;
     var r1=k%2===0?R*0.42:R;
-    for(var j=0;j<=40;j++){var f=j/40; p.push({x:cx+(r0+f*(r1-r0))*Math.cos(a0+f*(a1-a0)),y:cy+(r0+f*(r1-r0))*Math.sin(a0+f*(a1-a0))});}
+    for(var j=0;j<=50;j++){var f=j/50; p.push({x:cx+(r0+f*(r1-r0))*Math.cos(a0+f*(a1-a0)),y:cy+(r0+f*(r1-r0))*Math.sin(a0+f*(a1-a0))});}
   }
   return p;
 }
 
-// Layout - larger radii, better positions
-// [fxc, fyc, fr_of_minDim]
-var layouts=[
-  [0.50, 0.44, 0.30],  // lightbulb center - large
-  [0.15, 0.50, 0.16],  // pencil left
-  [0.85, 0.50, 0.16],  // apple right
-  [0.50, 0.84, 0.12]   // star bottom center
-];
-var generators=[bulbOutline,pencilOutline,appleOutline,starOutline];
+// Pre-baked shape point arrays (filled when W/H known)
+var shapeCache=[null,null,null,null,null,null,null]; // 7 sub-shapes
 
-function getOutline(si){
-  var l=layouts[si], cx=l[0]*W, cy=l[1]*H, R=l[2]*Math.min(W,H);
-  return generators[si](cx,cy,R);
+function buildCache(){
+  var bx=W*0.50,by=H*0.44,bR=Math.min(W,H)*0.26;
+  shapeCache[0]=bulbArc(bx,by,bR);
+  shapeCache[1]=bulbNeckAndRays(bx,by,bR);
+  shapeCache[2]=bulbFill(bx,by,bR);
+  shapeCache[3]=bulbRays(bx,by,bR);
+  var pR=Math.min(W,H)*0.16;
+  shapeCache[4]=pencilOutline(W*0.15,H*0.50,pR);
+  shapeCache[5]=appleOutline(W*0.85,H*0.50,pR);
+  shapeCache[6]=starOutline(W*0.50,H*0.84,Math.min(W,H)*0.10);
 }
+
+function ptFrom(cacheIdx){
+  var arr=shapeCache[cacheIdx];
+  if(!arr||arr.length===0)return {x:W/2,y:H/2};
+  var p=arr[Math.floor(Math.random()*arr.length)];
+  return {x:p.x+(Math.random()-0.5)*2,y:p.y+(Math.random()-0.5)*2};
+}
+
+// Map band index to cache index based on which buttons are pressed
+// band 0-3 = bulb sub-shapes 0,1,2,3
+// band 4 = pencil (cache 4), band 5 = apple (cache 5), band 6 = star (cache 6)
+function cacheForBand(bi){return bi<=3?bi:(bi+1);}
 
 function initParts(){
   parts=[];
   for(var i=0;i<N;i++){
-    var ang=Math.random()*Math.PI*2, spd=0.12+Math.random()*0.15;
+    var ang=Math.random()*Math.PI*2,spd=0.12+Math.random()*0.15;
     parts.push({
       x:Math.random()*W, y:Math.random()*H,
       vx:Math.cos(ang)*spd, vy:Math.sin(ang)*spd,
       wx:Math.random()*W, wy:Math.random()*H,
-      tx:0, ty:0, shaped:false,
+      tx:0, ty:0,
+      shaped:false, bandIdx:-1,
       sz:Math.random()*1.4+0.8,
-      alpha:0.1+Math.random()*0.12,
-      talpha:0.1+Math.random()*0.12,
+      alpha:0.10+Math.random()*0.12,
+      talpha:0.10+Math.random()*0.12,
       phase:Math.random()*Math.PI*2
     });
   }
 }
 
-function assignTargets(){
-  var n=actN, fifth=act[4];
-  // Bulb share grows with each click
-  var bf=[0,0.30,0.46,0.62,0.82][Math.min(n,4)];
-  // Satellites: each gets equal share of remaining 18%
-  var sf=0.06;
+function activateBand(bi){
+  // Recruit particles in the band range into their shape - ONLY if not already shaped
+  var band=BANDS[bi];
+  var start=Math.floor(band.start*N);
+  var end=Math.floor(band.end*N);
+  var ci=cacheForBand(bi);
+  for(var i=start;i<end;i++){
+    var p=parts[i];
+    if(p.shaped&&p.bandIdx===bi) continue; // already placed, leave it
+    var pt=ptFrom(ci);
+    p.tx=pt.x; p.ty=pt.y;
+    p.shaped=true; p.bandIdx=bi;
+    p.talpha=0.60+Math.random()*0.38;
+  }
+}
 
-  // Pre-compute outlines once (expensive)
-  var ol0=n>0||fifth?getOutline(0):null;
-  var ol1=fifth?getOutline(1):null;
-  var ol2=fifth?getOutline(2):null;
-  var ol3=fifth?getOutline(3):null;
-
-  parts.forEach(function(p,idx){
-    var roll=idx/N;
-    if(n===0&&!fifth){
-      p.shaped=false; p.talpha=0.07+Math.random()*0.09;
-    } else if(roll<bf){
-      var pt=ol0[Math.floor(Math.random()*ol0.length)];
-      p.tx=pt.x+(Math.random()-0.5)*1.8; p.ty=pt.y+(Math.random()-0.5)*1.8;
-      p.shaped=true; p.talpha=0.60+Math.random()*0.38;
-    } else if(fifth&&roll<bf+sf){
-      var pt2=ol1[Math.floor(Math.random()*ol1.length)];
-      p.tx=pt2.x+(Math.random()-0.5)*1.5; p.ty=pt2.y+(Math.random()-0.5)*1.5;
-      p.shaped=true; p.talpha=0.52+Math.random()*0.35;
-    } else if(fifth&&roll<bf+sf*2){
-      var pt3=ol2[Math.floor(Math.random()*ol2.length)];
-      p.tx=pt3.x+(Math.random()-0.5)*1.5; p.ty=pt3.y+(Math.random()-0.5)*1.5;
-      p.shaped=true; p.talpha=0.52+Math.random()*0.35;
-    } else if(fifth&&roll<bf+sf*3){
-      var pt4=ol3[Math.floor(Math.random()*ol4.length)];
-      p.tx=pt4.x+(Math.random()-0.5)*1.5; p.ty=pt4.y+(Math.random()-0.5)*1.5;
-      p.shaped=true; p.talpha=0.48+Math.random()*0.32;
-    } else {
-      p.shaped=false; p.talpha=0.06+Math.random()*0.08;
-    }
-  });
+function deactivateBand(bi){
+  var band=BANDS[bi];
+  var start=Math.floor(band.start*N);
+  var end=Math.floor(band.end*N);
+  for(var i=start;i<end;i++){
+    var p=parts[i];
+    p.shaped=false; p.bandIdx=-1;
+    p.talpha=0.07+Math.random()*0.09;
+    p.wx=Math.random()*W; p.wy=Math.random()*H;
+  }
 }
 
 function resize(){
@@ -225,7 +261,15 @@ function resize(){
   CV.width=Math.round(W*dpr); CV.height=Math.round(H*dpr);
   CV.style.width=W+'px'; CV.style.height=H+'px';
   CTX.setTransform(dpr,0,0,dpr,0,0);
-  if(parts.length>0){parts.forEach(function(p){p.wx=Math.random()*W;p.wy=Math.random()*H;});assignTargets();}
+  if(parts.length>0){buildCache(); rebuildAll();}
+}
+
+function rebuildAll(){
+  // Recompute targets for all currently active bands using new cache
+  for(var bi=0;bi<4;bi++){
+    if(act[bi]) activateBand(bi);
+  }
+  if(act[4]){activateBand(4);activateBand(5);activateBand(6);}
 }
 
 function loop(){
@@ -240,10 +284,10 @@ function loop(){
       p.vx*=0.86; p.vy*=0.86;
     } else {
       p.vx+=(p.wx-p.x)*0.0005; p.vy+=(p.wy-p.y)*0.0005;
-      p.vx+=(Math.random()-0.5)*0.028; p.vy+=(Math.random()-0.5)*0.028;
+      p.vx+=(Math.random()-0.5)*0.025; p.vy+=(Math.random()-0.5)*0.025;
       p.vx*=0.94; p.vy*=0.94;
       var ddx=p.wx-p.x,ddy=p.wy-p.y;
-      if(ddx*ddx+ddy*ddy<200){p.wx=Math.random()*W;p.wy=Math.random()*H;}
+      if(ddx*ddx+ddy*ddy<300){p.wx=Math.random()*W;p.wy=Math.random()*H;}
     }
     var spd=Math.sqrt(p.vx*p.vx+p.vy*p.vy);
     var maxS=p.shaped?1.8:0.7;
@@ -252,9 +296,9 @@ function loop(){
     p.x+=p.vx; p.y+=p.vy;
     if(p.x<-12)p.x=W+12; if(p.x>W+12)p.x=-12;
     if(p.y<-12)p.y=H+12; if(p.y>H+12)p.y=-12;
-    p.alpha+=(p.talpha-p.alpha)*0.02;
+    p.alpha+=(p.talpha-p.alpha)*0.020;
     var pulse=p.shaped?Math.sin(tick*1.9+p.phase)*0.04:0;
-    var sz=p.sz+(p.shaped?actN*0.08:0);
+    var sz=p.sz+(p.shaped?actN*0.07:0);
     CTX.beginPath();
     CTX.arc(p.x,p.y,Math.max(0.4,sz),0,Math.PI*2);
     CTX.fillStyle='rgba(217,119,87,'+Math.min(1,Math.max(0,p.alpha+pulse))+')';
@@ -269,9 +313,18 @@ var msgs=['Start by adding context. Each one matters.','Something is stirring.',
 document.querySelectorAll('.ctx-btn').forEach(function(btn){
   btn.addEventListener('click',function(){
     var i=parseInt(btn.getAttribute('data-i'));
-    act[i]=!act[i]; btn.classList.toggle('active',act[i]);
-    actN=act.slice(0,4).filter(Boolean).length;
-    assignTargets();
+    act[i]=!act[i];
+    btn.classList.toggle('active',act[i]);
+
+    if(i<4){
+      actN=act.slice(0,4).filter(Boolean).length;
+      if(act[i]){activateBand(i);}
+      else{deactivateBand(i);}
+    } else {
+      if(act[4]){activateBand(4);activateBand(5);activateBand(6);}
+      else{deactivateBand(4);deactivateBand(5);deactivateBand(6);}
+    }
+
     if(actN>=4) fifthBtn.classList.add('show');
     var mi=act[4]?5:actN;
     footEl.textContent=msgs[Math.min(mi,5)];
@@ -279,9 +332,11 @@ document.querySelectorAll('.ctx-btn').forEach(function(btn){
   });
 });
 
-window.addEventListener('load',function(){requestAnimationFrame(function(){requestAnimationFrame(function(){resize();initParts();assignTargets();loop();});});});
-window.addEventListener('resize',function(){resize();assignTargets();});
-if(window.ResizeObserver){new ResizeObserver(function(){resize();assignTargets();}).observe(wrap);}
+window.addEventListener('load',function(){requestAnimationFrame(function(){requestAnimationFrame(function(){
+  resize(); initParts(); buildCache(); loop();
+});});});
+window.addEventListener('resize',function(){resize();});
+if(window.ResizeObserver){new ResizeObserver(function(){resize();}).observe(wrap);}
 </script>
 </body>
 </html>
