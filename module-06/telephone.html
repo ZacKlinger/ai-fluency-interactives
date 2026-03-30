@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Telephone - Module 6 - AI Fluency for K-12 Educators</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,300;8..60,400;8..60,600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#faf9f5;--surface:#f0eee6;--dark:#141413;--muted:rgba(20,20,19,0.42);
+  --border:rgba(20,20,19,0.1);--coral:#d97757;--sans:'DM Sans',Arial,sans-serif;
+  --serif:'Source Serif 4',Georgia,serif
+}
+html,body{min-height:100vh;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:2rem 1rem;font-family:var(--sans);color:var(--dark)}
+.stage{width:100%;max-width:740px;position:relative}
+.status-badge{position:absolute;top:0;right:0;z-index:10;font-size:9.5px;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;background:var(--surface);border:0.5px solid var(--border);color:var(--muted);padding:4px 12px;border-radius:0 6px 0 4px}
+.card{background:var(--bg);border:0.5px solid var(--border);border-radius:6px;overflow:hidden}
+.top-bar{padding:1.75rem 2rem 0;padding-right:8rem}
+.eyebrow{font-size:10px;font-weight:500;letter-spacing:0.16em;text-transform:uppercase;color:var(--muted)}
+.title-area{padding:0.75rem 2rem 0.25rem}
+.headline{font-family:var(--sans);font-size:clamp(20px,3.2vw,28px);font-weight:600;color:var(--dark);line-height:1.2;margin-bottom:0.25rem;letter-spacing:-0.02em}
+.subhead{font-size:13px;font-weight:400;color:var(--muted);line-height:1.5}
+
+.text-zone{
+  padding:2rem 2rem 1.5rem;
+  border-top:0.5px solid var(--border);
+  margin-top:1rem;
+  background:var(--surface);
+  min-height:280px;
+  position:relative;
+}
+
+.stage-label{
+  font-size:10px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;
+  margin-bottom:1rem;display:flex;align-items:center;justify-content:space-between;
+}
+.stage-name{color:var(--coral)}
+.stage-num{color:var(--muted)}
+
+.text-block{
+  position:absolute;top:0;left:0;right:0;padding:2rem 2rem 1.5rem;
+  opacity:0;transition:opacity 0.45s ease;pointer-events:none;
+}
+.text-block.active{opacity:1;pointer-events:auto;position:relative}
+
+.text-prompt{
+  font-size:11px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;
+  color:var(--muted);margin-bottom:0.6rem;display:block;
+}
+.prompt-text{
+  font-size:12px;font-weight:400;color:var(--muted);
+  background:rgba(20,20,19,0.04);border-radius:3px;
+  padding:0.5rem 0.75rem;margin-bottom:1.25rem;
+  border-left:2px solid var(--border);font-family:var(--sans);
+  line-height:1.55;
+}
+.prompt-text em{font-style:normal;color:var(--coral);font-weight:500}
+
+.output-label{
+  font-size:10px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;
+  color:var(--muted);margin-bottom:0.75rem;display:block;
+}
+.output-text{
+  font-family:var(--serif);font-size:15.5px;font-weight:400;
+  color:var(--dark);line-height:1.85;
+}
+.output-text strong{font-weight:600}
+
+.missing-note{
+  font-size:11.5px;font-weight:400;color:var(--coral);
+  margin-top:1rem;line-height:1.5;
+  padding-top:0.85rem;border-top:0.5px solid rgba(217,119,87,0.2);
+}
+.missing-note strong{font-weight:600}
+
+/* Slider zone */
+.slider-zone{
+  padding:1.5rem 2rem 0.5rem;background:var(--bg);
+  border-top:0.5px solid var(--border);
+}
+.slider-track-wrap{position:relative;margin-bottom:0.5rem}
+.slider-labels{display:flex;justify-content:space-between;margin-bottom:0.5rem}
+.slider-label{font-size:10px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted)}
+.slider-label.right{color:var(--coral)}
+
+input[type=range]{
+  width:100%;
+  -webkit-appearance:none;appearance:none;
+  height:2px;background:var(--border);border-radius:2px;outline:none;cursor:pointer;
+}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;appearance:none;
+  width:18px;height:18px;border-radius:50%;
+  background:var(--coral);border:2px solid var(--bg);
+  box-shadow:0 0 0 1px var(--coral),0 2px 6px rgba(217,119,87,0.3);
+  cursor:pointer;transition:transform 0.15s;
+}
+input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.15)}
+input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:var(--coral);border:2px solid var(--bg);cursor:pointer}
+
+.progress-pips{display:flex;justify-content:space-between;margin-top:0.5rem}
+.pip{width:6px;height:6px;border-radius:50%;background:var(--border);transition:background 0.3s,transform 0.3s}
+.pip.lit{background:var(--coral);transform:scale(1.3)}
+
+.foot{
+  text-align:center;font-size:11px;font-weight:400;color:var(--muted);
+  padding:0.75rem 0 1.1rem;border-top:0.5px solid var(--border);
+  background:var(--surface);transition:color 0.4s;letter-spacing:0.02em;
+}
+
+@media(max-width:540px){.text-zone{min-height:320px}.output-text{font-size:14.5px}}
+</style>
+</head>
+<body>
+<div class="stage">
+  <div class="status-badge">Draft &middot; Module 6</div>
+  <div class="card">
+    <div class="top-bar">
+      <span class="eyebrow">AI Fluency for K&ndash;12 Educators &nbsp;&middot;&nbsp; Module 6</span>
+    </div>
+    <div class="title-area">
+      <h1 class="headline">The Telephone.</h1>
+      <p class="subhead">Drag left to watch a good output collapse into a bad one. The prompt is what changed.</p>
+    </div>
+
+    <div class="text-zone" id="textzone">
+
+      <div class="text-block active" id="block0">
+        <span class="text-prompt">The prompt that started it all:</span>
+        <div class="prompt-text">Write a reading passage about organ systems.</div>
+        <span class="output-label">AI output:</span>
+        <p class="output-text">The human body contains several organ systems. The circulatory system pumps blood through the body. The respiratory system helps us breathe. These systems work together to keep the body functioning. Each organ system has specific organs that carry out its functions.</p>
+        <p class="missing-note"><strong>What is missing:</strong> Everything. Grade level. Students. Purpose. Format. This is what AI does with nothing to work with.</p>
+      </div>
+
+      <div class="text-block" id="block1">
+        <span class="text-prompt">Add the grade and topic:</span>
+        <div class="prompt-text">Write a reading passage about the circulatory and respiratory systems for <em>7th grade science</em>.</div>
+        <span class="output-label">AI output:</span>
+        <p class="output-text">The circulatory and respiratory systems are two of the most important organ systems in the human body. The circulatory system consists of the heart, blood vessels, and blood, which work together to transport oxygen and nutrients to cells throughout the body. The respiratory system, which includes the lungs and airways, is responsible for gas exchange. When you breathe in, oxygen enters the lungs and is transferred to the bloodstream. Carbon dioxide, a waste product, is removed when you exhale.</p>
+        <p class="missing-note"><strong>Still missing:</strong> Reading level. Student vocabulary range. What students will do with this text. It is a competent paragraph. It is not a teaching tool.</p>
+      </div>
+
+      <div class="text-block" id="block2">
+        <span class="text-prompt">Specify the output format:</span>
+        <div class="prompt-text">Write a <em>one-page informational text</em> on how the circulatory and respiratory systems work together for 7th grade science. <em>Bold and define five vocabulary terms in context. Use short paragraphs.</em></div>
+        <span class="output-label">AI output:</span>
+        <p class="output-text">Your heart and lungs are in constant conversation. Every time your lungs take in air, they are sending a message to your blood: there is oxygen ready for pickup. And every time your heart beats, it is answering: the delivery is on its way.<br><br>This exchange depends on two organ systems working as partners. The <strong>respiratory system</strong> (the network of airways and lungs that moves air in and out of your body) brings oxygen in and pushes carbon dioxide out. The <strong>circulatory system</strong> (the heart, blood, and blood vessels) carries that oxygen to every cell in your body and returns carbon dioxide to the lungs to be exhaled.</p>
+        <p class="missing-note"><strong>Getting closer - but missing:</strong> Who these students are. What they already know. What they are building toward. The text is cleaner, but it could belong to any 7th grade classroom anywhere.</p>
+      </div>
+
+      <div class="text-block" id="block3">
+        <span class="text-prompt">Add context about the students and unit:</span>
+        <div class="prompt-text">Write a one-page informational text on how the circulatory and respiratory systems work together for 7th grade science. Bold and define five vocabulary terms in context. Use short paragraphs and <em>concrete, familiar analogies.</em> Students are <em>reading between 3rd and 9th grade level</em> and the text should <em>build toward a claim-evidence-reasoning writing task.</em></div>
+        <span class="output-label">AI output:</span>
+        <p class="output-text">Think of your circulatory system as a delivery service and your respiratory system as the warehouse that keeps it stocked.<br><br>The <strong>respiratory system</strong> (the network of airways, lungs, and muscles that moves air in and out of your body) is where your blood picks up its cargo. When you breathe in, tiny air sacs called <strong>alveoli</strong> (small pouches in your lungs where oxygen and carbon dioxide are exchanged) act like loading docks. Oxygen passes through their thin walls directly into your blood.<br><br>From there, the <strong>circulatory system</strong> (the heart, blood vessels, and blood that move materials through your body) takes over. Your heart pumps oxygen-rich blood outward through <strong>arteries</strong> (blood vessels that carry blood away from the heart) and receives it back through <strong>veins</strong> (blood vessels that return blood to the heart). Every cell in your body gets a delivery. Every cell sends its waste - carbon dioxide - back the same way.</p>
+        <p class="missing-note"><strong>Almost there - but missing:</strong> How this text fits the teacher's voice. The specific summative task students are working toward. That last mile of judgment that only she has.</p>
+      </div>
+
+      <div class="text-block" id="block4">
+        <span class="text-prompt">The full description - product, process, performance:</span>
+        <div class="prompt-text">Write a one-page informational text on how the circulatory and respiratory systems interact for 7th grade science, aligned to NGSS. Bold and define five vocabulary terms in context. Use short paragraphs and concrete, familiar analogies. Students are reading between 3rd and 9th grade level; aim for 6th grade Flesch-Kincaid. <em>Build toward a claim-evidence-reasoning task</em> - include one sentence near the end that explicitly models a claim supported by evidence. <em>Act as a curriculum collaborator, not a textbook.</em></div>
+        <span class="output-label">AI output:</span>
+        <p class="output-text">Think of your circulatory system as a delivery service and your respiratory system as the warehouse that keeps it stocked. They work so closely together that disrupting one immediately affects the other - which is exactly what makes them worth studying as a pair.<br><br>The <strong>respiratory system</strong> (the network of airways, lungs, and muscles that moves air in and out of your body) is where your blood picks up oxygen. Tiny pouches called <strong>alveoli</strong> (air sacs in your lungs built for gas exchange) act like loading docks. Oxygen passes through their thin walls directly into your bloodstream. Carbon dioxide - the waste your cells produce - travels the reverse route, crossing back into the alveoli to be exhaled.<br><br>The <strong>circulatory system</strong> (your heart, blood, and blood vessels working together to move materials through your body) carries that oxygen to every cell. Your heart pumps oxygen-rich blood outward through <strong>arteries</strong> and receives it back through <strong>veins</strong> once cells have used what they need.<br><br>Here is the claim the evidence supports: when your breathing rate increases during exercise, your heart rate increases too - because the two systems are calibrated to each other. More oxygen demand means more delivery, which means more pickup. You cannot push one system harder without pushing them both.</p>
+        <div style="margin-top:1rem;padding:0.75rem 1rem;background:rgba(217,119,87,0.07);border-radius:4px;border-left:2px solid rgba(217,119,87,0.4)">
+          <span style="font-size:10px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--coral);display:block;margin-bottom:3px">This is what description does.</span>
+          <span style="font-size:12px;font-weight:400;color:var(--dark);line-height:1.6">Same task. Same AI. Same sixty seconds. The prompt is the whole difference. Put your name on this one.</span>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="slider-zone">
+      <div class="slider-labels">
+        <span class="slider-label">Vague prompt</span>
+        <span class="slider-label right">Full description</span>
+      </div>
+      <input type="range" id="slider" min="0" max="4" step="1" value="4">
+      <div class="progress-pips" id="pips"></div>
+    </div>
+
+    <div class="foot" id="foot">Drag left to watch the output collapse.</div>
+  </div>
+</div>
+
+<script>
+var stages = [
+  "Stage 1 of 5 - No description",
+  "Stage 2 of 5 - Topic and grade only",
+  "Stage 3 of 5 - Format specified",
+  "Stage 4 of 5 - Students and purpose added",
+  "Stage 5 of 5 - Full description"
+];
+
+var hints = [
+  "Drag right to see what description can do.",
+  "Better. Still missing the students, the purpose, the craft.",
+  "Cleaner. But it could belong to any classroom anywhere.",
+  "Almost. One more layer and it becomes genuinely yours.",
+  "Same task. Same AI. The prompt is the whole difference."
+];
+
+var slider = document.getElementById('slider');
+var foot = document.getElementById('foot');
+var pipsEl = document.getElementById('pips');
+var blocks = document.querySelectorAll('.text-block');
+var current = 4;
+
+// Build pips
+for(var i=0;i<5;i++){
+  var pip=document.createElement('div');
+  pip.className='pip'+(i<=current?' lit':'');
+  pipsEl.appendChild(pip);
+}
+
+function goTo(val){
+  blocks[current].classList.remove('active');
+  current=val;
+  blocks[current].classList.add('active');
+  var allPips=pipsEl.querySelectorAll('.pip');
+  allPips.forEach(function(p,i){
+    p.className='pip'+(i<=current?' lit':'');
+  });
+  foot.textContent=hints[current];
+  foot.style.color=current===4?'rgba(20,20,19,0.7)':'rgba(20,20,19,0.42)';
+}
+
+slider.addEventListener('input',function(){goTo(parseInt(this.value));});
+
+// Init
+goTo(4);
+foot.textContent='Drag left to watch the output collapse.';
+</script>
+</body>
+</html>
