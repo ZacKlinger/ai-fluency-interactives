@@ -12,7 +12,7 @@
 :root{
   --bg:#faf9f5;--surface:#f0eee6;--dark:#141413;
   --muted:rgba(20,20,19,0.42);--border:rgba(20,20,19,0.1);
-  --coral:#d97757;--blue:#6a9bcc;--amber:#9a6e2a;
+  --coral:#d97757;--blue:#6a9bcc;--amber:#9a6e2a;--green:#3d6b4f;
   --sans:'DM Sans',Arial,sans-serif;--serif:'Source Serif 4',Georgia,serif;
 }
 html,body{min-height:100vh;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:2rem 1rem;font-family:var(--sans);color:var(--dark)}
@@ -32,44 +32,45 @@ html,body{min-height:100vh;background:var(--bg);display:flex;align-items:center;
 .progress-fill{height:100%;background:var(--coral);border-radius:1px;transition:width 0.4s ease;width:0%}
 
 /* Arena */
-.arena{padding:1.75rem 2rem 1.75rem;background:var(--surface);border-top:0.5px solid var(--border);border-bottom:0.5px solid var(--border);display:flex;flex-direction:column;align-items:center;gap:1.5rem;min-height:310px;justify-content:center}
+.arena{padding:1.75rem 2rem 1.75rem;background:var(--surface);border-top:0.5px solid var(--border);border-bottom:0.5px solid var(--border);display:flex;flex-direction:column;align-items:center;gap:1.5rem;min-height:320px;justify-content:center}
 
 /* Deck */
-.deck-wrap{position:relative;width:100%;max-width:460px;height:128px}
+.deck-wrap{position:relative;width:100%;max-width:460px;height:130px}
 .task-card{
-  position:absolute;inset:0;
-  background:var(--bg);border:0.5px solid var(--border);border-radius:6px;
-  padding:1.4rem 1.75rem;
-  display:flex;align-items:center;
-  transition:transform 0.3s ease,opacity 0.3s ease;
-  pointer-events:none;
+  position:absolute;inset:0;background:var(--bg);border:0.5px solid var(--border);border-radius:6px;
+  padding:1.4rem 1.75rem;display:flex;align-items:center;
+  transition:transform 0.3s ease,opacity 0.3s ease;pointer-events:none;
 }
 .task-card.active{z-index:10;pointer-events:auto}
 .task-card.behind-1{transform:translateY(7px) scale(0.97);opacity:0.5;z-index:5}
 .task-card.behind-2{transform:translateY(13px) scale(0.94);opacity:0.25;z-index:1}
 .task-text{font-family:var(--serif);font-variation-settings:'opsz' 15;font-size:15px;font-weight:400;color:var(--dark);line-height:1.5}
 
-/* Hint card */
-.hint-card{
-  position:absolute;inset:0;
-  background:var(--bg);border:0.5px solid var(--border);border-radius:6px;
-  padding:1.4rem 1.75rem;
-  display:flex;align-items:center;gap:0.85rem;
-  opacity:0;pointer-events:none;
-  transition:opacity 0.18s;
-  z-index:20;
-}
-.hint-card.show{opacity:1}
-.hint-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;margin-top:2px}
-.hint-dot.protect{background:var(--amber)}
-.hint-dot.ambitious{background:var(--coral)}
-.hint-dot.delegate{background:var(--blue)}
-.hint-text{font-size:13px;color:var(--muted);line-height:1.55}
-
-/* Fly animations */
+/* Fly */
 .fly-left{transform:translateX(-130%) rotate(-10deg) !important;opacity:0 !important;transition:transform 0.26s ease-in,opacity 0.18s !important}
 .fly-up{transform:translateY(-80px) scale(0.93) !important;opacity:0 !important;transition:transform 0.26s ease-in,opacity 0.18s !important}
 .fly-right{transform:translateX(130%) rotate(10deg) !important;opacity:0 !important;transition:transform 0.26s ease-in,opacity 0.18s !important}
+
+/* Hint card */
+.hint-card{
+  position:absolute;inset:0;background:var(--bg);
+  border:0.5px solid var(--border);border-radius:6px;
+  padding:1.25rem 1.5rem 1rem;
+  display:flex;flex-direction:column;justify-content:space-between;gap:0.6rem;
+  opacity:0;pointer-events:none;transition:opacity 0.2s;z-index:20;
+}
+.hint-card.show{opacity:1;pointer-events:auto}
+.hint-card.incorrect{border-color:var(--amber);cursor:pointer}
+.hint-card.correct{border-color:var(--green)}
+.hint-top{display:flex;align-items:flex-start;gap:0.75rem}
+.hint-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;margin-top:0.35rem}
+.hint-dot.protect{background:var(--amber)}
+.hint-dot.ambitious{background:var(--coral)}
+.hint-dot.delegate{background:var(--blue)}
+.hint-dot.correct-dot{background:var(--green)}
+.hint-text{font-family:var(--serif);font-variation-settings:'opsz' 14;font-size:14px;color:var(--dark);line-height:1.6}
+.hint-footer{font-size:10.5px;color:var(--muted);letter-spacing:0.04em;align-self:flex-end}
+.hint-footer.tap{color:var(--amber);font-weight:500}
 
 /* Zone buttons */
 .zones{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0.55rem;width:100%;max-width:490px}
@@ -77,14 +78,19 @@ html,body{min-height:100vh;background:var(--bg);display:flex;align-items:center;
   font-family:var(--sans);font-size:11.5px;font-weight:500;
   padding:0.7rem 0.5rem;border-radius:4px;cursor:pointer;
   border:0.5px solid var(--border);background:var(--bg);color:var(--muted);
-  transition:background 0.15s,border-color 0.15s,color 0.15s,transform 0.1s,box-shadow 0.1s;
+  transition:background 0.15s,border-color 0.15s,color 0.15s,transform 0.1s;
   text-align:center;line-height:1.35;
 }
 .zone-btn:hover{transform:translateY(-2px)}
-.zone-btn:active,.zone-btn.chosen{transform:translateY(0);box-shadow:0 2px 8px rgba(0,0,0,0.08)}
-.zone-btn.z-mine:hover,.zone-btn.z-mine.chosen{background:var(--dark);border-color:var(--dark);color:#fff}
-.zone-btn.z-collab:hover,.zone-btn.z-collab.chosen{background:var(--coral);border-color:var(--coral);color:#fff}
-.zone-btn.z-ai:hover,.zone-btn.z-ai.chosen{background:var(--blue);border-color:var(--blue);color:#fff}
+.zone-btn:active{transform:translateY(0)}
+.zone-btn.z-mine:hover{background:var(--dark);border-color:var(--dark);color:#fff}
+.zone-btn.z-collab:hover{background:var(--coral);border-color:var(--coral);color:#fff}
+.zone-btn.z-ai:hover{background:var(--blue);border-color:var(--blue);color:#fff}
+/* Flash states */
+.zone-btn.flash-correct{background:var(--green) !important;border-color:var(--green) !important;color:#fff !important;transition:none !important}
+.zone-btn.flash-mine{background:var(--dark) !important;border-color:var(--dark) !important;color:#fff !important;transition:none !important}
+.zone-btn.flash-collab{background:var(--coral) !important;border-color:var(--coral) !important;color:#fff !important;transition:none !important}
+.zone-btn.flash-ai{background:var(--blue) !important;border-color:var(--blue) !important;color:#fff !important;transition:none !important}
 .zone-name{display:block;font-weight:600;font-size:12px;margin-bottom:2px}
 .zone-sub{display:block;font-size:10px;opacity:0.7}
 .key-hint{font-size:10px;color:var(--muted);letter-spacing:0.03em;opacity:0.65}
@@ -109,21 +115,18 @@ html,body{min-height:100vh;background:var(--bg);display:flex;align-items:center;
 .col-ai .result-item::before{background:var(--blue)}
 .result-item.empty{opacity:0.32;padding-left:0}
 .result-item.empty::before{display:none}
-/* Flagged items in results */
-.result-item.flag-protect{color:var(--amber)}
-.result-item.flag-protect::before{background:var(--amber)}
-.result-item.flag-collab{color:var(--coral)}
-.result-item.flag-collab::before{background:var(--coral)}
-
+.result-item.flag-amber{color:var(--amber)}
+.result-item.flag-amber::before{background:var(--amber)}
+.result-item.flag-nudge{color:var(--coral)}
+.result-item.flag-nudge::before{background:var(--coral)}
 .insights{display:flex;flex-direction:column;gap:0.6rem;margin-bottom:1.2rem}
 .insight{background:var(--surface);border-left:2px solid var(--border);border-radius:0 4px 4px 0;padding:0.9rem 1.1rem;font-size:12.5px;color:var(--muted);line-height:1.65}
 .insight strong{color:var(--dark);font-weight:600}
-.insight.good{border-left-color:var(--blue)}
+.insight.good{border-left-color:var(--green)}
 .insight.warn{border-left-color:var(--amber)}
 .insight.nudge{border-left-color:var(--coral)}
 .restart{font-family:var(--sans);font-size:12px;font-weight:500;padding:0.45rem 1.1rem;border-radius:3px;cursor:pointer;border:0.5px solid var(--border);background:transparent;color:var(--muted);transition:border-color 0.15s,color 0.15s}
 .restart:hover{border-color:var(--coral);color:var(--coral)}
-
 .foot{text-align:center;font-size:11px;color:var(--muted);padding:0.65rem 0 1rem;border-top:0.5px solid var(--border);background:var(--surface);letter-spacing:0.02em}
 </style>
 </head>
@@ -134,11 +137,11 @@ html,body{min-height:100vh;background:var(--bg);display:flex;align-items:center;
     <div class="top-bar"><span class="eyebrow">AI Fluency for K&ndash;12 Educators &nbsp;&middot;&nbsp; Module 5</span></div>
     <div class="title-area">
       <h1 class="headline">What's worth delegating?</h1>
-      <p class="subhead">Twenty teaching tasks. For each one, make a call: keep it, build it together, or hand it off.</p>
+      <p class="subhead">Ten teaching tasks. For each one, make a call: keep it, build it together, or hand it off.</p>
     </div>
     <div class="progress-wrap">
       <div class="progress-meta">
-        <span id="progressText">Task 1 of 20</span>
+        <span id="progressText">Task 1 of 10</span>
         <span id="progressPct">0%</span>
       </div>
       <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
@@ -167,71 +170,56 @@ html,body{min-height:100vh;background:var(--bg);display:flex;align-items:center;
 </div>
 
 <script>
-// type: 'protect' = delicate, keep Mine
-//       'ambitious' = complex, best as collaboration
-//       'delegate' = routine, hand off fully
 // ideal: 0=Mine, 1=We build it, 2=AI leads
-// hint: shown after any choice -- coaching note, not a grade
+// type: 'protect'|'ambitious'|'delegate'
 var tasks=[
-  // DELICATE -- protect
-  {t:"Notice when a student seems withdrawn or emotionally off",mins:0,type:'protect',ideal:0,
-   hint:"Human attunement is irreplaceable here. Presence is the instrument."},
-  {t:"Build genuine trust with a student who has been refusing to engage",mins:0,type:'protect',ideal:0,
-   hint:"Relationships are the irreducible core of teaching. This stays with you."},
-  {t:"Decide whether a student's changing behavior signals something serious at home",mins:0,type:'protect',ideal:0,
-   hint:"This call draws on everything you know about this specific child. No tool has that."},
-  {t:"Have a conversation with a student about suspected academic dishonesty",mins:0,type:'protect',ideal:0,
-   hint:"Trust moments require a human voice. AI can help you prepare -- not deliver."},
-  {t:"Decide how to respond when a student discloses something concerning",mins:0,type:'protect',ideal:0,
-   hint:"This is among the most important things a teacher does. Full presence required."},
-  {t:"Facilitate a charged discussion about a polarizing current event",mins:0,type:'protect',ideal:0,
-   hint:"A room full of real students needs a real teacher to navigate this. You read the room. AI cannot."},
-  // AMBITIOUS -- best as collaboration
-  {t:"Write substantive, personalized feedback on 30 student essays",mins:160,type:'ambitious',ideal:1,
-   hint:"AI can draft personalized feedback at scale. You bring what you know about each student. Together: something neither could do alone."},
-  {t:"Design a semester-long interdisciplinary unit connecting your subject to three others",mins:200,type:'ambitious',ideal:1,
+  {t:"Notice when a student seems withdrawn or emotionally off",
+   mins:0,type:'protect',ideal:0,
+   hint:"Human attunement cannot be automated. You read the room. No tool can perceive a child the way you do."},
+  {t:"Write substantive, personalized feedback on 30 student essays",
+   mins:160,type:'ambitious',ideal:1,
+   hint:"AI can draft personalized feedback at scale. You bring what you know about each student. Together, you produce something neither could do alone."},
+  {t:"Generate 20 quiz questions aligned to your current unit",
+   mins:25,type:'delegate',ideal:2,
+   hint:"One of AI's clearest wins. Strong, aligned questions in seconds. Review before using -- then move on."},
+  {t:"Decide whether a student's changing behavior signals something serious",
+   mins:0,type:'protect',ideal:0,
+   hint:"This call draws on everything you know about this specific child -- context, history, gut. No tool has that."},
+  {t:"Design a semester-long interdisciplinary unit from scratch",
+   mins:200,type:'ambitious',ideal:1,
    hint:"Vision is yours. Structure, research, and resource lists are where AI earns its place -- and saves you days."},
-  {t:"Write individualized reading recommendations for every student in your class",mins:110,type:'ambitious',ideal:1,
-   hint:"You know your students. AI knows thousands of books. The combination is remarkable and previously impossible."},
-  {t:"Draft a grant proposal to launch a new program at your school",mins:180,type:'ambitious',ideal:1,
-   hint:"AI can draft structure and boilerplate in minutes. Your case for the program -- your why -- is the part that matters."},
-  {t:"Build a project-based unit on a topic you have never taught before",mins:150,type:'ambitious',ideal:1,
-   hint:"Define the learning goals. Let AI generate frameworks, connections, and resources. You shape it into something real."},
-  {t:"Write personalized progress narratives for 28 families before conferences",mins:110,type:'ambitious',ideal:1,
-   hint:"Your knowledge of each student is the ingredient. AI handles the writing at scale. Review each one before it goes out."},
-  {t:"Create a differentiated version of every handout in your current unit",mins:130,type:'ambitious',ideal:1,
-   hint:"Five versions of every handout used to mean a weekend of work. Not anymore. This is augmentation at its clearest."},
-  {t:"Draft a college recommendation letter for a student you know well",mins:55,type:'ambitious',ideal:1,
-   hint:"You supply the substance -- the specific moments and qualities. AI shapes it into a compelling letter. Your voice, amplified."},
-  // DELEGATE -- hand it off
-  {t:"Generate 20 quiz questions aligned to your current unit",mins:25,type:'delegate',ideal:2,
-   hint:"One of AI's clearest wins. Strong questions in seconds -- just review and cut what doesn't fit."},
-  {t:"Find three different ways to explain a concept your class is stuck on",mins:18,type:'delegate',ideal:2,
-   hint:"Research and synthesis are exactly what AI does well. Spend that time with your students instead."},
-  {t:"Create reading materials differentiated across five levels",mins:85,type:'delegate',ideal:2,
-   hint:"Hours of formatting work AI handles accurately. Review for fit and accuracy, then use."},
-  {t:"Write a substitute lesson plan for an unexpected absence",mins:22,type:'delegate',ideal:2,
-   hint:"Give AI your unit context and let it build a self-contained session. At 10pm the night before, you want this ready."},
-  {t:"Analyze your class's end-of-unit assessment data for patterns",mins:40,type:'delegate',ideal:2,
-   hint:"AI can surface patterns across 30 students in seconds. You decide what to do with them."},
-  {t:"Convert your lesson outline into a full slide deck",mins:45,type:'delegate',ideal:2,
-   hint:"Structure and formatting work that AI handles cleanly. Save your thinking for the content decisions."},
+  {t:"Create reading materials differentiated across five levels",
+   mins:85,type:'delegate',ideal:2,
+   hint:"Hours of formatting work AI handles accurately. Give it your content and level criteria, review the output, done."},
+  {t:"Write individualized reading recommendations for every student",
+   mins:110,type:'ambitious',ideal:1,
+   hint:"You know your students. AI knows thousands of books. Together: something remarkable that used to be impossible."},
+  {t:"Facilitate a charged discussion about a polarizing current event",
+   mins:0,type:'protect',ideal:0,
+   hint:"A room full of real students needs a real teacher to navigate this. Presence, judgment, and the ability to read the room -- yours alone."},
+  {t:"Convert your lesson outline into a full slide deck",
+   mins:45,type:'delegate',ideal:2,
+   hint:"Structure and formatting work that AI handles cleanly. Your time is better spent on the decisions that require you."},
+  {t:"Write personalized progress narratives for 28 families before conferences",
+   mins:110,type:'ambitious',ideal:1,
+   hint:"Your knowledge of each student is the ingredient. AI handles the writing at scale. Review each one before it goes out -- that review is the practice."},
 ];
 
 // Shuffle
 for(var i=tasks.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var tmp=tasks[i];tasks[i]=tasks[j];tasks[j]=tmp;}
 
+var N=tasks.length;
 var choices=[];
 var cur=0;
 var busy=false;
-var hintTimer=null;
+var awaitingDismiss=false;
+var autoTimer=null;
 
 function buildDeck(){
   var wrap=document.getElementById('deckWrap');
-  // Keep hint card if present, rebuild task cards
   var existing=wrap.querySelectorAll('.task-card');
   existing.forEach(function(e){e.remove();});
-  var remaining=tasks.length-cur;
+  var remaining=N-cur;
   for(var i=0;i<Math.min(3,remaining);i++){
     var el=document.createElement('div');
     el.className='task-card'+(i===0?' active':(i===1?' behind-1':' behind-2'));
@@ -240,50 +228,100 @@ function buildDeck(){
   }
 }
 
-function showHint(task,zone){
+function getOrCreateHint(){
   var wrap=document.getElementById('deckWrap');
   var hc=wrap.querySelector('.hint-card');
   if(!hc){hc=document.createElement('div');hc.className='hint-card';wrap.appendChild(hc);}
-  var dotClass=task.type;
-  hc.innerHTML='<span class="hint-dot '+dotClass+'"></span><span class="hint-text">'+task.hint+'</span>';
-  hc.classList.add('show');
-  if(hintTimer)clearTimeout(hintTimer);
-  hintTimer=setTimeout(function(){hc.classList.remove('show');},2000);
+  return hc;
 }
 
-function flashBtn(idx){
+function hideHint(){
+  var hc=document.getElementById('deckWrap').querySelector('.hint-card');
+  if(hc){hc.classList.remove('show','correct','incorrect');}
+}
+
+function advance(){
+  if(autoTimer){clearTimeout(autoTimer);autoTimer=null;}
+  awaitingDismiss=false;
+  hideHint();
+  cur++;
+  var pct=Math.round(cur/N*100);
+  document.getElementById('progressFill').style.width=pct+'%';
+  if(cur>=N){
+    document.getElementById('progressText').textContent='Done';
+    document.getElementById('progressPct').textContent='100%';
+    showResults();
+    busy=false;
+    return;
+  }
+  document.getElementById('progressText').textContent='Task '+(cur+1)+' of '+N;
+  document.getElementById('progressPct').textContent=pct+'%';
+  buildDeck();
+  busy=false;
+}
+
+function flashBtn(idx,cls){
   var b=document.getElementById('btn'+idx);
-  b.classList.add('chosen');
-  setTimeout(function(){b.classList.remove('chosen');},260);
+  b.classList.add(cls);
+  setTimeout(function(){b.classList.remove(cls);},320);
 }
 
 function choose(zone){
-  if(busy||cur>=tasks.length)return;
+  if(busy||cur>=N)return;
+  if(awaitingDismiss)return;
   busy=true;
+
   var task=tasks[cur];
-  flashBtn(zone);
-  choices.push({task:task,zone:zone});
+  var correct=(zone===task.ideal);
+  choices.push({task:task,zone:zone,correct:correct});
+
+  // Flash button
+  if(correct){
+    flashBtn(zone,'flash-correct');
+  } else {
+    var fc=['flash-mine','flash-collab','flash-ai'][zone];
+    flashBtn(zone,fc);
+  }
+
+  // Fly card out
   var active=document.querySelector('.task-card.active');
   if(active)active.classList.add(zone===0?'fly-left':(zone===2?'fly-right':'fly-up'));
-  // Show hint immediately
-  showHint(task,zone);
+
   setTimeout(function(){
-    cur++;
-    var pct=Math.round(cur/tasks.length*100);
-    document.getElementById('progressFill').style.width=pct+'%';
-    if(cur>=tasks.length){
-      document.getElementById('progressText').textContent='Done';
-      document.getElementById('progressPct').textContent='100%';
-      setTimeout(showResults,1800); // let last hint breathe
+    var hc=getOrCreateHint();
+    var dotClass=correct?'correct-dot':task.type;
+    var footer=correct
+      ?'<span class="hint-footer">Next &rarr;</span>'
+      :'<span class="hint-footer tap">Tap anywhere to continue</span>';
+    hc.innerHTML=
+      '<div class="hint-top"><span class="hint-dot '+dotClass+'"></span>'+
+      '<span class="hint-text">'+task.hint+'</span></div>'+
+      footer;
+    hc.className='hint-card show '+(correct?'correct':'incorrect');
+
+    if(correct){
+      // Auto-advance after a beat
+      autoTimer=setTimeout(advance,1600);
+    } else {
+      // Wait for explicit click
+      awaitingDismiss=true;
       busy=false;
-      return;
     }
-    document.getElementById('progressText').textContent='Task '+(cur+1)+' of '+tasks.length;
-    document.getElementById('progressPct').textContent=pct+'%';
-    buildDeck();
-    busy=false;
   },280);
 }
+
+// Click-to-dismiss incorrect hints
+document.getElementById('arena').addEventListener('click',function(e){
+  if(awaitingDismiss){advance();}
+});
+
+document.addEventListener('keydown',function(e){
+  if(awaitingDismiss&&(e.key===' '||e.key==='Enter')){advance();return;}
+  if(busy||awaitingDismiss)return;
+  if(e.key==='ArrowLeft'||e.key==='1')choose(0);
+  if(e.key==='ArrowUp'||e.key==='2')choose(1);
+  if(e.key==='ArrowRight'||e.key==='3')choose(2);
+});
 
 function showResults(){
   document.getElementById('arena').style.display='none';
@@ -292,76 +330,57 @@ function showResults(){
   var mine=choices.filter(function(c){return c.zone===0;});
   var collab=choices.filter(function(c){return c.zone===1;});
   var ai=choices.filter(function(c){return c.zone===2;});
+  var correct=choices.filter(function(c){return c.correct;}).length;
 
-  // Time estimate
   var mins=0;
   collab.forEach(function(c){mins+=Math.round(c.task.mins*0.5);});
   ai.forEach(function(c){mins+=c.task.mins;});
   var timeStr=mins>=60?(Math.round(mins/6)/10)+' hours':mins+' min';
 
-  // Flag: delicate tasks that were delegated
   var misdelegated=choices.filter(function(c){return c.task.type==='protect'&&c.zone>0;});
-  // Flag: ambitious tasks kept solely Mine
   var underutilized=choices.filter(function(c){return c.task.type==='ambitious'&&c.zone===0;});
-  // Flag: routine tasks kept Mine (held unnecessarily)
   var heldBack=choices.filter(function(c){return c.task.type==='delegate'&&c.zone===0;});
 
   function items(arr){
     if(!arr.length)return '<p class="result-item empty">Nothing here</p>';
     return arr.map(function(c){
       var flag='';
-      // In Mine column: flag if ambitious (could collaborate) or delegate type (could hand off)
-      if(c.zone===0&&c.task.type==='ambitious')flag=' flag-collab';
-      if(c.zone===0&&c.task.type==='delegate')flag=' flag-collab';
-      // In AI column: flag if protect type
-      if(c.zone===2&&c.task.type==='protect')flag=' flag-protect';
+      if(c.zone===0&&(c.task.type==='ambitious'||c.task.type==='delegate'))flag=' flag-nudge';
+      if(c.zone>0&&c.task.type==='protect')flag=' flag-amber';
       return '<p class="result-item'+flag+'">'+c.task.t+'</p>';
     }).join('');
   }
 
   var insightHtml='<div class="insights">';
-
-  // Misdelegated delicate tasks
   if(misdelegated.length>0){
-    insightHtml+='<div class="insight warn"><strong>A few tasks to reconsider.</strong> '+
+    insightHtml+='<div class="insight warn"><strong>A few to reconsider.</strong> '+
       misdelegated.map(function(c){return '"'+c.task.t+'"';}).join(' and ')+
-      (misdelegated.length===1?' is':' are')+
-      ' in territory where professional judgment and human presence really can\'t be replaced. Keep these close &mdash; they\'re the core of what makes you the teacher.</div>';
+      ' require professional judgment and human presence that AI cannot replicate. These stay with you.</div>';
   }
-  // Underutilized ambitious tasks
   if(underutilized.length>=2){
     insightHtml+='<div class="insight nudge"><strong>You kept some ambitious work entirely to yourself.</strong> '+
-      'Tasks like personalized feedback at scale or building units from scratch are exactly where AI collaboration multiplies your reach without replacing your judgment. '+
-      'Consider what you could do with that time back.</div>';
+      'Tasks like these are where AI collaboration multiplies your reach without replacing your judgment. '+
+      'Think about what you could do with that time back.</div>';
   }
-  // Held back routine tasks
   if(heldBack.length>=2){
     insightHtml+='<div class="insight nudge"><strong>Some routine tasks stayed in your pile.</strong> '+
-      'AI earns its place most clearly on the structural, repetitive work. Freeing yourself from these is what creates room for the teaching only you can do.</div>';
+      'Freeing yourself from structural and repetitive work is what creates space for the teaching only you can do.</div>';
   }
-  // All clear or well-calibrated
   if(misdelegated.length===0&&underutilized.length<2&&heldBack.length<2){
     insightHtml+='<div class="insight good"><strong>Well-calibrated.</strong> '+
       'You protected the work that needs human presence and delegated where AI genuinely earns it. '+
-      'That judgment &mdash; knowing when AI\'s presence helps versus when it doesn\'t &mdash; is the skill this module is building.</div>';
+      correct+' of '+N+' matched the ideal zone. That judgment -- knowing when AI helps versus when it doesn\'t -- is the skill.</div>';
   }
-
   insightHtml+='</div>';
 
   var r=document.getElementById('results');
   r.innerHTML=
     '<p class="result-hed">Your delegation profile.</p>'+
-    '<p class="result-sub">You could recover roughly <strong>'+timeStr+' per week</strong> with this approach. Here is how it breaks down.</p>'+
+    '<p class="result-sub">You matched <strong>'+correct+' of '+N+'</strong> ideal zones, and could recover roughly <strong>'+timeStr+' per week</strong> with this approach.</p>'+
     '<div class="result-cols">'+
-      '<div class="result-col col-mine">'+
-        '<div class="result-col-label">Mine <span class="col-count">('+mine.length+')</span></div>'+
-        items(mine)+'</div>'+
-      '<div class="result-col col-collab">'+
-        '<div class="result-col-label">We build it <span class="col-count">('+collab.length+')</span></div>'+
-        items(collab)+'</div>'+
-      '<div class="result-col col-ai">'+
-        '<div class="result-col-label">AI leads <span class="col-count">('+ai.length+')</span></div>'+
-        items(ai)+'</div>'+
+      '<div class="result-col col-mine"><div class="result-col-label">Mine <span class="col-count">('+mine.length+')</span></div>'+items(mine)+'</div>'+
+      '<div class="result-col col-collab"><div class="result-col-label">We build it <span class="col-count">('+collab.length+')</span></div>'+items(collab)+'</div>'+
+      '<div class="result-col col-ai"><div class="result-col-label">AI leads <span class="col-count">('+ai.length+')</span></div>'+items(ai)+'</div>'+
     '</div>'+
     insightHtml+
     '<button class="restart" onclick="restart()">Try again &rarr;</button>';
@@ -369,11 +388,11 @@ function showResults(){
 }
 
 function restart(){
-  choices=[];cur=0;busy=false;
-  if(hintTimer)clearTimeout(hintTimer);
-  for(var i=tasks.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var tmp=tasks[i];tasks[i]=tasks[j];tasks[j]=tmp;}
+  choices=[];cur=0;busy=false;awaitingDismiss=false;
+  if(autoTimer){clearTimeout(autoTimer);autoTimer=null;}
+  for(var i=N-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var tmp=tasks[i];tasks[i]=tasks[j];tasks[j]=tmp;}
   document.getElementById('progressFill').style.width='0%';
-  document.getElementById('progressText').textContent='Task 1 of '+tasks.length;
+  document.getElementById('progressText').textContent='Task 1 of '+N;
   document.getElementById('progressPct').textContent='0%';
   document.getElementById('results').classList.remove('visible');
   document.getElementById('results').innerHTML='';
@@ -381,12 +400,6 @@ function restart(){
   document.getElementById('foot').style.display='';
   buildDeck();
 }
-
-document.addEventListener('keydown',function(e){
-  if(e.key==='ArrowLeft'||e.key==='1')choose(0);
-  if(e.key==='ArrowUp'||e.key==='2')choose(1);
-  if(e.key==='ArrowRight'||e.key==='3')choose(2);
-});
 
 buildDeck();
 </script>
