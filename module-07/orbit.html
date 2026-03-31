@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>The Orbit — Module 7 — AI Fluency for K-12 Educators</title>
+<title>Resonance — Module 7 — AI Fluency for K-12 Educators</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,300..700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -24,17 +24,17 @@ html,body{min-height:100vh;background:var(--bg);display:flex;align-items:center;
 .title-area{padding:0.75rem 2rem 0.5rem}
 .headline{font-family:var(--serif);font-variation-settings:'opsz' 24;font-size:clamp(20px,2.8vw,26px);font-weight:600;color:var(--dark);line-height:1.2;margin-bottom:0.25rem;letter-spacing:-0.025em}
 .subhead{font-size:13px;color:var(--muted);line-height:1.5}
-.field-wrap{position:relative;background:var(--surface);border-top:0.5px solid var(--border);border-bottom:0.5px solid var(--border);cursor:pointer}
+.field-wrap{position:relative;background:var(--surface);border-top:0.5px solid var(--border);border-bottom:0.5px solid var(--border);cursor:pointer;user-select:none}
 canvas{display:block;width:100%}
-.step-text{padding:1.4rem 2rem 1.2rem;min-height:100px;display:flex;flex-direction:column;justify-content:center;transition:opacity 0.22s}
-.step-title{font-family:var(--serif);font-variation-settings:'opsz' 20;font-size:clamp(16px,2.2vw,20px);font-weight:600;color:var(--dark);letter-spacing:-0.02em;margin-bottom:0.3rem;line-height:1.2;min-height:1.4em}
-.step-body{font-size:13px;color:var(--muted);line-height:1.65;max-width:520px}
-.nav-area{padding:0.85rem 2rem 1.1rem;background:var(--surface);border-top:0.5px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.step-text{padding:1.3rem 2rem 1.1rem;min-height:95px;display:flex;flex-direction:column;justify-content:center;transition:opacity 0.2s}
+.step-title{font-family:var(--serif);font-variation-settings:'opsz' 20;font-size:clamp(16px,2.2vw,20px);font-weight:600;color:var(--dark);letter-spacing:-0.02em;line-height:1.2;margin-bottom:0.28rem;min-height:1.35em}
+.step-body{font-size:13px;color:var(--muted);line-height:1.65;max-width:500px}
+.nav-area{padding:0.8rem 2rem 1.05rem;background:var(--surface);border-top:0.5px solid var(--border);display:flex;align-items:center;justify-content:space-between}
 .dots{display:flex;gap:5px;align-items:center}
 .dot{width:5px;height:5px;border-radius:50%;background:var(--border);transition:background 0.3s,transform 0.3s}
 .dot.active{background:var(--coral);transform:scale(1.4)}
-.dot.done{background:rgba(217,119,87,0.35)}
-.nav-btn{font-family:var(--sans);font-size:12px;font-weight:500;padding:0.42rem 1.1rem;border-radius:3px;cursor:pointer;border:0.5px solid var(--border);background:var(--bg);color:var(--muted);transition:border-color 0.15s,color 0.15s}
+.dot.done{background:rgba(217,119,87,0.38)}
+.nav-btn{font-family:var(--sans);font-size:12px;font-weight:500;padding:0.42rem 1.1rem;border-radius:3px;cursor:pointer;border:0.5px solid var(--border);background:var(--bg);color:var(--muted);transition:border-color 0.15s,color 0.15s,background 0.15s}
 .nav-btn:hover{border-color:var(--coral);color:var(--coral)}
 .nav-btn.primary{background:var(--coral);border-color:var(--coral);color:#fff}
 .nav-btn.primary:hover{background:#c46848;border-color:#c46848;color:#fff}
@@ -46,81 +46,85 @@ canvas{display:block;width:100%}
   <div class="card">
     <div class="top-bar"><span class="eyebrow">AI Fluency for K&ndash;12 Educators &nbsp;&middot;&nbsp; Module 7</span></div>
     <div class="title-area">
-      <h1 class="headline">Two loops. Four competencies. One practice.</h1>
-      <p class="subhead">Watch how a real teaching task moves through the 4D framework.</p>
+      <h1 class="headline">Set it in motion.</h1>
+      <p class="subhead">Four competencies. One shared structure. Watch what happens when they all run together.</p>
     </div>
     <div class="field-wrap" id="fieldWrap"><canvas id="c"></canvas></div>
     <div class="step-text" id="stepText">
       <div class="step-title" id="stepTitle">&nbsp;</div>
-      <div class="step-body" id="stepBody">A teaching task enters the framework. Watch how all four competencies shape what happens next.</div>
+      <div class="step-body" id="stepBody">Four competencies. One shared structure. Click to set the framework in motion.</div>
     </div>
     <div class="nav-area">
       <div class="dots" id="dots"></div>
-      <button class="nav-btn primary" id="nextBtn">Continue &rarr;</button>
+      <button class="nav-btn primary" id="nextBtn">Begin &rarr;</button>
     </div>
   </div>
 </div>
 
 <script>
-var CV=document.getElementById('c'),CTX=CV.getContext('2d'),wrap=document.getElementById('fieldWrap');
-var W=0,H=0,dpr=1,tick=0;
-var DEG=Math.PI/180;
+var CV=document.getElementById('c'),CTX=CV.getContext('2d');
+var wrap=document.getElementById('fieldWrap');
+var W=0,H=0,dpr=1,barY=0;
+var raf=null, lastT=null;
+var SUBSTEPS=6;
 
-// Node definitions — angles in canvas radians (0=right, clockwise)
-var NODES={
-  del:{a:130*DEG, ring:'outer', name:'Delegation',  sub:'Ethical Focus', rgb:[20,20,19]},
-  dil:{a:50*DEG,  ring:'outer', name:'Diligence',   sub:'Ethical Focus', rgb:[20,20,19]},
-  des:{a:220*DEG, ring:'inner', name:'Description', sub:'Quality Focus', rgb:[217,119,87]},
-  dsc:{a:320*DEG, ring:'inner', name:'Discernment', sub:'Quality Focus', rgb:[217,119,87]},
+// Physics: natural frequencies (rad/s)^2
+// Outer pair: period ~2.4s → ω² = (2π/2.4)² ≈ 6.85
+// Inner pair: period ~1.55s → ω² = (2π/1.55)² ≈ 16.4
+var W0SQ_OUT=6.85, W0SQ_IN=16.4;
+var K_PAIR=3.2;   // coupling within each loop pair
+var K_CROSS=0.28; // weak coupling across loops
+var DAMP=0.11;    // velocity damping coefficient
+
+var pends={
+  del:{x0f:0.16,Lf:0.66,w0sq:W0SQ_OUT,rgb:[20,20,19],   name:'Delegation', sub:'Ethical Focus',  theta:0,omega:0,active:false,glow:0,trail:[]},
+  des:{x0f:0.38,Lf:0.42,w0sq:W0SQ_IN, rgb:[217,119,87], name:'Description', sub:'Quality Focus',  theta:0,omega:0,active:false,glow:0,trail:[]},
+  dsc:{x0f:0.62,Lf:0.42,w0sq:W0SQ_IN, rgb:[217,119,87], name:'Discernment', sub:'Quality Focus',  theta:0,omega:0,active:false,glow:0,trail:[]},
+  dil:{x0f:0.84,Lf:0.66,w0sq:W0SQ_OUT,rgb:[20,20,19],   name:'Diligence',  sub:'Ethical Focus',  theta:0,omega:0,active:false,glow:0,trail:[]}
 };
+var ORDER=['del','des','dsc','dil'];
 
-// Sequence: outer (Delegation->Diligence) -> inner (Description->Discernment) -> outer again
+// Starting angles (same direction → will beat and settle into anti-phase)
+var START_THETA={del:0.24, des:0.22, dsc:0.20, dil:0.18};
+
 var STEPS=[
-  {nodes:[],                        arcs:[],              highlight:null,  title:'',
-   body:'A teaching task enters the framework. Watch how all four competencies shape what happens next.'},
-  {nodes:['del'],                   arcs:[],              highlight:null,  title:'Delegation.',
-   body:'First: should AI be involved at all? And how much of this task belongs to it? This decision is always yours.'},
-  {nodes:['del','dil'],             arcs:['outer'],       highlight:null,  title:'Diligence.',
-   body:'Before a single prompt is written \u2014 what is your professional responsibility here? The outer loop sets the terms.'},
-  {nodes:['del','dil','des'],       arcs:['outer'],       highlight:null,  title:'Description.',
-   body:'Now you brief AI with precision: the product you need, the process to follow, the performance standard it must meet.'},
-  {nodes:['del','dil','des','dsc'], arcs:['outer','inner'],highlight:null, title:'Discernment.',
-   body:'Evaluate what comes back. Not quite right? Describe again. This inner loop repeats until the output earns your trust.'},
-  {nodes:['del','dil','des','dsc'], arcs:['outer','inner'],highlight:'dil',title:'Diligence, again.',
-   body:'Before anything reaches a student \u2014 your professional sign-off. The outer loop closes. The output is now yours.'},
-  {nodes:['del','dil','des','dsc'], arcs:['outer','inner'],highlight:null, title:'Four competencies. One practice.',
-   body:'Not steps \u2014 a living system you navigate. The outer loop protects. The inner loop refines. Together, they make AI use worthy of your students. Now make it yours.'},
+  {pend:null,    title:'',                               body:'Four competencies. One shared structure. Click anywhere to set the framework in motion.'},
+  {pend:'del',   title:'Delegation.',                    body:'Should AI be involved at all? And how much? The outer loop opens.'},
+  {pend:'dil',   title:'Diligence.',                     body:'What is your professional responsibility here? Before a single prompt — the outer loop is set.'},
+  {pend:'des',   title:'Description.',                   body:'Now you brief AI. With precision. The inner loop begins.'},
+  {pend:'dsc',   title:'Discernment.',                   body:'Evaluate what comes back. Not right? Describe again. All four are in motion.'},
+  {pend:null,    title:'Watch.',                         body:'The framework is finding its resonance. This is what it feels like when the practice runs on its own.'},
+  {pend:null,    title:'Diligence, once more.',          body:'Before the output leaves your hands — your sign-off. The outer loop closes. The work is yours.', highlight:'dil'},
+  {pend:null,    title:'Four competencies in resonance.',body:'Not steps — a living system, self-sustaining. This is what it looks like when all four work together. Now try it on something real.'},
 ];
 
 var step=0;
-var glow={del:0,dil:0,des:0,dsc:0,inner:0,outer:0,dil2:0};
-var tgt={del:0,dil:0,des:0,dsc:0,inner:0,outer:0,dil2:0};
-var dashOff=0;
+var dilHighlight=0, dilHighlightTgt=0;
 
-function nodePos(id){
-  var n=NODES[id];
-  var cx=W/2,cy=H/2;
-  var rO=Math.min(W,H)*0.315;
-  var rI=Math.min(W,H)*0.175;
-  var r=n.ring==='inner'?rI:rO;
-  return{x:cx+r*Math.cos(n.a),y:cy+r*Math.sin(n.a)};
+function bobPos(id){
+  var p=pends[id];
+  var L=p.Lf*(H-barY);
+  return{x:p.x0f*W + L*Math.sin(p.theta), y:barY + L*Math.cos(p.theta)};
+}
+
+function activate(id){
+  var p=pends[id];
+  p.theta=START_THETA[id];
+  p.omega=0;
+  p.active=true;
+  p.trail=[];
 }
 
 function setStep(s){
   step=s;
   var st=STEPS[s];
-  tgt.del=st.nodes.indexOf('del')>=0?1:0;
-  tgt.dil=st.nodes.indexOf('dil')>=0?1:0;
-  tgt.des=st.nodes.indexOf('des')>=0?1:0;
-  tgt.dsc=st.nodes.indexOf('dsc')>=0?1:0;
-  tgt.inner=st.arcs.indexOf('inner')>=0?1:0;
-  tgt.outer=st.arcs.indexOf('outer')>=0?1:0;
-  tgt.dil2=st.highlight==='dil'?1:0;
+  if(st.pend) activate(st.pend);
+  dilHighlightTgt=st.highlight==='dil'?1:0;
   fadeText(st);
   buildDots();
   var btn=document.getElementById('nextBtn');
   if(s>=STEPS.length-1){btn.textContent='Start over';btn.className='nav-btn';}
-  else{btn.textContent='Continue \u2192';btn.className='nav-btn primary';}
+  else{btn.textContent=s===0?'Begin \u2192':'Continue \u2192';btn.className='nav-btn primary';}
 }
 
 function fadeText(st){
@@ -130,7 +134,7 @@ function fadeText(st){
     document.getElementById('stepTitle').textContent=st.title||'\u00a0';
     document.getElementById('stepBody').textContent=st.body;
     el.style.opacity='1';
-  },200);
+  },190);
 }
 
 function buildDots(){
@@ -143,156 +147,182 @@ function buildDots(){
   }
 }
 
-function advance(){
-  setStep(step<STEPS.length-1?step+1:0);
-}
+function advance(){setStep(step<STEPS.length-1?step+1:0);}
 
 function resize(){
   dpr=window.devicePixelRatio||1;
   var r=wrap.getBoundingClientRect();
-  W=r.width;H=Math.round(W*0.60);
-  CV.width=Math.round(W*dpr);CV.height=Math.round(H*dpr);
-  CV.style.width=W+'px';CV.style.height=H+'px';
+  W=r.width; H=Math.round(W*0.66);
+  CV.width=Math.round(W*dpr); CV.height=Math.round(H*dpr);
+  CV.style.width=W+'px'; CV.style.height=H+'px';
   CTX.setTransform(dpr,0,0,dpr,0,0);
+  barY=H*0.09;
 }
 
-function lerp(a,b,t){return a+(b-a)*t;}
+function physics(dt){
+  var sub_dt=dt/SUBSTEPS;
+  for(var s=0;s<SUBSTEPS;s++){
+    var th={}, om={};
+    ORDER.forEach(function(id){th[id]=pends[id].theta; om[id]=pends[id].omega;});
 
-function render(){
-  requestAnimationFrame(render);
-  if(W===0){resize();return;}
-  tick+=0.007;
-  dashOff-=0.15;
-  var rate=0.05;
-  glow.del=lerp(glow.del,tgt.del,rate);
-  glow.dil=lerp(glow.dil,tgt.dil,rate);
-  glow.des=lerp(glow.des,tgt.des,rate);
-  glow.dsc=lerp(glow.dsc,tgt.dsc,rate);
-  glow.inner=lerp(glow.inner,tgt.inner,rate);
-  glow.outer=lerp(glow.outer,tgt.outer,rate);
-  glow.dil2=lerp(glow.dil2,tgt.dil2,0.04);
+    ORDER.forEach(function(id){
+      var p=pends[id];
+      if(!p.active) return;
+      var a=-p.w0sq*th[id] - DAMP*om[id];
+      // Within-loop pair coupling
+      if(id==='del'&&pends.dil.active) a+=K_PAIR*(th.dil-th.del);
+      if(id==='dil'&&pends.del.active) a+=K_PAIR*(th.del-th.dil);
+      if(id==='des'&&pends.dsc.active) a+=K_PAIR*(th.dsc-th.des);
+      if(id==='dsc'&&pends.des.active) a+=K_PAIR*(th.des-th.dsc);
+      // Cross-loop coupling (shared professional structure)
+      if(id==='del'&&pends.des.active) a+=K_CROSS*(th.des-th.del);
+      if(id==='des'&&pends.del.active) a+=K_CROSS*(th.del-th.des);
+      if(id==='dil'&&pends.dsc.active) a+=K_CROSS*(th.dsc-th.dil);
+      if(id==='dsc'&&pends.dil.active) a+=K_CROSS*(th.dil-th.dsc);
+      p.omega+=a*sub_dt;
+      p.theta+=p.omega*sub_dt;
+    });
+  }
+}
+
+function render(ts){
+  raf=requestAnimationFrame(render);
+  if(!lastT){lastT=ts;}
+  var dt=Math.min((ts-lastT)/1000, 0.04);
+  lastT=ts;
+
+  if(W===0){resize(); return;}
+
+  physics(dt);
+
+  // Lerp glow values
+  ORDER.forEach(function(id){
+    var p=pends[id];
+    var tgt=p.active?1:0;
+    p.glow+=(tgt-p.glow)*0.06;
+  });
+  dilHighlight+=(dilHighlightTgt-dilHighlight)*0.04;
 
   CTX.clearRect(0,0,W,H);
-  var cx=W/2,cy=H/2;
-  var rO=Math.min(W,H)*0.315;
-  var rI=Math.min(W,H)*0.175;
-  var pR=Math.max(14,Math.min(22,W*0.033));
 
-  // --- Orbital rings (dashed, slowly rotating) ---
-  CTX.save();
-  CTX.setLineDash([5,9]);
-  CTX.lineDashOffset=dashOff;
-  CTX.lineWidth=0.5;
-  CTX.beginPath();CTX.arc(cx,cy,rO,0,Math.PI*2);
-  CTX.strokeStyle='rgba(20,20,19,'+(0.14+glow.outer*0.18)+')';
-  CTX.stroke();
-  CTX.beginPath();CTX.arc(cx,cy,rI,0,Math.PI*2);
-  CTX.strokeStyle='rgba(217,119,87,'+(0.20+glow.inner*0.22)+')';
-  CTX.stroke();
-  CTX.setLineDash([]);
-  CTX.restore();
+  var TRAIL=52, BOB_R_OUT=Math.max(13,Math.min(20,W*0.030));
+  var BOB_R_IN =Math.max(10,Math.min(16,W*0.023));
 
-  // --- Active arc: inner loop (Description <-> Discernment, over the top) ---
-  if(glow.inner>0.01){
+  // Draw bar
+  CTX.beginPath(); CTX.moveTo(W*0.06,barY); CTX.lineTo(W*0.94,barY);
+  CTX.strokeStyle='rgba(20,20,19,0.22)'; CTX.lineWidth=1.5; CTX.stroke();
+
+  // Subtle bracket lines connecting coupled pairs (appears when both active)
+  var outerBothActive=pends.del.active&&pends.dil.active;
+  var innerBothActive=pends.des.active&&pends.dsc.active;
+  var bracketAlpha=0;
+
+  if(outerBothActive){
+    bracketAlpha=Math.min(pends.del.glow,pends.dil.glow)*0.35;
     CTX.beginPath();
-    CTX.arc(cx,cy,rI,220*DEG,320*DEG,false);
-    CTX.lineWidth=2;
-    CTX.strokeStyle='rgba(217,119,87,'+glow.inner*0.88+')';
-    CTX.stroke();
-    // Midpoint dot
-    var mxI=cx+rI*Math.cos(270*DEG),myI=cy+rI*Math.sin(270*DEG);
-    CTX.beginPath();CTX.arc(mxI,myI,3,0,Math.PI*2);
-    CTX.fillStyle='rgba(217,119,87,'+glow.inner*0.9+')';CTX.fill();
+    CTX.moveTo(pends.del.x0f*W+4, barY+6);
+    CTX.lineTo(pends.dil.x0f*W-4, barY+6);
+    CTX.strokeStyle='rgba(20,20,19,'+bracketAlpha+')';
+    CTX.lineWidth=0.5; CTX.setLineDash([3,5]); CTX.stroke(); CTX.setLineDash([]);
+  }
+  if(innerBothActive){
+    bracketAlpha=Math.min(pends.des.glow,pends.dsc.glow)*0.45;
+    CTX.beginPath();
+    CTX.moveTo(pends.des.x0f*W+2, barY+10);
+    CTX.lineTo(pends.dsc.x0f*W-2, barY+10);
+    CTX.strokeStyle='rgba(217,119,87,'+bracketAlpha+')';
+    CTX.lineWidth=0.5; CTX.setLineDash([3,5]); CTX.stroke(); CTX.setLineDash([]);
   }
 
-  // --- Active arc: outer loop (Delegation <-> Diligence, under the bottom) ---
-  if(glow.outer>0.01){
-    CTX.beginPath();
-    CTX.arc(cx,cy,rO,50*DEG,130*DEG,false);
-    CTX.lineWidth=2;
-    CTX.strokeStyle='rgba(20,20,19,'+glow.outer*0.65+')';
-    CTX.stroke();
-    var mxO=cx+rO*Math.cos(90*DEG),myO=cy+rO*Math.sin(90*DEG);
-    CTX.beginPath();CTX.arc(mxO,myO,3,0,Math.PI*2);
-    CTX.fillStyle='rgba(20,20,19,'+glow.outer*0.7+')';CTX.fill();
-  }
+  // Draw each pendulum
+  ORDER.forEach(function(id){
+    var p=pends[id];
+    var r=p.rgb;
+    var pos=bobPos(id);
+    var bR=p.w0sq===W0SQ_OUT?BOB_R_OUT:BOB_R_IN;
+    var g=p.glow;
 
-  // --- Center task node ---
-  var cpulse=0.5+0.5*Math.sin(tick*1.1);
-  var cr=pR*0.40+cpulse*pR*0.08;
-  CTX.beginPath();CTX.arc(cx,cy,cr,0,Math.PI*2);
-  CTX.fillStyle='rgba(20,20,19,'+(0.10+cpulse*0.07)+')';CTX.fill();
-  CTX.lineWidth=0.5;CTX.strokeStyle='rgba(20,20,19,0.22)';CTX.stroke();
-  CTX.textAlign='center';CTX.textBaseline='middle';
-  CTX.font='500 8.5px "DM Sans",Arial,sans-serif';
-  CTX.fillStyle='rgba(20,20,19,0.38)';
-  CTX.fillText('TASK',cx,cy);
+    // Add to trail
+    if(p.active){
+      p.trail.push({x:pos.x,y:pos.y});
+      if(p.trail.length>TRAIL) p.trail.shift();
+    }
 
-  // --- Planet nodes ---
-  ['del','dil','des','dsc'].forEach(function(id){
-    var n=NODES[id];
-    var pos=nodePos(id);
-    var g=glow[id];
-    var pulse=0.5+0.5*Math.sin(tick*1.3+n.a*2);
-    var r=n.rgb;
-    var isOuter=n.ring==='outer';
-
-    // Extra ring for Diligence on "again" step
-    var extra=(id==='dil')?glow.dil2:0;
-    if(extra>0.02){
-      var xpR=pR+4+pulse*6*extra;
-      CTX.beginPath();CTX.arc(pos.x,pos.y,xpR+6,0,Math.PI*2);
-      CTX.lineWidth=1+extra;
-      CTX.strokeStyle='rgba('+r[0]+','+r[1]+','+r[2]+','+extra*0.55*pulse+')';
+    // Trail
+    for(var i=1;i<p.trail.length;i++){
+      var tf=(i/p.trail.length);
+      var ta=tf*tf*0.55*g;
+      CTX.beginPath();
+      CTX.moveTo(p.trail[i-1].x,p.trail[i-1].y);
+      CTX.lineTo(p.trail[i].x,p.trail[i].y);
+      CTX.strokeStyle='rgba('+r[0]+','+r[1]+','+r[2]+','+ta+')';
+      CTX.lineWidth=1.5*tf;
       CTX.stroke();
     }
 
-    // Glow halo
-    if(g>0.03){
-      var haloR=pR+3+pulse*4*g;
-      var grd=CTX.createRadialGradient(pos.x,pos.y,pR*0.6,pos.x,pos.y,haloR);
-      grd.addColorStop(0,'rgba('+r[0]+','+r[1]+','+r[2]+','+(g*0.28*pulse)+')');
-      grd.addColorStop(1,'rgba('+r[0]+','+r[1]+','+r[2]+',0)');
-      CTX.beginPath();CTX.arc(pos.x,pos.y,haloR,0,Math.PI*2);
-      CTX.fillStyle=grd;CTX.fill();
-    }
-
-    // Planet circle
-    CTX.beginPath();CTX.arc(pos.x,pos.y,pR,0,Math.PI*2);
-    CTX.fillStyle='rgba('+r[0]+','+r[1]+','+r[2]+','+(0.10+g*0.72)+')';
-    CTX.fill();
+    // String
+    CTX.beginPath();
+    CTX.moveTo(p.x0f*W,barY);
+    CTX.lineTo(pos.x,pos.y);
+    CTX.strokeStyle='rgba('+r[0]+','+r[1]+','+r[2]+','+(0.15+g*0.40)+')';
     CTX.lineWidth=0.5+g*0.5;
-    CTX.strokeStyle='rgba('+r[0]+','+r[1]+','+r[2]+','+(0.25+g*0.60)+')';
     CTX.stroke();
 
-    // Labels — positioned outward from canvas center
-    var dx=pos.x-cx,dy=pos.y-cy;
-    var dist=Math.sqrt(dx*dx+dy*dy)||1;
-    var ux=dx/dist,uy=dy/dist;
-    var lx=pos.x+ux*(pR+8);
-    var ly=pos.y+uy*(pR+6);
-    var labelAlpha=0.25+g*0.70;
+    // Diligence highlight ring (step 6 "again" pulse)
+    if(id==='dil'&&dilHighlight>0.02){
+      var hp=0.5+0.5*Math.sin(Date.now()*0.005);
+      CTX.beginPath();
+      CTX.arc(pos.x,pos.y,bR+4+hp*5,0,Math.PI*2);
+      CTX.strokeStyle='rgba('+r[0]+','+r[1]+','+r[2]+','+dilHighlight*0.55*hp+')';
+      CTX.lineWidth=1.5; CTX.stroke();
+      CTX.beginPath();
+      CTX.arc(pos.x,pos.y,bR+10+hp*8,0,Math.PI*2);
+      CTX.strokeStyle='rgba('+r[0]+','+r[1]+','+r[2]+','+dilHighlight*0.22*hp+')';
+      CTX.lineWidth=1; CTX.stroke();
+    }
 
-    CTX.textAlign=ux<-0.1?'right':(ux>0.1?'left':'center');
-    CTX.textBaseline=uy<0?'bottom':'top';
+    // Glow halo
+    if(g>0.04){
+      var spd=Math.abs(p.omega);
+      var hR=bR+3+spd*8*g;
+      var grd=CTX.createRadialGradient(pos.x,pos.y,bR*0.5,pos.x,pos.y,hR);
+      grd.addColorStop(0,'rgba('+r[0]+','+r[1]+','+r[2]+','+(g*0.30)+')');
+      grd.addColorStop(1,'rgba('+r[0]+','+r[1]+','+r[2]+',0)');
+      CTX.beginPath(); CTX.arc(pos.x,pos.y,hR,0,Math.PI*2);
+      CTX.fillStyle=grd; CTX.fill();
+    }
+
+    // Bob
+    CTX.beginPath(); CTX.arc(pos.x,pos.y,bR,0,Math.PI*2);
+    CTX.fillStyle='rgba('+r[0]+','+r[1]+','+r[2]+','+(0.08+g*0.82)+')';
+    CTX.fill();
+    CTX.strokeStyle='rgba('+r[0]+','+r[1]+','+r[2]+','+(0.22+g*0.60)+')';
+    CTX.lineWidth=0.5+g*0.5; CTX.stroke();
+
+    // Pivot dot
+    CTX.beginPath(); CTX.arc(p.x0f*W,barY,2,0,Math.PI*2);
+    CTX.fillStyle='rgba('+r[0]+','+r[1]+','+r[2]+','+(0.18+g*0.45)+')'; CTX.fill();
+
+    // Label below bob (anchored to pivot, not bob, for readability)
+    var labelY=barY+(p.Lf*(H-barY))+bR+14;
+    var labelAlpha=0.22+g*0.68;
+    CTX.textAlign='center'; CTX.textBaseline='top';
     CTX.font='600 12px "DM Sans",Arial,sans-serif';
     CTX.fillStyle='rgba('+r[0]+','+r[1]+','+r[2]+','+labelAlpha+')';
-    CTX.fillText(n.name,lx,ly);
-
-    var ly2=ly+(uy<0?-15:15);
+    CTX.fillText(p.name, p.x0f*W, labelY);
     CTX.font='400 9.5px "DM Sans",Arial,sans-serif';
     CTX.fillStyle='rgba('+r[0]+','+r[1]+','+r[2]+','+(labelAlpha*0.55)+')';
-    CTX.fillText(n.sub,lx,ly2);
+    CTX.fillText(p.sub, p.x0f*W, labelY+14);
   });
 }
 
 // Init
 resize();
-window.addEventListener('resize',resize);
-setStep(0);
-render();
+window.addEventListener('resize',function(){resize();});
+buildDots();
+requestAnimationFrame(render);
 
-// Navigation
+// Nav
 document.getElementById('nextBtn').addEventListener('click',function(e){e.stopPropagation();advance();});
 document.getElementById('fieldWrap').addEventListener('click',advance);
 document.addEventListener('keydown',function(e){
