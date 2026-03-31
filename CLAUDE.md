@@ -4,6 +4,18 @@ Pre-LMS review build. HTML interactives for the AI Fluency course (Anthropic x T
 
 Live gallery: https://zacklinger.github.io/ai-fluency-interactives
 
+## Course content
+
+Read `course-content.md` for the full course context before building any interactive:
+- All 8 module learning objectives
+- Video transcripts and key quotes
+- The Ms. Okafor scenario (used in Modules 5 & 6)
+- Exercise formats that interactives are meant to spark
+- Key phrases to use verbatim in interactive copy
+
+Also add the source PDF to the repo root if you have it locally:
+`AI_Fluency_for_K-12_Educators_Course__Content___Project_Tracker.pdf`
+
 ## Local dev
 
 ```bash
