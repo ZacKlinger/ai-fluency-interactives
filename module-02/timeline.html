@@ -78,44 +78,17 @@ html,body{min-height:100vh;background:var(--bg);display:flex;align-items:center;
   <div class="foot" id="foot">Click any sentence to begin.</div>
 </div></div>
 <script>
-var data = [
-  {t:"When writing IEP goals, the SMART framework - Specific, Measurable, Achievable, Relevant, and Time-bound - is widely accepted as best practice across special education.",type:"safe",tag:"This one holds up.",body:"SMART goals are genuinely standard practice in special education. The instinct to check is still the right one - even solid claims deserve a second look."},
-  {t:"Research from the National Center for Learning Disabilities found that students with clearly measurable IEP goals make 34% more academic progress than those without.",type:"risky",tag:"Good instinct.",body:"That specific figure - 34%, that source - is fabricated. AI generates authoritative-sounding statistics that do not exist. <strong>Always search for the actual study before citing it.</strong>"},
-  {t:"Goals should reference the general education curriculum and connect to grade-level standards wherever possible, per IDEA requirements.",type:"safe",tag:"This one holds up.",body:"IDEA does require IEP goals to connect to the general curriculum. Solid ground here - keep reading."},
-  {t:"A 2021 Harvard study found that IEP goals written collaboratively with families are met at twice the rate of those written by teachers alone.",type:"risky",tag:"Strong instinct.",body:"That study does not exist. '2021 Harvard' is a classic hallucination pattern - prestigious institution, recent year, specific ratio. <strong>AI is most confident when it is most wrong.</strong>"},
-  {t:"Progress should be reported to families at least as often as report cards are issued for non-disabled students - a federal requirement under IDEA.",type:"amber",tag:"Worth a quick check.",body:"Broadly accurate, but exact interpretation varies by state and district. Close enough to verify before citing it in a meeting."},
-  {t:"Avoid vague language like 'will improve' - instead specify the skill, the condition, and the criteria for mastery.",type:"safe",tag:"This one holds up.",body:"Solid goal-writing guidance, consistent with how most districts and the research frame measurable IEP goals."}
+var data=[
+  {t:"When writing IEP goals, the SMART framework - Specific, Measurable, Achievable, Relevant, and Time-bound - is widely accepted as best practice across special education.",type:"safe",tag:"This one holds up.",body:"SMART goals are genuinely standard practice in special education. The instinct to check is still the right one -- even solid claims deserve a second look."},
+  {t:"Research from the National Center for Learning Disabilities found that students with clearly measurable IEP goals make 34% more academic progress than those without.",type:"risky",tag:"Good instinct.",body:"That specific figure -- 34%, that source -- is fabricated. AI generates authoritative-sounding statistics that do not exist. <strong>Always search for the actual study before citing it.</strong>"},
+  {t:"Goals should reference the general education curriculum and connect to grade-level standards wherever possible, per IDEA requirements.",type:"safe",tag:"This one holds up.",body:"IDEA does require IEP goals to connect to the general curriculum. Solid ground here -- keep reading."},
+  {t:"A 2021 Harvard study found that IEP goals written collaboratively with families are met at twice the rate of those written by teachers alone.",type:"risky",tag:"Strong instinct.",body:"That study does not exist. '2021 Harvard' is a classic hallucination pattern -- prestigious institution, recent year, specific ratio. <strong>AI is most confident when it is most wrong.</strong>"},
+  {t:"Progress should be reported to families at least as often as report cards are issued for non-disabled students -- a federal requirement under IDEA.",type:"amber",tag:"Worth a quick check.",body:"Broadly accurate, but exact interpretation varies by state and district. Close enough to verify before citing it in a meeting."},
+  {t:"Avoid vague language like 'will improve' -- instead specify the skill, the condition, and the criteria for mastery.",type:"safe",tag:"This one holds up.",body:"Solid goal-writing guidance, consistent with how most districts and the research frame measurable IEP goals."}
 ];
 var state={},activeIdx=null;
-function build(){
-  var p=document.getElementById('para'),d=document.getElementById('dots');
-  data.forEach(function(s,i){
-    if(i>0)p.appendChild(document.createTextNode(' '));
-    var sp=document.createElement('span');sp.className='s';sp.dataset.i=i;sp.textContent=s.t;
-    sp.addEventListener('click',function(){tap(i);});p.appendChild(sp);
-    var dot=document.createElement('div');dot.className='dot';dot.id='dot'+i;d.appendChild(dot);
-  });
-}
-function tap(i){
-  var isOn=state[i],s=data[i],sp=document.querySelector('[data-i="'+i+'"]'),rev=document.getElementById('reveal');
-  if(isOn){
-    state[i]=false;sp.classList.remove('risky','safe','amber');
-    document.getElementById('dot'+i).className='dot';
-    if(activeIdx===i){rev.classList.remove('show','risky','safe','amber');activeIdx=null;}
-  } else {
-    state[i]=true;sp.classList.remove('risky','safe','amber');void sp.offsetWidth;sp.classList.add(s.type);
-    document.getElementById('dot'+i).className='dot '+s.type;
-    rev.classList.remove('show','risky','safe','amber');
-    document.getElementById('rtag').textContent=s.tag;
-    document.getElementById('rtext').innerHTML=s.body;
-    void rev.offsetWidth;rev.classList.add(s.type,'show');activeIdx=i;
-  }
-  var n=Object.keys(state).filter(function(k){return state[k];}).length,f=document.getElementById('foot');
-  if(n>=5){f.textContent='This is what AI output looks like under close reading.';f.style.color='rgba(20,20,19,0.7)';}
-  else if(n>=3){f.textContent=n+' of 6 examined.';}
-  else if(n>0){f.textContent=n+' examined. Keep reading.';}
-  else{f.textContent='Click any sentence to begin.';}
-}
+function build(){var p=document.getElementById('para'),d=document.getElementById('dots');data.forEach(function(s,i){if(i>0)p.appendChild(document.createTextNode(' '));var sp=document.createElement('span');sp.className='s';sp.dataset.i=i;sp.textContent=s.t;sp.addEventListener('click',function(){tap(i);});p.appendChild(sp);var dot=document.createElement('div');dot.className='dot';dot.id='dot'+i;d.appendChild(dot);});}
+function tap(i){var isOn=state[i],s=data[i],sp=document.querySelector('[data-i="'+i+'"]'),rev=document.getElementById('reveal');if(isOn){state[i]=false;sp.classList.remove('risky','safe','amber');document.getElementById('dot'+i).className='dot';if(activeIdx===i){rev.classList.remove('show','risky','safe','amber');activeIdx=null;}}else{state[i]=true;sp.classList.remove('risky','safe','amber');void sp.offsetWidth;sp.classList.add(s.type);document.getElementById('dot'+i).className='dot '+s.type;rev.classList.remove('show','risky','safe','amber');document.getElementById('rtag').textContent=s.tag;document.getElementById('rtext').innerHTML=s.body;void rev.offsetWidth;rev.classList.add(s.type,'show');activeIdx=i;}var n=Object.keys(state).filter(function(k){return state[k];}).length,f=document.getElementById('foot');if(n>=5){f.textContent='This is what AI output looks like under close reading.';f.style.color='rgba(20,20,19,0.7)';}else if(n>=3){f.textContent=n+' of 6 examined.';}else if(n>0){f.textContent=n+' examined. Keep reading.';}else{f.textContent='Click any sentence to begin.';}}
 build();
 </script>
 </body></html>
