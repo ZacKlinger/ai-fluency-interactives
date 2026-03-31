@@ -25,7 +25,14 @@ html,body{background:var(--bg);font-family:var(--sans);color:var(--dark)}
 .subhead{font-family:var(--serif);font-variation-settings:'opsz' 13;font-size:13px;font-weight:300;color:var(--muted);line-height:1.5;letter-spacing:0.005em}
 
 /* Field */
-.field-wrap{background:var(--surface);border-top:0.5px solid var(--border);border-bottom:0.5px solid var(--border);display:flex;justify-content:center;padding:2rem 0;overflow:hidden}
+.field-wrap{background:var(--surface);border-top:0.5px solid var(--border);border-bottom:0.5px solid var(--border);display:flex;justify-content:center;padding:2rem 0;overflow:hidden;position:relative}
+
+/* Node popup */
+.node-popup{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) scale(0.97);width:min(272px,calc(100% - 4rem));background:var(--bg);border:0.5px solid var(--border);border-radius:6px;padding:1.1rem 1.4rem;z-index:20;opacity:0;pointer-events:none;transition:opacity 0.14s,transform 0.14s}
+.node-popup.open{opacity:1;pointer-events:auto;transform:translate(-50%,-50%) scale(1)}
+.popup-label{font-size:9.5px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:var(--coral);display:block;margin-bottom:0.35rem}
+.popup-name{font-family:var(--serif);font-variation-settings:'opsz' 16;font-size:15px;font-weight:500;color:var(--dark);line-height:1.25;margin-bottom:0.3rem;letter-spacing:-0.01em}
+.popup-body{font-size:12px;color:var(--muted);line-height:1.6}
 .diagram{position:relative;width:min(500px,calc(100% - 3rem));aspect-ratio:560/430}
 .diagram svg{width:100%;height:100%;display:block}
 
@@ -78,7 +85,12 @@ html,body{background:var(--bg);font-family:var(--sans);color:var(--dark)}
         <p class="subhead">Start with what you do every day &mdash; then see what surrounds it.</p>
       </div>
 
-      <div class="field-wrap">
+      <div class="field-wrap" id="fieldWrap">
+        <div class="node-popup" id="nodePopup">
+          <span class="popup-label" id="popupLabel"></span>
+          <div class="popup-name" id="popupName"></div>
+          <p class="popup-body" id="popupBody"></p>
+        </div>
         <div class="diagram" id="wrap">
           <svg id="svg" viewBox="80 57 400 307" preserveAspectRatio="xMidYMid meet" style="overflow:visible">
             <defs>
@@ -186,16 +198,43 @@ html,body{background:var(--bg);font-family:var(--sans);color:var(--dark)}
 
 <script>
 var nodes = {
-  nDes:{arcs:['arcTop','arcBot'],ac:'rgba(204,107,90,0.42)'},
-  nDsc:{arcs:['arcTop','arcBot'],ac:'rgba(204,107,90,0.42)'},
-  nDel:{arcs:['outerE'],ac:'rgba(204,107,90,0.35)'},
-  nDil:{arcs:['outerE'],ac:'rgba(204,107,90,0.35)'}
+  nDes:{arcs:['arcTop','arcBot'],ac:'rgba(204,107,90,0.42)',
+    label:'Description',name:'Tell AI exactly what you need.',
+    body:'Product, process, and performance standard. Precision here is everything — the more specific you are, the more useful AI becomes.'},
+  nDsc:{arcs:['arcTop','arcBot'],ac:'rgba(204,107,90,0.42)',
+    label:'Discernment',name:'Evaluate what AI gives back.',
+    body:"Check for accuracy, alignment, and fit for your students. This is the step most people skip — and the one that matters most."},
+  nDel:{arcs:['outerE'],ac:'rgba(204,107,90,0.35)',
+    label:'Delegation',name:'Decide what AI should handle.',
+    body:'Not every task deserves to be handed off. Ask: does this genuinely serve my students, or am I just offloading?'},
+  nDil:{arcs:['outerE'],ac:'rgba(204,107,90,0.35)',
+    label:'Diligence',name:'Own the outcome.',
+    body:"Privacy, accuracy, and professional responsibility don't transfer to AI. The work is yours — AI assistance doesn't change that."}
 };
 
 var pvDef  = document.getElementById('pvDefault');
 var pvCon  = document.getElementById('pvConnect');
 var foot   = document.getElementById('foot');
+var popup  = document.getElementById('nodePopup');
+var popupLabel = document.getElementById('popupLabel');
+var popupName  = document.getElementById('popupName');
+var popupBody  = document.getElementById('popupBody');
 var inEthical = false;
+var activeNode = null;
+
+function openPopup(id) {
+  var d = nodes[id];
+  popupLabel.textContent = d.label;
+  popupName.textContent  = d.name;
+  popupBody.textContent  = d.body;
+  popup.classList.add('open');
+  activeNode = id;
+}
+
+function closePopup() {
+  popup.classList.remove('open');
+  activeNode = null;
+}
 
 function showQuality() {
   pvDef.classList.remove('hidden');
@@ -227,7 +266,15 @@ Object.keys(nodes).forEach(function(id) {
     });
   });
   el.addEventListener('mouseleave', function() { resetArcs(); });
+  el.addEventListener('click', function(e) {
+    e.stopPropagation();
+    if (activeNode === id) { closePopup(); } else { openPopup(id); }
+  });
 });
+
+popup.addEventListener('click', function(e) { e.stopPropagation(); });
+document.addEventListener('click', closePopup);
+document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closePopup(); });
 
 // Scroll
 var track = document.getElementById('track');
