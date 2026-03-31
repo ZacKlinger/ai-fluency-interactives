@@ -60,14 +60,12 @@ html,body{min-height:100vh;background:var(--bg);display:flex;align-items:center;
   opacity:0;pointer-events:none;transition:opacity 0.2s;z-index:20;
 }
 .hint-card.show{opacity:1;pointer-events:auto}
-.hint-card.incorrect{border-color:var(--amber);cursor:pointer}
+.hint-card.incorrect{border-color:#b94a38;cursor:pointer}
 .hint-card.correct{border-color:var(--green)}
 .hint-top{display:flex;align-items:flex-start;gap:0.75rem}
 .hint-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;margin-top:0.35rem}
-.hint-dot.protect{background:var(--amber)}
-.hint-dot.ambitious{background:var(--coral)}
-.hint-dot.delegate{background:var(--blue)}
 .hint-dot.correct-dot{background:var(--green)}
+.hint-dot.wrong-dot{background:#b94a38}
 .hint-text{font-family:var(--serif);font-variation-settings:'opsz' 14;font-size:14px;color:var(--dark);line-height:1.6}
 .hint-footer{font-size:10.5px;color:var(--muted);letter-spacing:0.04em;align-self:flex-end}
 .hint-footer.tap{color:var(--amber);font-weight:500}
@@ -283,7 +281,7 @@ function choose(zone){
 
   setTimeout(function(){
     var hc=getOrCreateHint();
-    var dotClass=correct?'correct-dot':task.type;
+    var dotClass=correct?'correct-dot':'wrong-dot';
     var footer=correct
       ?'<span class="hint-footer tap-correct">Tap to continue &rarr;</span>'
       :'<span class="hint-footer tap">Tap anywhere to continue</span>';
