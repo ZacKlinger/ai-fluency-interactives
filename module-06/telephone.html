@@ -187,9 +187,15 @@ window.addEventListener('load',function(){requestAnimationFrame(function(){reque
 window.addEventListener('resize',resize);
 if(window.ResizeObserver){new ResizeObserver(resize).observe(wrap);}
 
-// Clicking the canvas triggers the first context button if it hasn't been clicked yet
+// Clicking the canvas advances to the next unactivated context button in order
 wrap.addEventListener('click',function(){
-  if(!act[0]){document.querySelector('.ctx-btn[data-i="0"]').click();}
+  var btns=document.querySelectorAll('.ctx-btn');
+  for(var i=0;i<btns.length;i++){
+    var b=btns[i],isFifth=b.classList.contains('fifth');
+    if(!b.classList.contains('active')&&(!isFifth||b.classList.contains('ready'))){
+      b.click();break;
+    }
+  }
 });
 </script>
 </body>
