@@ -71,6 +71,7 @@ html,body{min-height:100vh;background:var(--bg);display:flex;align-items:center;
 .hint-text{font-family:var(--serif);font-variation-settings:'opsz' 14;font-size:14px;color:var(--dark);line-height:1.6}
 .hint-footer{font-size:10.5px;color:var(--muted);letter-spacing:0.04em;align-self:flex-end}
 .hint-footer.tap{color:var(--amber);font-weight:500}
+.hint-footer.tap-correct{color:var(--green);font-weight:500}
 
 /* Zone buttons */
 .zones{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0.55rem;width:100%;max-width:490px}
@@ -87,7 +88,7 @@ html,body{min-height:100vh;background:var(--bg);display:flex;align-items:center;
 .zone-btn.z-collab:hover{background:var(--coral);border-color:var(--coral);color:#fff}
 .zone-btn.z-ai:hover{background:var(--blue);border-color:var(--blue);color:#fff}
 /* Flash states */
-.zone-btn.flash-correct{background:var(--green) !important;border-color:var(--green) !important;color:#fff !important;transition:none !important}
+.zone-btn.flash-correct{background:var(--green) !important;border-color:var(--green) !important;color:#fff !important;transform:scale(1.1) translateY(-3px) !important;box-shadow:0 6px 20px rgba(61,107,79,0.38) !important;transition:transform 0.12s,box-shadow 0.12s !important}
 .zone-btn.flash-mine{background:var(--dark) !important;border-color:var(--dark) !important;color:#fff !important;transition:none !important}
 .zone-btn.flash-collab{background:var(--coral) !important;border-color:var(--coral) !important;color:#fff !important;transition:none !important}
 .zone-btn.flash-ai{background:var(--blue) !important;border-color:var(--blue) !important;color:#fff !important;transition:none !important}
@@ -260,10 +261,10 @@ function advance(){
   busy=false;
 }
 
-function flashBtn(idx,cls){
+function flashBtn(idx,cls,duration){
   var b=document.getElementById('btn'+idx);
   b.classList.add(cls);
-  setTimeout(function(){b.classList.remove(cls);},320);
+  setTimeout(function(){b.classList.remove(cls);},duration||320);
 }
 
 function choose(zone){
@@ -277,7 +278,7 @@ function choose(zone){
 
   // Flash button
   if(correct){
-    flashBtn(zone,'flash-correct');
+    flashBtn(zone,'flash-correct',600);
   } else {
     var fc=['flash-mine','flash-collab','flash-ai'][zone];
     flashBtn(zone,fc);
@@ -291,22 +292,15 @@ function choose(zone){
     var hc=getOrCreateHint();
     var dotClass=correct?'correct-dot':task.type;
     var footer=correct
-      ?'<span class="hint-footer">Next &rarr;</span>'
+      ?'<span class="hint-footer tap-correct">Tap to continue &rarr;</span>'
       :'<span class="hint-footer tap">Tap anywhere to continue</span>';
     hc.innerHTML=
       '<div class="hint-top"><span class="hint-dot '+dotClass+'"></span>'+
       '<span class="hint-text">'+task.hint+'</span></div>'+
       footer;
     hc.className='hint-card show '+(correct?'correct':'incorrect');
-
-    if(correct){
-      // Auto-advance after a beat
-      autoTimer=setTimeout(advance,1600);
-    } else {
-      // Wait for explicit click
-      awaitingDismiss=true;
-      busy=false;
-    }
+    awaitingDismiss=true;
+    busy=false;
   },280);
 }
 
