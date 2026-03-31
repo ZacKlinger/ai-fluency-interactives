@@ -9,7 +9,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,300;8..60,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-:root{--bg:#faf9f5;--surface:#f0eee6;--dark:#141413;--muted:rgba(20,20,19,0.42);--border:rgba(20,20,19,0.1);--coral:#d97757;--sans:'DM Sans',Arial,sans-serif;--serif:'Source Serif 4',Georgia,serif}
+:root{--bg:#faf9f5;--surface:#f0eee6;--dark:#141413;--muted:rgba(20,20,19,0.42);--border:rgba(20,20,19,0.1);--coral:#cc6b5a;--sans:'DM Sans',Arial,sans-serif;--serif:'Source Serif 4',Georgia,serif}
 html,body{background:var(--bg);font-family:var(--sans);color:var(--dark)}
 
 .track{position:relative;height:300vh}
@@ -40,32 +40,26 @@ html,body{background:var(--bg);font-family:var(--sans);color:var(--dark)}
 .nd-outer .pf{fill-opacity:0.07;transition:fill-opacity 0.2s}
 .nd-outer:hover .pf{fill-opacity:0.18}
 
-/* Info panel */
-.info-panel{min-height:98px;transition:opacity 0.18s}
-.info-panel.dim{opacity:0}
-
-/* Default view — 2 col */
-.pv-default{padding:1.1rem 2rem 1.4rem;display:grid;grid-template-columns:1fr 1.65fr;gap:1.75rem;align-items:start}
+/* Info panel — grid-stacked so both views hold same space, no bounce */
+.info-panel{display:grid;grid-template-areas:"p"}
+.pv-default,.pv-connect{grid-area:p;padding:1.2rem 2rem 1.5rem;display:grid;grid-template-columns:1fr 1.65fr;gap:1.75rem;align-items:start;transition:opacity 0.2s}
+.pv-connect{opacity:0;pointer-events:none}
+.pv-default.hidden{opacity:0;pointer-events:none}
+.pv-connect.hidden{opacity:0;pointer-events:none}
+.pv-connect.visible{opacity:1;pointer-events:auto}
 .pv-left{border-right:0.5px solid var(--border);padding-right:1.75rem}
-.plabel{font-size:10px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:var(--coral);display:block;margin-bottom:0.3rem}
-.pname{font-size:15px;font-weight:600;color:var(--dark);line-height:1.3;margin-bottom:0.55rem;letter-spacing:-0.01em}
+.plabel{font-size:10px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:var(--coral);display:block;margin-bottom:0.35rem}
+.pname{font-family:var(--serif);font-variation-settings:'opsz' 17;font-size:16px;font-weight:400;color:var(--dark);line-height:1.3;margin-bottom:0.45rem;letter-spacing:-0.015em}
 .pconnect{display:flex;gap:5px;align-items:flex-start}
 .parrow{font-size:11px;color:var(--muted);flex-shrink:0;margin-top:2px}
 .plink{font-size:11.5px;color:var(--muted);line-height:1.5}
-.pinsight{font-family:var(--serif);font-size:14px;color:var(--dark);line-height:1.75}
-
-/* Connect view — full width, 2 col items */
-.pv-connect{padding:1.1rem 2rem 1.4rem;display:none}
-.cv-label{font-size:10px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:var(--coral);display:block;margin-bottom:0.65rem}
-.cv-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.4rem}
-.cv-item-title{font-size:12.5px;font-weight:600;color:var(--dark);margin-bottom:0.28rem;letter-spacing:-0.01em}
-.cv-item-body{font-family:var(--serif);font-size:13px;color:var(--muted);line-height:1.65}
+.pinsight{font-family:var(--serif);font-variation-settings:'opsz' 14;font-size:14px;color:var(--dark);line-height:1.75}
 
 /* Foot */
 .foot{text-align:center;font-size:11px;color:var(--muted);padding:0.55rem 0 0.8rem;border-top:0.5px solid var(--border);background:var(--surface);letter-spacing:0.02em;transition:color 0.4s}
 
 @media(max-width:520px){
-  .pv-default,.cv-grid{grid-template-columns:1fr}
+  .pv-default,.pv-connect{grid-template-columns:1fr}
   .pv-left{border-right:none;border-bottom:0.5px solid var(--border);padding-right:0;padding-bottom:0.75rem;margin-bottom:0.75rem}
 }
 </style>
@@ -92,7 +86,7 @@ html,body{background:var(--bg);font-family:var(--sans);color:var(--dark)}
                 <path d="M1.5,1.5 L6,4 L1.5,6.5" fill="none" stroke="rgba(20,20,19,0.28)" stroke-width="1.2" stroke-linejoin="round" stroke-linecap="round"/>
               </marker>
               <marker id="arr-c" markerWidth="8" markerHeight="8" refX="5.5" refY="4" orient="auto">
-                <path d="M1.5,1.5 L6,4 L1.5,6.5" fill="none" stroke="rgba(217,119,87,0.6)" stroke-width="1.2" stroke-linejoin="round" stroke-linecap="round"/>
+                <path d="M1.5,1.5 L6,4 L1.5,6.5" fill="none" stroke="rgba(204,107,90,0.6)" stroke-width="1.2" stroke-linejoin="round" stroke-linecap="round"/>
               </marker>
             </defs>
 
@@ -105,21 +99,21 @@ html,body{background:var(--bg);font-family:var(--sans);color:var(--dark)}
               <!-- Delegation — coral outline -->
               <g id="nDel" class="nd nd-outer" transform="translate(280,40)">
                 <rect x="-80" y="-21" width="160" height="42" rx="5" fill="#f0eee6"/>
-                <rect class="pf" x="-80" y="-21" width="160" height="42" rx="5" fill="#d97757"/>
-                <rect x="-80" y="-21" width="160" height="42" rx="5" fill="none" stroke="#d97757" stroke-width="0.5"/>
+                <rect class="pf" x="-80" y="-21" width="160" height="42" rx="5" fill="#cc6b5a"/>
+                <rect x="-80" y="-21" width="160" height="42" rx="5" fill="none" stroke="#cc6b5a" stroke-width="0.5"/>
                 <text text-anchor="middle" dominant-baseline="middle"
                   font-family="DM Sans,sans-serif" font-size="13" font-weight="500"
-                  fill="#d97757" letter-spacing="0.01em">Delegation</text>
+                  fill="#cc6b5a" letter-spacing="0.01em">Delegation</text>
               </g>
 
               <!-- Diligence — coral outline -->
               <g id="nDil" class="nd nd-outer" transform="translate(280,380)">
                 <rect x="-80" y="-21" width="160" height="42" rx="5" fill="#f0eee6"/>
-                <rect class="pf" x="-80" y="-21" width="160" height="42" rx="5" fill="#d97757"/>
-                <rect x="-80" y="-21" width="160" height="42" rx="5" fill="none" stroke="#d97757" stroke-width="0.5"/>
+                <rect class="pf" x="-80" y="-21" width="160" height="42" rx="5" fill="#cc6b5a"/>
+                <rect x="-80" y="-21" width="160" height="42" rx="5" fill="none" stroke="#cc6b5a" stroke-width="0.5"/>
                 <text text-anchor="middle" dominant-baseline="middle"
                   font-family="DM Sans,sans-serif" font-size="13" font-weight="500"
-                  fill="#d97757" letter-spacing="0.01em">Diligence</text>
+                  fill="#cc6b5a" letter-spacing="0.01em">Diligence</text>
               </g>
             </g>
 
@@ -127,17 +121,17 @@ html,body{background:var(--bg);font-family:var(--sans);color:var(--dark)}
             <g id="cg" style="opacity:0">
               <!-- Inner loop label — above inner arc center -->
               <rect x="224" y="78" width="112" height="18" rx="3"
-                fill="#f0eee6" stroke="rgba(217,119,87,0.25)" stroke-width="0.5"/>
+                fill="#f0eee6" stroke="rgba(204,107,90,0.25)" stroke-width="0.5"/>
               <text x="280" y="87" text-anchor="middle" dominant-baseline="middle"
                 font-family="DM Sans,sans-serif" font-size="8.5" font-weight="600"
-                fill="rgba(217,119,87,0.75)" letter-spacing="0.10em">QUALITY CYCLE</text>
+                fill="rgba(204,107,90,0.75)" letter-spacing="0.10em">QUALITY FOCUS</text>
 
               <!-- Outer loop label — upper-right region, between Delegation and Discernment -->
               <rect x="365" y="79" width="140" height="18" rx="3"
-                fill="#f0eee6" stroke="rgba(217,119,87,0.25)" stroke-width="0.5"/>
+                fill="#f0eee6" stroke="rgba(204,107,90,0.25)" stroke-width="0.5"/>
               <text x="435" y="88" text-anchor="middle" dominant-baseline="middle"
                 font-family="DM Sans,sans-serif" font-size="8.5" font-weight="600"
-                fill="rgba(217,119,87,0.75)" letter-spacing="0.10em">PROTECTIVE AGENCY</text>
+                fill="rgba(204,107,90,0.75)" letter-spacing="0.10em">ETHICAL FOCUS</text>
             </g>
 
             <!-- Inner arcs (drawn before nodes so nodes sit cleanly on top) -->
@@ -153,7 +147,7 @@ html,body{background:var(--bg);font-family:var(--sans);color:var(--dark)}
             <!-- Description — solid coral fill, white text -->
             <g id="nDes" class="nd nd-inner" transform="translate(154,210)">
               <rect x="-80" y="-21" width="160" height="42" rx="5" fill="#f0eee6"/>
-              <rect class="pf" x="-80" y="-21" width="160" height="42" rx="5" fill="#d97757"/>
+              <rect class="pf" x="-80" y="-21" width="160" height="42" rx="5" fill="#cc6b5a"/>
               <text text-anchor="middle" dominant-baseline="middle"
                 font-family="DM Sans,sans-serif" font-size="13" font-weight="500"
                 fill="#faf9f5" letter-spacing="0.01em">Description</text>
@@ -162,7 +156,7 @@ html,body{background:var(--bg);font-family:var(--sans);color:var(--dark)}
             <!-- Discernment — solid coral fill, white text -->
             <g id="nDsc" class="nd nd-inner" transform="translate(406,210)">
               <rect x="-80" y="-21" width="160" height="42" rx="5" fill="#f0eee6"/>
-              <rect class="pf" x="-80" y="-21" width="160" height="42" rx="5" fill="#d97757"/>
+              <rect class="pf" x="-80" y="-21" width="160" height="42" rx="5" fill="#cc6b5a"/>
               <text text-anchor="middle" dominant-baseline="middle"
                 font-family="DM Sans,sans-serif" font-size="13" font-weight="500"
                 fill="#faf9f5" letter-spacing="0.01em">Discernment</text>
@@ -172,101 +166,67 @@ html,body{background:var(--bg);font-family:var(--sans);color:var(--dark)}
         </div>
       </div>
 
-      <!-- Info panel — switches between node detail and loop interaction views -->
+      <!-- Info panel — stacked: Quality Focus (inner) / Ethical Focus (outer) -->
       <div class="info-panel" id="infoPanel">
 
         <div class="pv-default" id="pvDefault">
           <div class="pv-left">
-            <span class="plabel" id="plabel">Description</span>
-            <div class="pname" id="pname">Tell AI exactly what you need.</div>
+            <span class="plabel">Quality Focus</span>
+            <div class="pname">Description + Discernment</div>
             <div class="pconnect">
               <span class="parrow">&#8594;</span>
-              <span class="plink" id="plink">Discernment evaluates every output Description produces.</span>
+              <span class="plink">An iterative cycle to ensure a high-quality product.</span>
             </div>
           </div>
           <div>
-            <p class="pinsight" id="pinsight">Specify the product, process, and performance standard. The more precise you are, the more useful AI becomes.</p>
+            <p class="pinsight">You craft a description for what you need, evaluate what AI returns with Discernment, and refine &mdash; repeating the loop until the result genuinely serves your students.</p>
           </div>
         </div>
 
         <div class="pv-connect" id="pvConnect">
-          <span class="cv-label">Two distinct loops</span>
-          <div class="cv-grid">
-            <div>
-              <div class="cv-item-title">Inner Loop &mdash; Quality Cycle</div>
-              <p class="cv-item-body">An iterative cycle for getting AI right. You craft a Description, evaluate the output with Discernment, and refine &mdash; repeating until the result genuinely serves your students.</p>
+          <div class="pv-left">
+            <span class="plabel">Ethical Focus</span>
+            <div class="pname">Delegation + Diligence</div>
+            <div class="pconnect">
+              <span class="parrow">&#8594;</span>
+              <span class="plink">A protective agency for strong ethical standards.</span>
             </div>
-            <div>
-              <div class="cv-item-title">Outer Loop &mdash; Protective Agency</div>
-              <p class="cv-item-body">A guardrail for professional ethics. Delegation asks whether AI belongs here at all. Diligence ensures you remain accountable for every outcome &mdash; regardless of who (or what) produced it.</p>
-            </div>
+          </div>
+          <div>
+            <p class="pinsight">Before and after the quality loop, these behaviors ask the harder questions: should AI be here at all, and are you fully accountable for what it produces?</p>
           </div>
         </div>
 
       </div>
 
-      <div class="foot" id="foot">Hover a node to explore &mdash; then scroll to see the full picture</div>
+      <div class="foot" id="foot">Scroll to reveal the full framework</div>
     </div>
   </div>
 </div>
 
 <script>
 var nodes = {
-  nDes:{label:'Description',name:'Tell AI exactly what you need.',insight:'Specify the product, process, and performance standard. The more precise you are, the more useful AI becomes.',link:'Discernment evaluates every output Description produces.',arcs:['arcTop','arcBot'],ac:'rgba(217,119,87,0.42)'},
-  nDsc:{label:'Discernment',name:'Evaluate what AI gives back.',insight:'Check for accuracy, alignment, and fit for your students. This is the step most people skip -- and the one that matters most.',link:'Refines your next Description -- the cycle continues until the output is right.',arcs:['arcTop','arcBot'],ac:'rgba(217,119,87,0.42)'},
-  nDel:{label:'Delegation',name:'Decide what belongs to AI.',insight:"Not every task should be handed off. Ask: does this serve my students? Does AI genuinely add value here, or am I just offloading?",link:'Paired with Diligence to close the loop of professional responsibility.',arcs:['outerE'],ac:'rgba(217,119,87,0.35)'},
-  nDil:{label:'Diligence',name:'Own the professional responsibility.',insight:"Privacy, accuracy, and transparency don't transfer to AI. The work is yours. AI assistance does not carry that responsibility.",link:'Paired with Delegation to form the full arc of ethical practice.',arcs:['outerE'],ac:'rgba(217,119,87,0.35)'}
+  nDes:{arcs:['arcTop','arcBot'],ac:'rgba(204,107,90,0.42)'},
+  nDsc:{arcs:['arcTop','arcBot'],ac:'rgba(204,107,90,0.42)'},
+  nDel:{arcs:['outerE'],ac:'rgba(204,107,90,0.35)'},
+  nDil:{arcs:['outerE'],ac:'rgba(204,107,90,0.35)'}
 };
 
-var panel    = document.getElementById('infoPanel');
-var pvDef    = document.getElementById('pvDefault');
-var pvCon    = document.getElementById('pvConnect');
-var plabel   = document.getElementById('plabel');
-var pname    = document.getElementById('pname');
-var pinsight = document.getElementById('pinsight');
-var plink    = document.getElementById('plink');
-var foot     = document.getElementById('foot');
-var ft, revertFt;
-var inConnect = false;
+var pvDef  = document.getElementById('pvDefault');
+var pvCon  = document.getElementById('pvConnect');
+var foot   = document.getElementById('foot');
+var inEthical = false;
 
-function setNodeInfo(id) {
-  var d = nodes[id];
-  plabel.textContent  = d.label;
-  pname.textContent   = d.name;
-  pinsight.textContent= d.insight;
-  plink.textContent   = d.link;
+function showQuality() {
+  pvDef.classList.remove('hidden');
+  pvCon.classList.remove('visible');
+  pvCon.classList.add('hidden');
 }
 
-function showDefaultView(id, fade) {
-  if (!fade) {
-    setNodeInfo(id);
-    pvDef.style.display = 'grid';
-    pvCon.style.display = 'none';
-    return;
-  }
-  panel.classList.add('dim');
-  clearTimeout(ft);
-  ft = setTimeout(function() {
-    setNodeInfo(id);
-    pvDef.style.display = 'grid';
-    pvCon.style.display = 'none';
-    panel.classList.remove('dim');
-  }, 160);
-}
-
-function showConnectView(fade) {
-  if (!fade) {
-    pvDef.style.display = 'none';
-    pvCon.style.display = 'block';
-    return;
-  }
-  panel.classList.add('dim');
-  clearTimeout(ft);
-  ft = setTimeout(function() {
-    pvDef.style.display = 'none';
-    pvCon.style.display = 'block';
-    panel.classList.remove('dim');
-  }, 160);
+function showEthical() {
+  pvCon.classList.remove('hidden');
+  pvCon.classList.add('visible');
+  pvDef.classList.add('hidden');
 }
 
 function resetArcs() {
@@ -276,33 +236,17 @@ function resetArcs() {
   });
 }
 
-// Initialize
-setNodeInfo('nDes');
-
 Object.keys(nodes).forEach(function(id) {
   var el = document.getElementById(id);
   var d  = nodes[id];
   if (!el) return;
   el.addEventListener('mouseenter', function() {
-    clearTimeout(revertFt);
-    // Always show node detail on hover, even in connect view
-    if (inConnect && pvCon.style.display !== 'none') {
-      showDefaultView(id, true);
-    } else {
-      showDefaultView(id, pvDef.style.display === 'none');
-    }
     d.arcs.forEach(function(aid) {
       var a = document.getElementById(aid);
       if (a) a.style.stroke = d.ac;
     });
   });
-  el.addEventListener('mouseleave', function() {
-    resetArcs();
-    if (inConnect) {
-      // Revert to connect view after a beat
-      revertFt = setTimeout(function() { showConnectView(true); }, 900);
-    }
-  });
+  el.addEventListener('mouseleave', function() { resetArcs(); });
 });
 
 // Scroll
@@ -314,9 +258,9 @@ var vbA   = [80,57,400,307];
 var vbB   = [0,0,560,430];
 var lp    = -1;
 var fmsgs = [
-  'Hover a node to explore \u2014 then scroll to see the full picture',
+  'Scroll to reveal the full framework',
   'Keep scrolling\u2026',
-  'Keep scrolling to reveal both loops',
+  'Both loops in view \u2014 hover any node to explore',
   'Both loops in view \u2014 hover any node to explore'
 ];
 
@@ -336,14 +280,12 @@ window.addEventListener('scroll', function() {
   if (ph !== lp) {
     lp = ph;
     foot.textContent = fmsgs[ph];
-    if (ph === 3 && !inConnect) {
-      inConnect = true;
-      clearTimeout(revertFt);
-      showConnectView(true);
-    } else if (ph < 3 && inConnect) {
-      inConnect = false;
-      clearTimeout(revertFt);
-      showDefaultView('nDes', true);
+    if (ph >= 2 && !inEthical) {
+      inEthical = true;
+      showEthical();
+    } else if (ph < 2 && inEthical) {
+      inEthical = false;
+      showQuality();
     }
   }
 }, {passive:true});
