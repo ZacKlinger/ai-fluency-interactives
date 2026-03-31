@@ -6,7 +6,7 @@
 <title>The 4D Framework - Module 4 - AI Fluency for K-12 Educators</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,300;8..60,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,300..700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{--bg:#faf9f5;--surface:#f0eee6;--dark:#141413;--muted:rgba(20,20,19,0.42);--border:rgba(20,20,19,0.1);--coral:#cc6b5a;--sans:'DM Sans',Arial,sans-serif;--serif:'Source Serif 4',Georgia,serif}
@@ -21,8 +21,8 @@ html,body{background:var(--bg);font-family:var(--sans);color:var(--dark)}
 .top-bar{padding:1.5rem 2rem 0}
 .eyebrow{font-size:10px;font-weight:500;letter-spacing:0.16em;text-transform:uppercase;color:var(--muted)}
 .title-area{padding:0.6rem 2rem 0.2rem}
-.headline{font-family:var(--sans);font-size:clamp(19px,2.8vw,24px);font-weight:600;color:var(--dark);line-height:1.25;margin-bottom:0.2rem;letter-spacing:-0.02em}
-.subhead{font-size:12.5px;color:var(--muted);line-height:1.5}
+.headline{font-family:var(--serif);font-variation-settings:'opsz' 24;font-size:clamp(20px,2.8vw,26px);font-weight:600;color:var(--dark);line-height:1.2;margin-bottom:0.25rem;letter-spacing:-0.025em}
+.subhead{font-family:var(--serif);font-variation-settings:'opsz' 13;font-size:13px;font-weight:300;color:var(--muted);line-height:1.5;letter-spacing:0.005em}
 
 /* Field */
 .field-wrap{background:var(--surface);border-top:0.5px solid var(--border);border-bottom:0.5px solid var(--border);display:flex;justify-content:center;padding:2rem 0;overflow:hidden}
@@ -85,9 +85,6 @@ html,body{background:var(--bg);font-family:var(--sans);color:var(--dark)}
               <marker id="arr" markerWidth="8" markerHeight="8" refX="5.5" refY="4" orient="auto">
                 <path d="M1.5,1.5 L6,4 L1.5,6.5" fill="none" stroke="rgba(20,20,19,0.28)" stroke-width="1.2" stroke-linejoin="round" stroke-linecap="round"/>
               </marker>
-              <marker id="arr-c" markerWidth="8" markerHeight="8" refX="5.5" refY="4" orient="auto">
-                <path d="M1.5,1.5 L6,4 L1.5,6.5" fill="none" stroke="rgba(204,107,90,0.6)" stroke-width="1.2" stroke-linejoin="round" stroke-linecap="round"/>
-              </marker>
             </defs>
 
             <!-- OUTER GROUP -->
@@ -98,40 +95,23 @@ html,body{background:var(--bg);font-family:var(--sans);color:var(--dark)}
 
               <!-- Delegation — coral outline -->
               <g id="nDel" class="nd nd-outer" transform="translate(280,40)">
-                <rect x="-80" y="-21" width="160" height="42" rx="5" fill="#f0eee6"/>
-                <rect class="pf" x="-80" y="-21" width="160" height="42" rx="5" fill="#cc6b5a"/>
-                <rect x="-80" y="-21" width="160" height="42" rx="5" fill="none" stroke="#cc6b5a" stroke-width="0.5"/>
+                <rect x="-80" y="-30" width="160" height="60" rx="10" fill="#f0eee6"/>
+                <rect class="pf" x="-80" y="-30" width="160" height="60" rx="10" fill="#cc6b5a"/>
+                <rect x="-80" y="-30" width="160" height="60" rx="10" fill="none" stroke="#cc6b5a" stroke-width="0.5"/>
                 <text text-anchor="middle" dominant-baseline="middle"
-                  font-family="DM Sans,sans-serif" font-size="13" font-weight="500"
-                  fill="#cc6b5a" letter-spacing="0.01em">Delegation</text>
+                  style="font-family:'Source Serif 4',Georgia,serif;font-size:15px;font-weight:400;font-variation-settings:'opsz' 15"
+                  fill="#cc6b5a">Delegation</text>
               </g>
 
               <!-- Diligence — coral outline -->
               <g id="nDil" class="nd nd-outer" transform="translate(280,380)">
-                <rect x="-80" y="-21" width="160" height="42" rx="5" fill="#f0eee6"/>
-                <rect class="pf" x="-80" y="-21" width="160" height="42" rx="5" fill="#cc6b5a"/>
-                <rect x="-80" y="-21" width="160" height="42" rx="5" fill="none" stroke="#cc6b5a" stroke-width="0.5"/>
+                <rect x="-80" y="-30" width="160" height="60" rx="10" fill="#f0eee6"/>
+                <rect class="pf" x="-80" y="-30" width="160" height="60" rx="10" fill="#cc6b5a"/>
+                <rect x="-80" y="-30" width="160" height="60" rx="10" fill="none" stroke="#cc6b5a" stroke-width="0.5"/>
                 <text text-anchor="middle" dominant-baseline="middle"
-                  font-family="DM Sans,sans-serif" font-size="13" font-weight="500"
-                  fill="#cc6b5a" letter-spacing="0.01em">Diligence</text>
+                  style="font-family:'Source Serif 4',Georgia,serif;font-size:15px;font-weight:400;font-variation-settings:'opsz' 15"
+                  fill="#cc6b5a">Diligence</text>
               </g>
-            </g>
-
-            <!-- PHASE 3: loop role labels -->
-            <g id="cg" style="opacity:0">
-              <!-- Inner loop label — above inner arc center -->
-              <rect x="224" y="78" width="112" height="18" rx="3"
-                fill="#f0eee6" stroke="rgba(204,107,90,0.25)" stroke-width="0.5"/>
-              <text x="280" y="87" text-anchor="middle" dominant-baseline="middle"
-                font-family="DM Sans,sans-serif" font-size="8.5" font-weight="600"
-                fill="rgba(204,107,90,0.75)" letter-spacing="0.10em">QUALITY FOCUS</text>
-
-              <!-- Outer loop label — upper-right region, between Delegation and Discernment -->
-              <rect x="365" y="79" width="140" height="18" rx="3"
-                fill="#f0eee6" stroke="rgba(204,107,90,0.25)" stroke-width="0.5"/>
-              <text x="435" y="88" text-anchor="middle" dominant-baseline="middle"
-                font-family="DM Sans,sans-serif" font-size="8.5" font-weight="600"
-                fill="rgba(204,107,90,0.75)" letter-spacing="0.10em">ETHICAL FOCUS</text>
             </g>
 
             <!-- Inner arcs (drawn before nodes so nodes sit cleanly on top) -->
@@ -146,20 +126,20 @@ html,body{background:var(--bg);font-family:var(--sans);color:var(--dark)}
 
             <!-- Description — solid coral fill, white text -->
             <g id="nDes" class="nd nd-inner" transform="translate(154,210)">
-              <rect x="-80" y="-21" width="160" height="42" rx="5" fill="#f0eee6"/>
-              <rect class="pf" x="-80" y="-21" width="160" height="42" rx="5" fill="#cc6b5a"/>
+              <rect x="-80" y="-30" width="160" height="60" rx="10" fill="#f0eee6"/>
+              <rect class="pf" x="-80" y="-30" width="160" height="60" rx="10" fill="#cc6b5a"/>
               <text text-anchor="middle" dominant-baseline="middle"
-                font-family="DM Sans,sans-serif" font-size="13" font-weight="500"
-                fill="#faf9f5" letter-spacing="0.01em">Description</text>
+                style="font-family:'Source Serif 4',Georgia,serif;font-size:15px;font-weight:400;font-variation-settings:'opsz' 15"
+                fill="#faf9f5">Description</text>
             </g>
 
             <!-- Discernment — solid coral fill, white text -->
             <g id="nDsc" class="nd nd-inner" transform="translate(406,210)">
-              <rect x="-80" y="-21" width="160" height="42" rx="5" fill="#f0eee6"/>
-              <rect class="pf" x="-80" y="-21" width="160" height="42" rx="5" fill="#cc6b5a"/>
+              <rect x="-80" y="-30" width="160" height="60" rx="10" fill="#f0eee6"/>
+              <rect class="pf" x="-80" y="-30" width="160" height="60" rx="10" fill="#cc6b5a"/>
               <text text-anchor="middle" dominant-baseline="middle"
-                font-family="DM Sans,sans-serif" font-size="13" font-weight="500"
-                fill="#faf9f5" letter-spacing="0.01em">Discernment</text>
+                style="font-family:'Source Serif 4',Georgia,serif;font-size:15px;font-weight:400;font-variation-settings:'opsz' 15"
+                fill="#faf9f5">Discernment</text>
             </g>
 
           </svg>
@@ -253,7 +233,6 @@ Object.keys(nodes).forEach(function(id) {
 var track = document.getElementById('track');
 var svg   = document.getElementById('svg');
 var og    = document.getElementById('og');
-var cg    = document.getElementById('cg');
 var vbA   = [80,57,400,307];
 var vbB   = [0,0,560,430];
 var lp    = -1;
@@ -274,7 +253,6 @@ window.addEventListener('scroll', function() {
 
   svg.setAttribute('viewBox', vbA.map(function(a,i){return lerp(a,vbB[i],p);}).join(' '));
   og.style.opacity = Math.max(0, Math.min(1, (raw - 0.28) / 0.32)).toFixed(3);
-  cg.style.opacity = Math.max(0, Math.min(1, (raw - 0.68) / 0.18)).toFixed(3);
 
   var ph = raw < 0.08 ? 0 : raw > 0.65 ? 3 : raw > 0.38 ? 2 : 1;
   if (ph !== lp) {
