@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Orbit — Module 7 — AI Fluency for K-12 Educators</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,300..700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#faf9f5;--surface:#f0eee6;--dark:#141413;
+  --muted:rgba(20,20,19,0.42);--border:rgba(20,20,19,0.1);
+  --coral:#d97757;--green:#3d6b4f;
+  --sans:'DM Sans',Arial,sans-serif;--serif:'Source Serif 4',Georgia,serif;
+}
+html,body{min-height:100vh;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:2rem 1rem;font-family:var(--sans);color:var(--dark)}
+.stage{width:100%;max-width:720px;position:relative}
+.status-badge{position:absolute;top:0;right:0;z-index:10;font-size:9.5px;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;background:var(--surface);border:0.5px solid var(--border);color:var(--muted);padding:4px 12px;border-radius:0 6px 0 4px}
+.card{background:var(--bg);border:0.5px solid var(--border);border-radius:6px;overflow:hidden}
+.top-bar{padding:1.75rem 2rem 0;padding-right:9rem}
+.eyebrow{font-size:10px;font-weight:500;letter-spacing:0.16em;text-transform:uppercase;color:var(--muted)}
+.title-area{padding:0.75rem 2rem 0.5rem}
+.headline{font-family:var(--serif);font-variation-settings:'opsz' 24;font-size:clamp(20px,2.8vw,26px);font-weight:600;color:var(--dark);line-height:1.2;margin-bottom:0.25rem;letter-spacing:-0.025em}
+.subhead{font-size:13px;color:var(--muted);line-height:1.5}
+.field-wrap{position:relative;background:var(--surface);border-top:0.5px solid var(--border);border-bottom:0.5px solid var(--border);cursor:pointer}
+canvas{display:block;width:100%}
+.step-text{padding:1.4rem 2rem 1.2rem;min-height:100px;display:flex;flex-direction:column;justify-content:center;transition:opacity 0.22s}
+.step-title{font-family:var(--serif);font-variation-settings:'opsz' 20;font-size:clamp(16px,2.2vw,20px);font-weight:600;color:var(--dark);letter-spacing:-0.02em;margin-bottom:0.3rem;line-height:1.2;min-height:1.4em}
+.step-body{font-size:13px;color:var(--muted);line-height:1.65;max-width:520px}
+.nav-area{padding:0.85rem 2rem 1.1rem;background:var(--surface);border-top:0.5px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.dots{display:flex;gap:5px;align-items:center}
+.dot{width:5px;height:5px;border-radius:50%;background:var(--border);transition:background 0.3s,transform 0.3s}
+.dot.active{background:var(--coral);transform:scale(1.4)}
+.dot.done{background:rgba(217,119,87,0.35)}
+.nav-btn{font-family:var(--sans);font-size:12px;font-weight:500;padding:0.42rem 1.1rem;border-radius:3px;cursor:pointer;border:0.5px solid var(--border);background:var(--bg);color:var(--muted);transition:border-color 0.15s,color 0.15s}
+.nav-btn:hover{border-color:var(--coral);color:var(--coral)}
+.nav-btn.primary{background:var(--coral);border-color:var(--coral);color:#fff}
+.nav-btn.primary:hover{background:#c46848;border-color:#c46848;color:#fff}
+</style>
+</head>
+<body>
+<div class="stage">
+  <div class="status-badge">Draft &middot; Module 7</div>
+  <div class="card">
+    <div class="top-bar"><span class="eyebrow">AI Fluency for K&ndash;12 Educators &nbsp;&middot;&nbsp; Module 7</span></div>
+    <div class="title-area">
+      <h1 class="headline">Two loops. Four competencies. One practice.</h1>
+      <p class="subhead">Watch how a real teaching task moves through the 4D framework.</p>
+    </div>
+    <div class="field-wrap" id="fieldWrap"><canvas id="c"></canvas></div>
+    <div class="step-text" id="stepText">
+      <div class="step-title" id="stepTitle">&nbsp;</div>
+      <div class="step-body" id="stepBody">A teaching task enters the framework. Watch how all four competencies shape what happens next.</div>
+    </div>
+    <div class="nav-area">
+      <div class="dots" id="dots"></div>
+      <button class="nav-btn primary" id="nextBtn">Continue &rarr;</button>
+    </div>
+  </div>
+</div>
+
+<script>
+var CV=document.getElementById('c'),CTX=CV.getContext('2d'),wrap=document.getElementById('fieldWrap');
+var W=0,H=0,dpr=1,tick=0;
+var DEG=Math.PI/180;
+
+// Node definitions — angles in canvas radians (0=right, clockwise)
+var NODES={
+  del:{a:130*DEG, ring:'outer', name:'Delegation',  sub:'Ethical Focus', rgb:[20,20,19]},
+  dil:{a:50*DEG,  ring:'outer', name:'Diligence',   sub:'Ethical Focus', rgb:[20,20,19]},
+  des:{a:220*DEG, ring:'inner', name:'Description', sub:'Quality Focus', rgb:[217,119,87]},
+  dsc:{a:320*DEG, ring:'inner', name:'Discernment', sub:'Quality Focus', rgb:[217,119,87]},
+};
+
+// Sequence: outer (Delegation->Diligence) -> inner (Description->Discernment) -> outer again
+var STEPS=[
+  {nodes:[],                        arcs:[],              highlight:null,  title:'',
+   body:'A teaching task enters the framework. Watch how all four competencies shape what happens next.'},
+  {nodes:['del'],                   arcs:[],              highlight:null,  title:'Delegation.',
+   body:'First: should AI be involved at all? And how much of this task belongs to it? This decision is always yours.'},
+  {nodes:['del','dil'],             arcs:['outer'],       highlight:null,  title:'Diligence.',
+   body:'Before a single prompt is written \u2014 what is your professional responsibility here? The outer loop sets the terms.'},
+  {nodes:['del','dil','des'],       arcs:['outer'],       highlight:null,  title:'Description.',
+   body:'Now you brief AI with precision: the product you need, the process to follow, the performance standard it must meet.'},
+  {nodes:['del','dil','des','dsc'], arcs:['outer','inner'],highlight:null, title:'Discernment.',
+   body:'Evaluate what comes back. Not quite right? Describe again. This inner loop repeats until the output earns your trust.'},
+  {nodes:['del','dil','des','dsc'], arcs:['outer','inner'],highlight:'dil',title:'Diligence, again.',
+   body:'Before anything reaches a student \u2014 your professional sign-off. The outer loop closes. The output is now yours.'},
+  {nodes:['del','dil','des','dsc'], arcs:['outer','inner'],highlight:null, title:'Four competencies. One practice.',
+   body:'Not steps \u2014 a living system you navigate. The outer loop protects. The inner loop refines. Together, they make AI use worthy of your students. Now make it yours.'},
+];
+
+var step=0;
+var glow={del:0,dil:0,des:0,dsc:0,inner:0,outer:0,dil2:0};
+var tgt={del:0,dil:0,des:0,dsc:0,inner:0,outer:0,dil2:0};
+var dashOff=0;
+
+function nodePos(id){
+  var n=NODES[id];
+  var cx=W/2,cy=H/2;
+  var rO=Math.min(W,H)*0.315;
+  var rI=Math.min(W,H)*0.175;
+  var r=n.ring==='inner'?rI:rO;
+  return{x:cx+r*Math.cos(n.a),y:cy+r*Math.sin(n.a)};
+}
+
+function setStep(s){
+  step=s;
+  var st=STEPS[s];
+  tgt.del=st.nodes.indexOf('del')>=0?1:0;
+  tgt.dil=st.nodes.indexOf('dil')>=0?1:0;
+  tgt.des=st.nodes.indexOf('des')>=0?1:0;
+  tgt.dsc=st.nodes.indexOf('dsc')>=0?1:0;
+  tgt.inner=st.arcs.indexOf('inner')>=0?1:0;
+  tgt.outer=st.arcs.indexOf('outer')>=0?1:0;
+  tgt.dil2=st.highlight==='dil'?1:0;
+  fadeText(st);
+  buildDots();
+  var btn=document.getElementById('nextBtn');
+  if(s>=STEPS.length-1){btn.textContent='Start over';btn.className='nav-btn';}
+  else{btn.textContent='Continue \u2192';btn.className='nav-btn primary';}
+}
+
+function fadeText(st){
+  var el=document.getElementById('stepText');
+  el.style.opacity='0';
+  setTimeout(function(){
+    document.getElementById('stepTitle').textContent=st.title||'\u00a0';
+    document.getElementById('stepBody').textContent=st.body;
+    el.style.opacity='1';
+  },200);
+}
+
+function buildDots(){
+  var dc=document.getElementById('dots');
+  dc.innerHTML='';
+  for(var i=0;i<STEPS.length;i++){
+    var d=document.createElement('div');
+    d.className='dot'+(i===step?' active':(i<step?' done':''));
+    dc.appendChild(d);
+  }
+}
+
+function advance(){
+  setStep(step<STEPS.length-1?step+1:0);
+}
+
+function resize(){
+  dpr=window.devicePixelRatio||1;
+  var r=wrap.getBoundingClientRect();
+  W=r.width;H=Math.round(W*0.60);
+  CV.width=Math.round(W*dpr);CV.height=Math.round(H*dpr);
+  CV.style.width=W+'px';CV.style.height=H+'px';
+  CTX.setTransform(dpr,0,0,dpr,0,0);
+}
+
+function lerp(a,b,t){return a+(b-a)*t;}
+
+function render(){
+  requestAnimationFrame(render);
+  if(W===0){resize();return;}
+  tick+=0.007;
+  dashOff-=0.15;
+  var rate=0.05;
+  glow.del=lerp(glow.del,tgt.del,rate);
+  glow.dil=lerp(glow.dil,tgt.dil,rate);
+  glow.des=lerp(glow.des,tgt.des,rate);
+  glow.dsc=lerp(glow.dsc,tgt.dsc,rate);
+  glow.inner=lerp(glow.inner,tgt.inner,rate);
+  glow.outer=lerp(glow.outer,tgt.outer,rate);
+  glow.dil2=lerp(glow.dil2,tgt.dil2,0.04);
+
+  CTX.clearRect(0,0,W,H);
+  var cx=W/2,cy=H/2;
+  var rO=Math.min(W,H)*0.315;
+  var rI=Math.min(W,H)*0.175;
+  var pR=Math.max(14,Math.min(22,W*0.033));
+
+  // --- Orbital rings (dashed, slowly rotating) ---
+  CTX.save();
+  CTX.setLineDash([5,9]);
+  CTX.lineDashOffset=dashOff;
+  CTX.lineWidth=0.5;
+  CTX.beginPath();CTX.arc(cx,cy,rO,0,Math.PI*2);
+  CTX.strokeStyle='rgba(20,20,19,'+(0.14+glow.outer*0.18)+')';
+  CTX.stroke();
+  CTX.beginPath();CTX.arc(cx,cy,rI,0,Math.PI*2);
+  CTX.strokeStyle='rgba(217,119,87,'+(0.20+glow.inner*0.22)+')';
+  CTX.stroke();
+  CTX.setLineDash([]);
+  CTX.restore();
+
+  // --- Active arc: inner loop (Description <-> Discernment, over the top) ---
+  if(glow.inner>0.01){
+    CTX.beginPath();
+    CTX.arc(cx,cy,rI,220*DEG,320*DEG,false);
+    CTX.lineWidth=2;
+    CTX.strokeStyle='rgba(217,119,87,'+glow.inner*0.88+')';
+    CTX.stroke();
+    // Midpoint dot
+    var mxI=cx+rI*Math.cos(270*DEG),myI=cy+rI*Math.sin(270*DEG);
+    CTX.beginPath();CTX.arc(mxI,myI,3,0,Math.PI*2);
+    CTX.fillStyle='rgba(217,119,87,'+glow.inner*0.9+')';CTX.fill();
+  }
+
+  // --- Active arc: outer loop (Delegation <-> Diligence, under the bottom) ---
+  if(glow.outer>0.01){
+    CTX.beginPath();
+    CTX.arc(cx,cy,rO,50*DEG,130*DEG,false);
+    CTX.lineWidth=2;
+    CTX.strokeStyle='rgba(20,20,19,'+glow.outer*0.65+')';
+    CTX.stroke();
+    var mxO=cx+rO*Math.cos(90*DEG),myO=cy+rO*Math.sin(90*DEG);
+    CTX.beginPath();CTX.arc(mxO,myO,3,0,Math.PI*2);
+    CTX.fillStyle='rgba(20,20,19,'+glow.outer*0.7+')';CTX.fill();
+  }
+
+  // --- Center task node ---
+  var cpulse=0.5+0.5*Math.sin(tick*1.1);
+  var cr=pR*0.40+cpulse*pR*0.08;
+  CTX.beginPath();CTX.arc(cx,cy,cr,0,Math.PI*2);
+  CTX.fillStyle='rgba(20,20,19,'+(0.10+cpulse*0.07)+')';CTX.fill();
+  CTX.lineWidth=0.5;CTX.strokeStyle='rgba(20,20,19,0.22)';CTX.stroke();
+  CTX.textAlign='center';CTX.textBaseline='middle';
+  CTX.font='500 8.5px "DM Sans",Arial,sans-serif';
+  CTX.fillStyle='rgba(20,20,19,0.38)';
+  CTX.fillText('TASK',cx,cy);
+
+  // --- Planet nodes ---
+  ['del','dil','des','dsc'].forEach(function(id){
+    var n=NODES[id];
+    var pos=nodePos(id);
+    var g=glow[id];
+    var pulse=0.5+0.5*Math.sin(tick*1.3+n.a*2);
+    var r=n.rgb;
+    var isOuter=n.ring==='outer';
+
+    // Extra ring for Diligence on "again" step
+    var extra=(id==='dil')?glow.dil2:0;
+    if(extra>0.02){
+      var xpR=pR+4+pulse*6*extra;
+      CTX.beginPath();CTX.arc(pos.x,pos.y,xpR+6,0,Math.PI*2);
+      CTX.lineWidth=1+extra;
+      CTX.strokeStyle='rgba('+r[0]+','+r[1]+','+r[2]+','+extra*0.55*pulse+')';
+      CTX.stroke();
+    }
+
+    // Glow halo
+    if(g>0.03){
+      var haloR=pR+3+pulse*4*g;
+      var grd=CTX.createRadialGradient(pos.x,pos.y,pR*0.6,pos.x,pos.y,haloR);
+      grd.addColorStop(0,'rgba('+r[0]+','+r[1]+','+r[2]+','+(g*0.28*pulse)+')');
+      grd.addColorStop(1,'rgba('+r[0]+','+r[1]+','+r[2]+',0)');
+      CTX.beginPath();CTX.arc(pos.x,pos.y,haloR,0,Math.PI*2);
+      CTX.fillStyle=grd;CTX.fill();
+    }
+
+    // Planet circle
+    CTX.beginPath();CTX.arc(pos.x,pos.y,pR,0,Math.PI*2);
+    CTX.fillStyle='rgba('+r[0]+','+r[1]+','+r[2]+','+(0.10+g*0.72)+')';
+    CTX.fill();
+    CTX.lineWidth=0.5+g*0.5;
+    CTX.strokeStyle='rgba('+r[0]+','+r[1]+','+r[2]+','+(0.25+g*0.60)+')';
+    CTX.stroke();
+
+    // Labels — positioned outward from canvas center
+    var dx=pos.x-cx,dy=pos.y-cy;
+    var dist=Math.sqrt(dx*dx+dy*dy)||1;
+    var ux=dx/dist,uy=dy/dist;
+    var lx=pos.x+ux*(pR+8);
+    var ly=pos.y+uy*(pR+6);
+    var labelAlpha=0.25+g*0.70;
+
+    CTX.textAlign=ux<-0.1?'right':(ux>0.1?'left':'center');
+    CTX.textBaseline=uy<0?'bottom':'top';
+    CTX.font='600 12px "DM Sans",Arial,sans-serif';
+    CTX.fillStyle='rgba('+r[0]+','+r[1]+','+r[2]+','+labelAlpha+')';
+    CTX.fillText(n.name,lx,ly);
+
+    var ly2=ly+(uy<0?-15:15);
+    CTX.font='400 9.5px "DM Sans",Arial,sans-serif';
+    CTX.fillStyle='rgba('+r[0]+','+r[1]+','+r[2]+','+(labelAlpha*0.55)+')';
+    CTX.fillText(n.sub,lx,ly2);
+  });
+}
+
+// Init
+resize();
+window.addEventListener('resize',resize);
+setStep(0);
+render();
+
+// Navigation
+document.getElementById('nextBtn').addEventListener('click',function(e){e.stopPropagation();advance();});
+document.getElementById('fieldWrap').addEventListener('click',advance);
+document.addEventListener('keydown',function(e){
+  if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();advance();}
+  if(e.key==='ArrowLeft'){e.preventDefault();if(step>0)setStep(step-1);}
+});
+</script>
+</body>
+</html>
