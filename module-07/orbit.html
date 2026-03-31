@@ -2,333 +2,353 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Resonance — Module 7 — AI Fluency for K-12 Educators</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Chain Reaction &mdash; Module 7</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,300..700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
 :root{
   --bg:#faf9f5;--surface:#f0eee6;--dark:#141413;
-  --muted:rgba(20,20,19,0.42);--border:rgba(20,20,19,0.1);
-  --coral:#d97757;--green:#3d6b4f;
-  --sans:'DM Sans',Arial,sans-serif;--serif:'Source Serif 4',Georgia,serif;
+  --muted:rgba(20,20,19,0.42);--border:rgba(20,20,19,0.1);--coral:#d97757;
 }
-html,body{min-height:100vh;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:2rem 1rem;font-family:var(--sans);color:var(--dark)}
-.stage{width:100%;max-width:720px;position:relative}
-.status-badge{position:absolute;top:0;right:0;z-index:10;font-size:9.5px;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;background:var(--surface);border:0.5px solid var(--border);color:var(--muted);padding:4px 12px;border-radius:0 6px 0 4px}
-.card{background:var(--bg);border:0.5px solid var(--border);border-radius:6px;overflow:hidden}
-.top-bar{padding:1.75rem 2rem 0;padding-right:9rem}
-.eyebrow{font-size:10px;font-weight:500;letter-spacing:0.16em;text-transform:uppercase;color:var(--muted)}
-.title-area{padding:0.75rem 2rem 0.5rem}
-.headline{font-family:var(--serif);font-variation-settings:'opsz' 24;font-size:clamp(20px,2.8vw,26px);font-weight:600;color:var(--dark);line-height:1.2;margin-bottom:0.25rem;letter-spacing:-0.025em}
-.subhead{font-size:13px;color:var(--muted);line-height:1.5}
-.field-wrap{position:relative;background:var(--surface);border-top:0.5px solid var(--border);border-bottom:0.5px solid var(--border);cursor:pointer;user-select:none}
-canvas{display:block;width:100%}
-.step-text{padding:1.3rem 2rem 1.1rem;min-height:95px;display:flex;flex-direction:column;justify-content:center;transition:opacity 0.2s}
-.step-title{font-family:var(--serif);font-variation-settings:'opsz' 20;font-size:clamp(16px,2.2vw,20px);font-weight:600;color:var(--dark);letter-spacing:-0.02em;line-height:1.2;margin-bottom:0.28rem;min-height:1.35em}
-.step-body{font-size:13px;color:var(--muted);line-height:1.65;max-width:500px}
-.nav-area{padding:0.8rem 2rem 1.05rem;background:var(--surface);border-top:0.5px solid var(--border);display:flex;align-items:center;justify-content:space-between}
-.dots{display:flex;gap:5px;align-items:center}
-.dot{width:5px;height:5px;border-radius:50%;background:var(--border);transition:background 0.3s,transform 0.3s}
-.dot.active{background:var(--coral);transform:scale(1.4)}
-.dot.done{background:rgba(217,119,87,0.38)}
-.nav-btn{font-family:var(--sans);font-size:12px;font-weight:500;padding:0.42rem 1.1rem;border-radius:3px;cursor:pointer;border:0.5px solid var(--border);background:var(--bg);color:var(--muted);transition:border-color 0.15s,color 0.15s,background 0.15s}
-.nav-btn:hover{border-color:var(--coral);color:var(--coral)}
-.nav-btn.primary{background:var(--coral);border-color:var(--coral);color:#fff}
-.nav-btn.primary:hover{background:#c46848;border-color:#c46848;color:#fff}
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  background:var(--bg);color:var(--dark);font-family:'DM Sans',sans-serif;
+  min-height:100vh;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;padding:24px;
+}
+.wrap{width:100%;max-width:560px}
+.eyebrow{
+  text-align:center;font-size:11px;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--muted);margin-bottom:8px;
+}
+h1{
+  text-align:center;font-family:'Source Serif 4',serif;
+  font-size:20px;font-weight:400;line-height:1.35;margin-bottom:20px;
+}
+canvas{
+  display:block;width:100%;border-radius:8px;
+  background:var(--surface);cursor:default;touch-action:none;
+}
+.cap{min-height:52px;margin-top:16px;text-align:center;padding:0 8px}
+.cap p{
+  font-family:'Source Serif 4',serif;font-size:15px;
+  line-height:1.6;color:var(--dark);opacity:0;
+  transition:opacity .5s ease;
+}
+.cap p.show{opacity:1}
+.hint{
+  font-size:12px;color:var(--muted);text-align:center;
+  margin-top:6px;min-height:18px;transition:opacity .3s;
+}
+.actions{
+  display:flex;gap:8px;justify-content:center;
+  margin-top:16px;flex-wrap:wrap;
+}
+.btn{
+  background:none;border:.5px solid var(--border);border-radius:6px;
+  padding:7px 18px;font:500 13px 'DM Sans',sans-serif;
+  color:var(--dark);cursor:pointer;
+  transition:border-color .15s,color .15s,background .15s;
+}
+.btn:hover{border-color:var(--coral);color:var(--coral)}
+.btn.on{background:var(--coral);border-color:var(--coral);color:#fff}
+.btn.on:hover{background:#c46846;border-color:#c46846}
 </style>
 </head>
 <body>
-<div class="stage">
-  <div class="status-badge">Draft &middot; Module 7</div>
-  <div class="card">
-    <div class="top-bar"><span class="eyebrow">AI Fluency for K&ndash;12 Educators &nbsp;&middot;&nbsp; Module 7</span></div>
-    <div class="title-area">
-      <h1 class="headline">Set it in motion.</h1>
-      <p class="subhead">Four competencies. One shared structure. Watch what happens when they all run together.</p>
-    </div>
-    <div class="field-wrap" id="fieldWrap"><canvas id="c"></canvas></div>
-    <div class="step-text" id="stepText">
-      <div class="step-title" id="stepTitle">&nbsp;</div>
-      <div class="step-body" id="stepBody">Four competencies. One shared structure. Click to set the framework in motion.</div>
-    </div>
-    <div class="nav-area">
-      <div class="dots" id="dots"></div>
-      <button class="nav-btn primary" id="nextBtn">Begin &rarr;</button>
-    </div>
+<div class="wrap">
+  <div class="eyebrow">Module 7 &middot; Tying It All Together</div>
+  <h1>The 4D Framework is a chain reaction.</h1>
+  <canvas id="c"></canvas>
+  <div class="cap"><p id="cap-text"></p></div>
+  <div class="hint" id="hint">Pull any ball back and release</div>
+  <div class="actions">
+    <button class="btn" id="btn-demo" onclick="autoDemo()">Auto demo</button>
+    <button class="btn" id="btn-remove" onclick="toggleRemoveMode()">Remove a D</button>
+    <button class="btn" id="btn-reset" onclick="resetAll()">Reset</button>
   </div>
 </div>
 
 <script>
-var CV=document.getElementById('c'),CTX=CV.getContext('2d');
-var wrap=document.getElementById('fieldWrap');
-var W=0,H=0,dpr=1,barY=0;
-var raf=null, lastT=null;
-var SUBSTEPS=6;
+var C=document.getElementById('c');
+var CTX=C.getContext('2d');
+var capEl=document.getElementById('cap-text');
+var hintEl=document.getElementById('hint');
+var btnRemove=document.getElementById('btn-remove');
 
-// Physics: natural frequencies (rad/s)^2
-// Outer pair: period ~2.4s → ω² = (2π/2.4)² ≈ 6.85
-// Inner pair: period ~1.55s → ω² = (2π/1.55)² ≈ 16.4
-var W0SQ_OUT=6.85, W0SQ_IN=16.4;
-var K_PAIR=3.2;   // coupling within each loop pair
-var K_CROSS=0.28; // weak coupling across loops
-var DAMP=0.11;    // velocity damping coefficient
-
-var pends={
-  del:{x0f:0.16,Lf:0.66,w0sq:W0SQ_OUT,rgb:[20,20,19],   name:'Delegation', sub:'Ethical Focus',  theta:0,omega:0,active:false,glow:0,trail:[]},
-  des:{x0f:0.38,Lf:0.42,w0sq:W0SQ_IN, rgb:[217,119,87], name:'Description', sub:'Quality Focus',  theta:0,omega:0,active:false,glow:0,trail:[]},
-  dsc:{x0f:0.62,Lf:0.42,w0sq:W0SQ_IN, rgb:[217,119,87], name:'Discernment', sub:'Quality Focus',  theta:0,omega:0,active:false,glow:0,trail:[]},
-  dil:{x0f:0.84,Lf:0.66,w0sq:W0SQ_OUT,rgb:[20,20,19],   name:'Diligence',  sub:'Ethical Focus',  theta:0,omega:0,active:false,glow:0,trail:[]}
-};
-var ORDER=['del','des','dsc','dil'];
-
-// Starting angles (same direction → will beat and settle into anti-phase)
-var START_THETA={del:0.24, des:0.22, dsc:0.20, dil:0.18};
-
-var STEPS=[
-  {pend:null,    title:'',                               body:'Four competencies. One shared structure. Click anywhere to set the framework in motion.'},
-  {pend:'del',   title:'Delegation.',                    body:'Should AI be involved at all? And how much? The outer loop opens.'},
-  {pend:'dil',   title:'Diligence.',                     body:'What is your professional responsibility here? Before a single prompt — the outer loop is set.'},
-  {pend:'des',   title:'Description.',                   body:'Now you brief AI. With precision. The inner loop begins.'},
-  {pend:'dsc',   title:'Discernment.',                   body:'Evaluate what comes back. Not right? Describe again. All four are in motion.'},
-  {pend:null,    title:'Watch.',                         body:'The framework is finding its resonance. This is what it feels like when the practice runs on its own.'},
-  {pend:null,    title:'Diligence, once more.',          body:'Before the output leaves your hands — your sign-off. The outer loop closes. The work is yours.', highlight:'dil'},
-  {pend:null,    title:'Four competencies in resonance.',body:'Not steps — a living system, self-sustaining. This is what it looks like when all four work together. Now try it on something real.'},
-];
-
-var step=0;
-var dilHighlight=0, dilHighlightTgt=0;
-
-function bobPos(id){
-  var p=pends[id];
-  var L=p.Lf*(H-barY);
-  return{x:p.x0f*W + L*Math.sin(p.theta), y:barY + L*Math.cos(p.theta)};
-}
-
-function activate(id){
-  var p=pends[id];
-  p.theta=START_THETA[id];
-  p.omega=0;
-  p.active=true;
-  p.trail=[];
-}
-
-function setStep(s){
-  step=s;
-  var st=STEPS[s];
-  if(st.pend) activate(st.pend);
-  dilHighlightTgt=st.highlight==='dil'?1:0;
-  fadeText(st);
-  buildDots();
-  var btn=document.getElementById('nextBtn');
-  if(s>=STEPS.length-1){btn.textContent='Start over';btn.className='nav-btn';}
-  else{btn.textContent=s===0?'Begin \u2192':'Continue \u2192';btn.className='nav-btn primary';}
-}
-
-function fadeText(st){
-  var el=document.getElementById('stepText');
-  el.style.opacity='0';
-  setTimeout(function(){
-    document.getElementById('stepTitle').textContent=st.title||'\u00a0';
-    document.getElementById('stepBody').textContent=st.body;
-    el.style.opacity='1';
-  },190);
-}
-
-function buildDots(){
-  var dc=document.getElementById('dots');
-  dc.innerHTML='';
-  for(var i=0;i<STEPS.length;i++){
-    var d=document.createElement('div');
-    d.className='dot'+(i===step?' active':(i<step?' done':''));
-    dc.appendChild(d);
-  }
-}
-
-function advance(){setStep(step<STEPS.length-1?step+1:0);}
+var W,H,BAR_Y,PX,LL,RAD,SP,GOL;
 
 function resize(){
-  dpr=window.devicePixelRatio||1;
-  var r=wrap.getBoundingClientRect();
-  W=r.width; H=Math.round(W*0.66);
-  CV.width=Math.round(W*dpr); CV.height=Math.round(H*dpr);
-  CV.style.width=W+'px'; CV.style.height=H+'px';
-  CTX.setTransform(dpr,0,0,dpr,0,0);
-  barY=H*0.09;
+  W=C.offsetWidth;
+  H=Math.round(W*0.60);
+  C.width=Math.round(W*devicePixelRatio);
+  C.height=Math.round(H*devicePixelRatio);
+  C.style.height=H+'px';
+  CTX.setTransform(1,0,0,1,0,0);
+  CTX.scale(devicePixelRatio,devicePixelRatio);
+  RAD=Math.max(20,Math.round(W*0.042));
+  SP=RAD*2+2;
+  LL=H*0.55;
+  BAR_Y=H*0.10;
+  GOL=980/LL;
+  var s0=W/2-SP*1.5;
+  PX=[s0,s0+SP,s0+SP*2,s0+SP*3];
 }
+
+var BALLS=[
+  {t:0,o:0,rm:false,name:'Delegation', sub:'Ethical Focus',dark:true},
+  {t:0,o:0,rm:false,name:'Diligence',  sub:'Ethical Focus',dark:true},
+  {t:0,o:0,rm:false,name:'Description',sub:'Quality Focus',dark:false},
+  {t:0,o:0,rm:false,name:'Discernment',sub:'Quality Focus',dark:false},
+];
+
+var DAMP=0.006,SUBS=8;
+var drag=-1,removeMode=false;
+var hasSwung=false,gapShown=false,restored=false;
+var capTimer=null;
+var lastT=performance.now();
+
+function bx(i){return PX[i]+LL*Math.sin(BALLS[i].t);}
+function by(i){return BAR_Y+LL*Math.cos(BALLS[i].t);}
 
 function physics(dt){
-  var sub_dt=dt/SUBSTEPS;
-  for(var s=0;s<SUBSTEPS;s++){
-    var th={}, om={};
-    ORDER.forEach(function(id){th[id]=pends[id].theta; om[id]=pends[id].omega;});
-
-    ORDER.forEach(function(id){
-      var p=pends[id];
-      if(!p.active) return;
-      var a=-p.w0sq*th[id] - DAMP*om[id];
-      // Within-loop pair coupling
-      if(id==='del'&&pends.dil.active) a+=K_PAIR*(th.dil-th.del);
-      if(id==='dil'&&pends.del.active) a+=K_PAIR*(th.del-th.dil);
-      if(id==='des'&&pends.dsc.active) a+=K_PAIR*(th.dsc-th.des);
-      if(id==='dsc'&&pends.des.active) a+=K_PAIR*(th.des-th.dsc);
-      // Cross-loop coupling (shared professional structure)
-      if(id==='del'&&pends.des.active) a+=K_CROSS*(th.des-th.del);
-      if(id==='des'&&pends.del.active) a+=K_CROSS*(th.del-th.des);
-      if(id==='dil'&&pends.dsc.active) a+=K_CROSS*(th.dsc-th.dil);
-      if(id==='dsc'&&pends.dil.active) a+=K_CROSS*(th.dil-th.dsc);
-      p.omega+=a*sub_dt;
-      p.theta+=p.omega*sub_dt;
-    });
+  var sub_dt=dt/SUBS;
+  for(var s=0;s<SUBS;s++){
+    for(var i=0;i<4;i++){
+      if(BALLS[i].rm||drag===i) continue;
+      var a=-GOL*Math.sin(BALLS[i].t)-DAMP*BALLS[i].o;
+      BALLS[i].o+=a*sub_dt;
+      BALLS[i].t+=BALLS[i].o*sub_dt;
+    }
+    // 3 passes for chain collision propagation
+    for(var pass=0;pass<3;pass++){
+      for(var i=0;i<3;i++){
+        if(BALLS[i].rm||BALLS[i+1].rm) continue;
+        var xi=bx(i),xi1=bx(i+1);
+        var gap=xi1-xi-2*RAD;
+        if(gap<0){
+          var ci=Math.max(0.1,Math.cos(BALLS[i].t));
+          var ci1=Math.max(0.1,Math.cos(BALLS[i+1].t));
+          var vi=LL*BALLS[i].o*ci;
+          var vi1=LL*BALLS[i+1].o*ci1;
+          if(vi>vi1){
+            BALLS[i].o=vi1/LL/ci;
+            BALLS[i+1].o=vi/LL/ci1;
+            var half=-gap*0.5;
+            BALLS[i].t-=half/LL;
+            BALLS[i+1].t+=half/LL;
+          }
+        }
+      }
+    }
   }
 }
 
-function render(ts){
-  raf=requestAnimationFrame(render);
-  if(!lastT){lastT=ts;}
-  var dt=Math.min((ts-lastT)/1000, 0.04);
-  lastT=ts;
+function rrect(x,y,w,h,r){
+  CTX.beginPath();
+  CTX.moveTo(x+r,y);
+  CTX.lineTo(x+w-r,y);
+  CTX.quadraticCurveTo(x+w,y,x+w,y+r);
+  CTX.lineTo(x+w,y+h-r);
+  CTX.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+  CTX.lineTo(x+r,y+h);
+  CTX.quadraticCurveTo(x,y+h,x,y+h-r);
+  CTX.lineTo(x,y+r);
+  CTX.quadraticCurveTo(x,y,x+r,y);
+  CTX.closePath();
+}
 
-  if(W===0){resize(); return;}
-
-  physics(dt);
-
-  // Lerp glow values
-  ORDER.forEach(function(id){
-    var p=pends[id];
-    var tgt=p.active?1:0;
-    p.glow+=(tgt-p.glow)*0.06;
-  });
-  dilHighlight+=(dilHighlightTgt-dilHighlight)*0.04;
-
+function draw(){
   CTX.clearRect(0,0,W,H);
 
-  var TRAIL=52, BOB_R_OUT=Math.max(13,Math.min(20,W*0.030));
-  var BOB_R_IN =Math.max(10,Math.min(16,W*0.023));
+  // Bar
+  var barX=PX[0]-RAD-2;
+  var barW=PX[3]-PX[0]+RAD*2+4;
+  CTX.fillStyle='rgba(20,20,19,0.82)';
+  rrect(barX,BAR_Y-6,barW,12,4);
+  CTX.fill();
 
-  // Draw bar
-  CTX.beginPath(); CTX.moveTo(W*0.06,barY); CTX.lineTo(W*0.94,barY);
-  CTX.strokeStyle='rgba(20,20,19,0.22)'; CTX.lineWidth=1.5; CTX.stroke();
-
-  // Subtle bracket lines connecting coupled pairs (appears when both active)
-  var outerBothActive=pends.del.active&&pends.dil.active;
-  var innerBothActive=pends.des.active&&pends.dsc.active;
-  var bracketAlpha=0;
-
-  if(outerBothActive){
-    bracketAlpha=Math.min(pends.del.glow,pends.dil.glow)*0.35;
-    CTX.beginPath();
-    CTX.moveTo(pends.del.x0f*W+4, barY+6);
-    CTX.lineTo(pends.dil.x0f*W-4, barY+6);
-    CTX.strokeStyle='rgba(20,20,19,'+bracketAlpha+')';
-    CTX.lineWidth=0.5; CTX.setLineDash([3,5]); CTX.stroke(); CTX.setLineDash([]);
-  }
-  if(innerBothActive){
-    bracketAlpha=Math.min(pends.des.glow,pends.dsc.glow)*0.45;
-    CTX.beginPath();
-    CTX.moveTo(pends.des.x0f*W+2, barY+10);
-    CTX.lineTo(pends.dsc.x0f*W-2, barY+10);
-    CTX.strokeStyle='rgba(217,119,87,'+bracketAlpha+')';
-    CTX.lineWidth=0.5; CTX.setLineDash([3,5]); CTX.stroke(); CTX.setLineDash([]);
-  }
-
-  // Draw each pendulum
-  ORDER.forEach(function(id){
-    var p=pends[id];
-    var r=p.rgb;
-    var pos=bobPos(id);
-    var bR=p.w0sq===W0SQ_OUT?BOB_R_OUT:BOB_R_IN;
-    var g=p.glow;
-
-    // Add to trail
-    if(p.active){
-      p.trail.push({x:pos.x,y:pos.y});
-      if(p.trail.length>TRAIL) p.trail.shift();
-    }
-
-    // Trail
-    for(var i=1;i<p.trail.length;i++){
-      var tf=(i/p.trail.length);
-      var ta=tf*tf*0.55*g;
-      CTX.beginPath();
-      CTX.moveTo(p.trail[i-1].x,p.trail[i-1].y);
-      CTX.lineTo(p.trail[i].x,p.trail[i].y);
-      CTX.strokeStyle='rgba('+r[0]+','+r[1]+','+r[2]+','+ta+')';
-      CTX.lineWidth=1.5*tf;
-      CTX.stroke();
-    }
+  for(var i=0;i<4;i++){
+    var b=BALLS[i];
+    var bbx=bx(i),bby=by(i);
 
     // String
     CTX.beginPath();
-    CTX.moveTo(p.x0f*W,barY);
-    CTX.lineTo(pos.x,pos.y);
-    CTX.strokeStyle='rgba('+r[0]+','+r[1]+','+r[2]+','+(0.15+g*0.40)+')';
-    CTX.lineWidth=0.5+g*0.5;
+    CTX.moveTo(PX[i],BAR_Y);
+    CTX.lineTo(bbx,bby);
+    if(b.rm){
+      CTX.setLineDash([5,4]);
+      CTX.strokeStyle='rgba(20,20,19,0.18)';
+    } else {
+      CTX.setLineDash([]);
+      CTX.strokeStyle='rgba(20,20,19,0.32)';
+    }
+    CTX.lineWidth=1;
     CTX.stroke();
+    CTX.setLineDash([]);
 
-    // Diligence highlight ring (step 6 "again" pulse)
-    if(id==='dil'&&dilHighlight>0.02){
-      var hp=0.5+0.5*Math.sin(Date.now()*0.005);
-      CTX.beginPath();
-      CTX.arc(pos.x,pos.y,bR+4+hp*5,0,Math.PI*2);
-      CTX.strokeStyle='rgba('+r[0]+','+r[1]+','+r[2]+','+dilHighlight*0.55*hp+')';
-      CTX.lineWidth=1.5; CTX.stroke();
-      CTX.beginPath();
-      CTX.arc(pos.x,pos.y,bR+10+hp*8,0,Math.PI*2);
-      CTX.strokeStyle='rgba('+r[0]+','+r[1]+','+r[2]+','+dilHighlight*0.22*hp+')';
-      CTX.lineWidth=1; CTX.stroke();
+    // Ball
+    CTX.beginPath();
+    CTX.arc(bbx,bby,RAD,0,Math.PI*2);
+    if(b.rm){
+      CTX.fillStyle='rgba(20,20,19,0.04)';
+      CTX.fill();
+      CTX.strokeStyle='rgba(20,20,19,0.22)';
+      CTX.lineWidth=1;
+      CTX.stroke();
+    } else {
+      CTX.fillStyle=b.dark?'rgba(20,20,19,0.88)':'rgba(217,119,87,0.92)';
+      CTX.fill();
+      // Label inside ball
+      var sz=Math.max(9,Math.round(RAD*0.44));
+      var label=RAD>24?b.name.substring(0,3):b.name[0];
+      CTX.fillStyle='rgba(255,255,255,0.92)';
+      CTX.font='600 '+sz+'px "DM Sans"';
+      CTX.textAlign='center';
+      CTX.textBaseline='middle';
+      CTX.fillText(label,bbx,bby);
     }
 
-    // Glow halo
-    if(g>0.04){
-      var spd=Math.abs(p.omega);
-      var hR=bR+3+spd*8*g;
-      var grd=CTX.createRadialGradient(pos.x,pos.y,bR*0.5,pos.x,pos.y,hR);
-      grd.addColorStop(0,'rgba('+r[0]+','+r[1]+','+r[2]+','+(g*0.30)+')');
-      grd.addColorStop(1,'rgba('+r[0]+','+r[1]+','+r[2]+',0)');
-      CTX.beginPath(); CTX.arc(pos.x,pos.y,hR,0,Math.PI*2);
-      CTX.fillStyle=grd; CTX.fill();
-    }
-
-    // Bob
-    CTX.beginPath(); CTX.arc(pos.x,pos.y,bR,0,Math.PI*2);
-    CTX.fillStyle='rgba('+r[0]+','+r[1]+','+r[2]+','+(0.08+g*0.82)+')';
-    CTX.fill();
-    CTX.strokeStyle='rgba('+r[0]+','+r[1]+','+r[2]+','+(0.22+g*0.60)+')';
-    CTX.lineWidth=0.5+g*0.5; CTX.stroke();
-
-    // Pivot dot
-    CTX.beginPath(); CTX.arc(p.x0f*W,barY,2,0,Math.PI*2);
-    CTX.fillStyle='rgba('+r[0]+','+r[1]+','+r[2]+','+(0.18+g*0.45)+')'; CTX.fill();
-
-    // Label below bob (anchored to pivot, not bob, for readability)
-    var labelY=barY+(p.Lf*(H-barY))+bR+14;
-    var labelAlpha=0.22+g*0.68;
-    CTX.textAlign='center'; CTX.textBaseline='top';
-    CTX.font='600 12px "DM Sans",Arial,sans-serif';
-    CTX.fillStyle='rgba('+r[0]+','+r[1]+','+r[2]+','+labelAlpha+')';
-    CTX.fillText(p.name, p.x0f*W, labelY);
-    CTX.font='400 9.5px "DM Sans",Arial,sans-serif';
-    CTX.fillStyle='rgba('+r[0]+','+r[1]+','+r[2]+','+(labelAlpha*0.55)+')';
-    CTX.fillText(p.sub, p.x0f*W, labelY+14);
-  });
+    // Name label below — anchored to pivot x for stability while swinging
+    var labelY=BAR_Y+LL+RAD+8;
+    CTX.textAlign='center';
+    CTX.textBaseline='top';
+    CTX.font='500 11px "DM Sans"';
+    CTX.fillStyle=b.rm?'rgba(20,20,19,0.22)':'rgba(20,20,19,0.78)';
+    CTX.fillText(b.name,PX[i],labelY);
+    CTX.font='400 10px "DM Sans"';
+    CTX.fillStyle=b.rm?'rgba(20,20,19,0.14)':'rgba(20,20,19,0.42)';
+    CTX.fillText(b.sub,PX[i],labelY+14);
+  }
 }
 
-// Init
-resize();
-window.addEventListener('resize',function(){resize();});
-buildDots();
-requestAnimationFrame(render);
+function setCaption(text){
+  if(capTimer) clearTimeout(capTimer);
+  capEl.classList.remove('show');
+  capTimer=setTimeout(function(){
+    capEl.textContent=text;
+    capEl.classList.add('show');
+  },280);
+}
 
-// Nav
-document.getElementById('nextBtn').addEventListener('click',function(e){e.stopPropagation();advance();});
-document.getElementById('fieldWrap').addEventListener('click',advance);
-document.addEventListener('keydown',function(e){
-  if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();advance();}
-  if(e.key==='ArrowLeft'){e.preventDefault();if(step>0)setStep(step-1);}
-});
+function getPos(e){
+  var r=C.getBoundingClientRect();
+  var src=e.touches?e.touches[0]:e;
+  return {x:(src.clientX-r.left),y:(src.clientY-r.top)};
+}
+
+function onDown(e){
+  if(e.cancelable) e.preventDefault();
+  var m=getPos(e);
+  for(var i=0;i<4;i++){
+    var dx=m.x-bx(i),dy=m.y-by(i);
+    if(Math.sqrt(dx*dx+dy*dy)<=RAD+8){
+      if(removeMode){
+        BALLS[i].rm=!BALLS[i].rm;
+        var anyRemoved=BALLS.some(function(b){return b.rm;});
+        if(anyRemoved){
+          var names=BALLS.filter(function(b){return b.rm;}).map(function(b){return b.name;});
+          gapShown=true;
+          setCaption('Without '+names.join(' or ')+', the chain breaks here. All four are essential.');
+          hintEl.textContent='Pull any ball to see the gap';
+        } else {
+          restored=true;
+          setCaption('Four Ds. One unbroken practice. Now make it yours.');
+          hintEl.textContent='';
+        }
+      } else {
+        drag=i;
+        BALLS[i].o=0;
+        C.style.cursor='grabbing';
+      }
+      return;
+    }
+  }
+}
+
+function onMove(e){
+  if(drag<0) return;
+  if(e.cancelable) e.preventDefault();
+  var m=getPos(e);
+  var theta=Math.atan2(m.x-PX[drag],m.y-BAR_Y);
+  BALLS[drag].t=Math.max(-0.45,Math.min(0.45,theta));
+  BALLS[drag].o=0;
+}
+
+function onUp(){
+  if(drag>=0){
+    if(!hasSwung&&Math.abs(BALLS[drag].t)>0.05){
+      hasSwung=true;
+      if(!gapShown&&!restored){
+        setCaption('Each D passes energy to the next \u2014 this is the 4D chain reaction.');
+        hintEl.textContent='Try pulling from the other end';
+      }
+    }
+    drag=-1;
+    C.style.cursor=removeMode?'pointer':'default';
+  }
+}
+
+C.addEventListener('mousedown',onDown);
+C.addEventListener('mousemove',onMove);
+C.addEventListener('mouseup',onUp);
+C.addEventListener('mouseleave',onUp);
+C.addEventListener('touchstart',onDown,{passive:false});
+C.addEventListener('touchmove',onMove,{passive:false});
+C.addEventListener('touchend',onUp);
+
+function autoDemo(){
+  resetAll(true);
+  setTimeout(function(){
+    BALLS[0].t=-0.65;
+    BALLS[0].o=0;
+    hasSwung=true;
+    setCaption('Each D passes energy to the next \u2014 this is the 4D chain reaction.');
+    hintEl.textContent='Pull any ball to keep exploring';
+  },80);
+}
+
+function toggleRemoveMode(){
+  removeMode=!removeMode;
+  btnRemove.classList.toggle('on',removeMode);
+  C.style.cursor=removeMode?'pointer':'default';
+  if(removeMode){
+    hintEl.textContent='Click any ball to remove it from the chain';
+  } else {
+    var anyRemoved=BALLS.some(function(b){return b.rm;});
+    hintEl.textContent=anyRemoved?'Pull any ball to see the gap':'Pull any ball back and release';
+  }
+}
+
+function resetAll(silent){
+  BALLS.forEach(function(b){b.t=0;b.o=0;b.rm=false;});
+  removeMode=false;
+  drag=-1;
+  hasSwung=false;
+  gapShown=false;
+  restored=false;
+  btnRemove.classList.remove('on');
+  C.style.cursor='default';
+  if(!silent){
+    if(capTimer) clearTimeout(capTimer);
+    capEl.classList.remove('show');
+    setTimeout(function(){capEl.textContent='';},500);
+    hintEl.textContent='Pull any ball back and release';
+  }
+}
+
+function loop(ts){
+  var dt=Math.min((ts-lastT)/1000,0.033);
+  lastT=ts;
+  if(drag<0) physics(dt);
+  draw();
+  requestAnimationFrame(loop);
+}
+
+window.addEventListener('resize',function(){resize();draw();});
+resize();
+requestAnimationFrame(function(ts){lastT=ts;loop(ts);});
 </script>
 </body>
 </html>
