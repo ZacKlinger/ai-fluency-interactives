@@ -6,271 +6,282 @@
 <title>The 4D Framework - Module 4 - AI Fluency for K-12 Educators</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@300;400;600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,300;8..60,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --bg:#faf9f5;--surface:#f0eee6;--dark:#141413;
-  --muted:rgba(20,20,19,0.42);--border:rgba(20,20,19,0.1);
-  --coral:#d97757;--blue:#6a9bcc;--green:#3d6b4f;--amber:#9a6e2a;
-  --sans:'DM Sans',Arial,sans-serif;--serif:'Source Serif 4',Georgia,serif
-}
+:root{--bg:#faf9f5;--surface:#f0eee6;--dark:#141413;--muted:rgba(20,20,19,0.42);--border:rgba(20,20,19,0.1);--coral:#d97757;--blue:#6a9bcc;--green:#3d6b4f;--amber:#9a6e2a;--sans:'DM Sans',Arial,sans-serif;--serif:'Source Serif 4',Georgia,serif}
 html,body{background:var(--bg);font-family:var(--sans);color:var(--dark)}
 
 .track{position:relative;height:260vh}
-.stage{
-  position:sticky;top:0;height:100vh;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  padding:32px 24px
-}
+.stage{position:sticky;top:0;height:100vh;display:flex;align-items:center;justify-content:center;padding:2rem 1rem}
 
-.eyebrow{font-size:10px;font-weight:500;letter-spacing:0.16em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;text-align:center}
-.headline{font-family:var(--serif);font-size:clamp(16px,2.2vw,21px);font-weight:400;color:var(--dark);text-align:center;margin-bottom:32px;line-height:1.5}
+/* Card — matches module-01 / module-06 */
+.card{width:100%;max-width:680px;background:var(--bg);border:0.5px solid var(--border);border-radius:6px;overflow:hidden}
+.status-badge{position:absolute;top:0;right:0;font-size:9.5px;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;background:var(--surface);border:0.5px solid var(--border);color:var(--muted);padding:4px 12px;border-radius:0 6px 0 4px}
 
-/* Diagram — fixed proportions matching full viewBox aspect ratio */
-.diagram-wrap{position:relative;width:min(560px,92vw);aspect-ratio:560/430}
-.diagram-wrap svg{width:100%;height:100%;display:block}
+/* Header */
+.top-bar{padding:1.5rem 2rem 0;position:relative}
+.eyebrow{font-size:10px;font-weight:500;letter-spacing:0.16em;text-transform:uppercase;color:var(--muted)}
+.title-area{padding:0.6rem 2rem 0.2rem}
+.headline{font-family:var(--sans);font-size:clamp(19px,2.8vw,24px);font-weight:600;color:var(--dark);line-height:1.25;margin-bottom:0.2rem;letter-spacing:-0.02em}
+.subhead{font-size:12.5px;color:var(--muted);line-height:1.5}
 
-/* Arc animations and transitions */
+/* Field — full-width, surface background, bordered like module-06 */
+.field-wrap{background:var(--surface);border-top:0.5px solid var(--border);border-bottom:0.5px solid var(--border);display:flex;justify-content:center;padding:1.5rem 0;overflow:hidden;position:relative}
+.diagram{position:relative;width:min(500px,calc(100% - 3rem));aspect-ratio:560/430}
+.diagram svg{width:100%;height:100%;display:block}
+
+/* Arc animation */
 @keyframes flow{to{stroke-dashoffset:-300}}
-.arc{animation:flow 9s linear infinite;transition:stroke 0.2s}
+.arc{animation:flow 9s linear infinite;transition:stroke 0.25s}
 
-/* Node hover */
+/* Node hover — pill fill brightens */
 .nd{cursor:pointer}
-.nd rect{transition:fill-opacity 0.2s}
-.nd:hover rect{fill-opacity:0.2!important}
+.nd .pf{fill-opacity:0.07;transition:fill-opacity 0.22s}
+.nd:hover .pf{fill-opacity:0.18}
 
-/* Tooltip */
-.tip{
-  position:absolute;background:var(--dark);color:#faf9f5;
-  border-radius:4px;padding:13px 17px;font-size:13px;line-height:1.55;
-  max-width:220px;pointer-events:none;opacity:0;transition:opacity 0.14s;z-index:20
-}
-.tip.on{opacity:1}
-.t-name{font-weight:600;font-size:10.5px;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:5px}
-.t-link{font-size:11px;color:rgba(250,249,245,0.5);margin-top:8px;padding-top:8px;border-top:0.5px solid rgba(250,249,245,0.14)}
+/* Info panel — 2-col like module-01 */
+.info-panel{padding:1.1rem 2rem 1.4rem;min-height:96px;transition:opacity 0.18s}
+.info-panel.dim{opacity:0}
+.info-grid{display:grid;grid-template-columns:1fr 1.65fr;gap:1.75rem;align-items:start}
+.info-left{border-right:0.5px solid var(--border);padding-right:1.75rem}
+.ilabel{font-size:10px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;display:block;margin-bottom:0.3rem;transition:color 0.25s}
+.iname{font-size:15px;font-weight:600;color:var(--dark);line-height:1.3;margin-bottom:0.55rem;letter-spacing:-0.01em}
+.iconnect{display:flex;gap:5px;align-items:flex-start}
+.iarrow{font-size:11px;color:var(--muted);flex-shrink:0;margin-top:2px}
+.ilink{font-size:11.5px;color:var(--muted);line-height:1.5}
+.iinsight{font-family:var(--serif);font-size:14px;font-weight:400;color:var(--dark);line-height:1.75}
 
-/* Captions */
-.caption-area{position:relative;height:52px;width:100%;display:flex;align-items:center;justify-content:center;margin-top:20px}
-.caption{
-  position:absolute;font-family:var(--serif);font-size:15px;line-height:1.6;
-  color:var(--dark);text-align:center;max-width:460px;
-  opacity:0;transform:translateY(5px);transition:opacity 0.5s,transform 0.5s
-}
-.caption.show{opacity:1;transform:translateY(0)}
+/* Foot */
+.foot{text-align:center;font-size:11px;font-weight:400;color:var(--muted);padding:0.55rem 0 0.8rem;border-top:0.5px solid var(--border);background:var(--surface);letter-spacing:0.02em;transition:color 0.4s}
 
-/* Scroll cue */
-.cue{
-  position:absolute;bottom:32px;left:50%;transform:translateX(-50%);
-  display:flex;flex-direction:column;align-items:center;gap:8px;
-  font-size:10px;letter-spacing:0.1em;text-transform:uppercase;
-  color:var(--muted);transition:opacity 0.5s;white-space:nowrap
+@media(max-width:500px){
+  .info-grid{grid-template-columns:1fr}
+  .info-left{border-right:none;border-bottom:0.5px solid var(--border);padding-right:0;padding-bottom:0.75rem;margin-bottom:0.75rem}
 }
-.cue-line{width:1px;height:26px;background:var(--muted);opacity:0.45;transform-origin:top;animation:drip 2s ease-in-out infinite}
-@keyframes drip{0%,100%{transform:scaleY(0.3);opacity:0.15}55%{transform:scaleY(1);opacity:0.5}}
 </style>
 </head>
 <body>
 
 <div class="track" id="track">
   <div class="stage">
-    <div class="eyebrow">Module 4 -- The 4D Framework</div>
-    <div class="headline">Four behaviors. Two loops.<br>One complete approach to working with AI.</div>
-
-    <div class="diagram-wrap" id="wrap">
-      <!-- viewBox starts zoomed into inner loop; scroll pulls it out to full view -->
-      <svg id="svg" viewBox="80 57 400 307" preserveAspectRatio="xMidYMid meet" style="overflow:visible">
-        <defs>
-          <marker id="arr" markerWidth="9" markerHeight="9" refX="6.5" refY="4.5" orient="auto">
-            <path d="M2,1.5 L7,4.5 L2,7.5"
-              fill="none" stroke="rgba(20,20,19,0.38)"
-              stroke-width="1.3" stroke-linejoin="round" stroke-linecap="round"/>
-          </marker>
-        </defs>
-
-        <!-- OUTER GROUP -- hidden until scroll pulls back -->
-        <g id="og" style="opacity:0">
-          <ellipse id="outerEllipse" cx="280" cy="210" rx="236" ry="170"
-            fill="none" stroke="rgba(20,20,19,0.13)" stroke-width="0.5"
-            style="transition:stroke 0.2s"/>
-
-          <!-- Delegation (top) -->
-          <g id="nDel" class="nd" transform="translate(280,40)">
-            <rect x="-66" y="-15" width="132" height="30" rx="15"
-              fill="#9a6e2a" fill-opacity="0.09" stroke="#9a6e2a" stroke-width="0.5"/>
-            <text text-anchor="middle" dominant-baseline="middle"
-              font-family="DM Sans,sans-serif" font-size="12" font-weight="600"
-              fill="#9a6e2a" letter-spacing="0.03em">Delegation</text>
-          </g>
-
-          <!-- Diligence (bottom) -->
-          <g id="nDil" class="nd" transform="translate(280,380)">
-            <rect x="-66" y="-15" width="132" height="30" rx="15"
-              fill="#3d6b4f" fill-opacity="0.09" stroke="#3d6b4f" stroke-width="0.5"/>
-            <text text-anchor="middle" dominant-baseline="middle"
-              font-family="DM Sans,sans-serif" font-size="12" font-weight="600"
-              fill="#3d6b4f" letter-spacing="0.03em">Diligence</text>
-          </g>
-        </g>
-
-        <!-- INNER LOOP -- animated dashed arcs -->
-        <path id="arcTop" class="arc"
-          d="M 154,210 C 154,106 406,106 406,210"
-          fill="none" stroke="rgba(20,20,19,0.18)" stroke-width="1.5"
-          stroke-dasharray="7 5" marker-end="url(#arr)"/>
-
-        <path id="arcBot" class="arc"
-          d="M 406,210 C 406,314 154,314 154,210"
-          fill="none" stroke="rgba(20,20,19,0.18)" stroke-width="1.5"
-          stroke-dasharray="7 5" marker-end="url(#arr)"/>
-
-        <!-- Description (left) -->
-        <g id="nDes" class="nd" transform="translate(154,210)">
-          <rect x="-66" y="-15" width="132" height="30" rx="15"
-            fill="#d97757" fill-opacity="0.09" stroke="#d97757" stroke-width="0.5"/>
-          <text text-anchor="middle" dominant-baseline="middle"
-            font-family="DM Sans,sans-serif" font-size="12" font-weight="600"
-            fill="#d97757" letter-spacing="0.03em">Description</text>
-        </g>
-
-        <!-- Discernment (right) -->
-        <g id="nDsc" class="nd" transform="translate(406,210)">
-          <rect x="-66" y="-15" width="132" height="30" rx="15"
-            fill="#6a9bcc" fill-opacity="0.09" stroke="#6a9bcc" stroke-width="0.5"/>
-          <text text-anchor="middle" dominant-baseline="middle"
-            font-family="DM Sans,sans-serif" font-size="12" font-weight="600"
-            fill="#6a9bcc" letter-spacing="0.03em">Discernment</text>
-        </g>
-
-      </svg>
-
-      <!-- Tooltip -->
-      <div class="tip" id="tip">
-        <div class="t-name" id="tName"></div>
-        <div id="tBody"></div>
-        <div class="t-link" id="tLink"></div>
+    <div class="card">
+      <div class="top-bar">
+        <span class="eyebrow">AI Fluency for K&ndash;12 Educators &nbsp;&middot;&nbsp; Module 4</span>
+        <span class="status-badge">Interactive</span>
       </div>
-    </div>
+      <div class="title-area">
+        <h1 class="headline">Four behaviors. Two loops.</h1>
+        <p class="subhead">Start with what you do every day &mdash; then see what surrounds it.</p>
+      </div>
 
-    <!-- Phase captions -->
-    <div class="caption-area">
-      <p class="caption show" id="cap1">Every AI interaction is a loop. Describe. Evaluate. Repeat.</p>
-      <p class="caption" id="cap2">The outer loop frames every decision you make as a professional.</p>
-    </div>
+      <!-- Diagram field -->
+      <div class="field-wrap">
+        <div class="diagram" id="wrap">
+          <svg id="svg" viewBox="80 57 400 307" preserveAspectRatio="xMidYMid meet" style="overflow:visible">
+            <defs>
+              <marker id="arr" markerWidth="8" markerHeight="8" refX="5.5" refY="4" orient="auto">
+                <path d="M1.5,1.5 L6,4 L1.5,6.5"
+                  fill="none" stroke="rgba(20,20,19,0.28)"
+                  stroke-width="1.2" stroke-linejoin="round" stroke-linecap="round"/>
+              </marker>
+            </defs>
 
-    <div class="cue" id="cue">
-      <span>Scroll</span>
-      <div class="cue-line"></div>
+            <!-- Outer group — hidden until scroll reveals it -->
+            <g id="og" style="opacity:0">
+              <ellipse id="outerE" cx="280" cy="210" rx="236" ry="170"
+                fill="none" stroke="rgba(20,20,19,0.1)" stroke-width="0.5"
+                style="transition:stroke 0.25s"/>
+
+              <!-- Delegation -->
+              <g id="nDel" class="nd" transform="translate(280,40)">
+                <rect x="-70" y="-17" width="140" height="34" rx="17" fill="#f0eee6"/>
+                <rect class="pf" x="-70" y="-17" width="140" height="34" rx="17" fill="#9a6e2a"/>
+                <rect x="-70" y="-17" width="140" height="34" rx="17"
+                  fill="none" stroke="#9a6e2a" stroke-width="0.5"/>
+                <text text-anchor="middle" dominant-baseline="middle"
+                  font-family="DM Sans,sans-serif" font-size="12" font-weight="600"
+                  fill="#9a6e2a" letter-spacing="0.04em">Delegation</text>
+              </g>
+
+              <!-- Diligence -->
+              <g id="nDil" class="nd" transform="translate(280,380)">
+                <rect x="-70" y="-17" width="140" height="34" rx="17" fill="#f0eee6"/>
+                <rect class="pf" x="-70" y="-17" width="140" height="34" rx="17" fill="#3d6b4f"/>
+                <rect x="-70" y="-17" width="140" height="34" rx="17"
+                  fill="none" stroke="#3d6b4f" stroke-width="0.5"/>
+                <text text-anchor="middle" dominant-baseline="middle"
+                  font-family="DM Sans,sans-serif" font-size="12" font-weight="600"
+                  fill="#3d6b4f" letter-spacing="0.04em">Diligence</text>
+              </g>
+            </g>
+
+            <!-- Inner arcs (animated, drawn before nodes so nodes sit on top) -->
+            <path id="arcTop" class="arc"
+              d="M 154,210 C 154,106 406,106 406,210"
+              fill="none" stroke="rgba(20,20,19,0.14)" stroke-width="1"
+              stroke-dasharray="4 6" marker-end="url(#arr)"/>
+            <path id="arcBot" class="arc"
+              d="M 406,210 C 406,314 154,314 154,210"
+              fill="none" stroke="rgba(20,20,19,0.14)" stroke-width="1"
+              stroke-dasharray="4 6" marker-end="url(#arr)"/>
+
+            <!-- Description (opaque bg rect blocks arcs from bleeding through) -->
+            <g id="nDes" class="nd" transform="translate(154,210)">
+              <rect x="-70" y="-17" width="140" height="34" rx="17" fill="#f0eee6"/>
+              <rect class="pf" x="-70" y="-17" width="140" height="34" rx="17" fill="#d97757"/>
+              <rect x="-70" y="-17" width="140" height="34" rx="17"
+                fill="none" stroke="#d97757" stroke-width="0.5"/>
+              <text text-anchor="middle" dominant-baseline="middle"
+                font-family="DM Sans,sans-serif" font-size="12" font-weight="600"
+                fill="#d97757" letter-spacing="0.04em">Description</text>
+            </g>
+
+            <!-- Discernment -->
+            <g id="nDsc" class="nd" transform="translate(406,210)">
+              <rect x="-70" y="-17" width="140" height="34" rx="17" fill="#f0eee6"/>
+              <rect class="pf" x="-70" y="-17" width="140" height="34" rx="17" fill="#6a9bcc"/>
+              <rect x="-70" y="-17" width="140" height="34" rx="17"
+                fill="none" stroke="#6a9bcc" stroke-width="0.5"/>
+              <text text-anchor="middle" dominant-baseline="middle"
+                font-family="DM Sans,sans-serif" font-size="12" font-weight="600"
+                fill="#6a9bcc" letter-spacing="0.04em">Discernment</text>
+            </g>
+
+          </svg>
+        </div>
+      </div>
+
+      <!-- Info panel — content updates on node hover -->
+      <div class="info-panel" id="infoPanel">
+        <div class="info-grid">
+          <div class="info-left">
+            <span class="ilabel" id="ilabel">Description</span>
+            <div class="iname" id="iname">Tell AI exactly what you need.</div>
+            <div class="iconnect">
+              <span class="iarrow">&#8594;</span>
+              <span class="ilink" id="ilink">Discernment evaluates every output Description produces.</span>
+            </div>
+          </div>
+          <div class="info-right">
+            <p class="iinsight" id="iinsight">Specify the product, process, and performance standard. The more precise you are, the more useful AI becomes.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="foot" id="foot">Hover a node to explore &mdash; then scroll to see the full picture</div>
     </div>
   </div>
 </div>
 
 <script>
-var nodeData = {
+var nodes = {
   nDes: {
-    name: 'Description', color: '#d97757',
-    body: 'Telling AI what you need -- the product, process, and performance standard you have in mind.',
-    link: 'Discernment evaluates what Description produces.',
-    arcs: ['arcTop','arcBot'], arcColor: 'rgba(217,119,87,0.55)'
+    label:'Description', color:'#d97757',
+    name:'Tell AI exactly what you need.',
+    insight:'Specify the product, process, and performance standard. The more precise you are, the more useful AI becomes.',
+    link:'Discernment evaluates every output Description produces.',
+    arcs:['arcTop','arcBot'], ac:'rgba(217,119,87,0.42)'
   },
   nDsc: {
-    name: 'Discernment', color: '#6a9bcc',
-    body: 'Evaluating AI output critically. Accuracy, alignment, and whether it truly serves your goal.',
-    link: 'Informs better Description -- and raises questions for Delegation.',
-    arcs: ['arcTop','arcBot'], arcColor: 'rgba(106,155,204,0.55)'
+    label:'Discernment', color:'#6a9bcc',
+    name:'Evaluate what AI gives back.',
+    insight:'Check for accuracy, alignment, and fit. This is the step most people skip -- and the one that matters most.',
+    link:'Informs better Description -- and surfaces questions for Delegation.',
+    arcs:['arcTop','arcBot'], ac:'rgba(106,155,204,0.42)'
   },
   nDel: {
-    name: 'Delegation', color: '#9a6e2a',
-    body: 'Deciding what to hand off to AI and what to keep. Not every task belongs to AI.',
-    link: 'Decides whether to use Description at all.',
-    arcs: ['outerEllipse'], arcColor: 'rgba(154,110,42,0.4)'
+    label:'Delegation', color:'#9a6e2a',
+    name:'Decide what belongs to AI.',
+    insight:"Not every task should be handed off. Ask: does this serve my students? Does AI genuinely add value here, or am I just offloading?",
+    link:'Determines whether to enter the Description loop at all.',
+    arcs:['outerE'], ac:'rgba(154,110,42,0.35)'
   },
   nDil: {
-    name: 'Diligence', color: '#3d6b4f',
-    body: 'Your professional responsibility. Privacy, accuracy, and transparency stay with you.',
-    link: 'Holds Description and Discernment to a professional standard.',
-    arcs: ['outerEllipse'], arcColor: 'rgba(61,107,79,0.4)'
+    label:'Diligence', color:'#3d6b4f',
+    name:'Own the professional responsibility.',
+    insight:"Privacy, accuracy, and transparency don't transfer to AI. The work is yours. AI assistance does not carry that responsibility.",
+    link:'Holds every Description and Discernment interaction to a professional standard.',
+    arcs:['outerE'], ac:'rgba(61,107,79,0.35)'
   }
 };
 
-var tip   = document.getElementById('tip');
-var tName = document.getElementById('tName');
-var tBody = document.getElementById('tBody');
-var tLink = document.getElementById('tLink');
-var wrap  = document.getElementById('wrap');
+var panel   = document.getElementById('infoPanel');
+var ilabel  = document.getElementById('ilabel');
+var iname   = document.getElementById('iname');
+var iinsight= document.getElementById('iinsight');
+var ilink   = document.getElementById('ilink');
+var foot    = document.getElementById('foot');
+var ft;
+
+function setInfo(id, instant) {
+  var d = nodes[id];
+  if (instant) {
+    ilabel.textContent  = d.label;  ilabel.style.color = d.color;
+    iname.textContent   = d.name;
+    iinsight.textContent= d.insight;
+    ilink.textContent   = d.link;
+    return;
+  }
+  panel.classList.add('dim');
+  clearTimeout(ft);
+  ft = setTimeout(function() {
+    ilabel.textContent  = d.label;  ilabel.style.color = d.color;
+    iname.textContent   = d.name;
+    iinsight.textContent= d.insight;
+    ilink.textContent   = d.link;
+    panel.classList.remove('dim');
+  }, 160);
+}
+
+setInfo('nDes', true);
 
 function resetArcs() {
-  ['arcTop','arcBot','outerEllipse'].forEach(function(id) {
-    var el = document.getElementById(id);
-    if (el) el.style.stroke = '';
+  ['arcTop','arcBot','outerE'].forEach(function(i) {
+    var e = document.getElementById(i);
+    if (e) e.style.stroke = '';
   });
 }
 
-Object.keys(nodeData).forEach(function(id) {
+Object.keys(nodes).forEach(function(id) {
   var el = document.getElementById(id);
-  var d  = nodeData[id];
+  var d  = nodes[id];
   if (!el) return;
-  el.addEventListener('mouseenter', function(e) {
-    tName.textContent = d.name;
-    tName.style.color = d.color;
-    tBody.textContent = d.body;
-    tLink.textContent = d.link;
-    tip.classList.add('on');
-    d.arcs.forEach(function(arcId) {
-      var arc = document.getElementById(arcId);
-      if (arc) arc.style.stroke = d.arcColor;
+  el.addEventListener('mouseenter', function() {
+    setInfo(id);
+    d.arcs.forEach(function(aid) {
+      var a = document.getElementById(aid);
+      if (a) a.style.stroke = d.ac;
     });
-    posTip(e);
   });
-  el.addEventListener('mousemove', posTip);
-  el.addEventListener('mouseleave', function() { tip.classList.remove('on'); resetArcs(); });
+  el.addEventListener('mouseleave', resetArcs);
 });
 
-function posTip(e) {
-  var r = wrap.getBoundingClientRect();
-  var x = e.clientX - r.left + 18;
-  var y = e.clientY - r.top - 14;
-  if (x + 228 > r.width) x = e.clientX - r.left - 236;
-  if (y < 0) y = 4;
-  tip.style.left = x + 'px';
-  tip.style.top  = y + 'px';
-}
-
+// Scroll-driven viewBox zoom
 var track = document.getElementById('track');
 var svg   = document.getElementById('svg');
 var og    = document.getElementById('og');
-var cue   = document.getElementById('cue');
-var cap1  = document.getElementById('cap1');
-var cap2  = document.getElementById('cap2');
+var vbA   = [80,57,400,307];
+var vbB   = [0,0,560,430];
+var fmsgs = [
+  'Hover a node to explore \u2014 then scroll to see the full picture',
+  'The outer loop is coming into view\u2026',
+  'All four Ds visible. Hover any node to explore connections.'
+];
+var lp = -1;
 
-var vbA = [80, 57, 400, 307];
-var vbB = [0,  0,  560, 430];
-
-function ease(t) {
-  return t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t+2,3)/2;
-}
-function lerp(a, b, t) { return a + (b-a)*t; }
-
-var lastPhase = 0;
+function ease(t){ return t<0.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2; }
+function lerp(a,b,t){ return a+(b-a)*t; }
 
 window.addEventListener('scroll', function() {
-  var scrollable = track.offsetHeight - window.innerHeight;
-  var raw = Math.max(0, Math.min(1, -track.getBoundingClientRect().top / scrollable));
-  var p   = ease(raw);
-
-  svg.setAttribute('viewBox', vbA.map(function(a,i){ return lerp(a,vbB[i],p); }).join(' '));
-
-  og.style.opacity = Math.max(0, Math.min(1, (raw - 0.35) / 0.4)).toFixed(3);
-
-  cue.style.opacity = raw < 0.07 ? 1 : 0;
-
-  var phase = raw < 0.12 ? 0 : raw > 0.55 ? 2 : 1;
-  if (phase !== lastPhase) {
-    lastPhase = phase;
-    cap1.classList.toggle('show', phase === 0);
-    cap2.classList.toggle('show', phase === 2);
-  }
-}, { passive: true });
+  var sc = track.offsetHeight - window.innerHeight;
+  var raw= Math.max(0,Math.min(1,-track.getBoundingClientRect().top/sc));
+  var p  = ease(raw);
+  svg.setAttribute('viewBox', vbA.map(function(a,i){return lerp(a,vbB[i],p);}).join(' '));
+  og.style.opacity = Math.max(0,Math.min(1,(raw-0.35)/0.4)).toFixed(3);
+  var ph = raw<0.1?0:raw>0.8?2:1;
+  if (ph!==lp){ lp=ph; foot.textContent=fmsgs[ph]; }
+},{passive:true});
 </script>
 </body>
 </html>
