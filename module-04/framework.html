@@ -9,25 +9,23 @@
 <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,300;8..60,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-:root{--bg:#faf9f5;--surface:#f0eee6;--dark:#141413;--muted:rgba(20,20,19,0.42);--border:rgba(20,20,19,0.1);--coral:#d97757;--blue:#6a9bcc;--green:#3d6b4f;--amber:#9a6e2a;--sans:'DM Sans',Arial,sans-serif;--serif:'Source Serif 4',Georgia,serif}
+:root{--bg:#faf9f5;--surface:#f0eee6;--dark:#141413;--muted:rgba(20,20,19,0.42);--border:rgba(20,20,19,0.1);--coral:#d97757;--sans:'DM Sans',Arial,sans-serif;--serif:'Source Serif 4',Georgia,serif}
 html,body{background:var(--bg);font-family:var(--sans);color:var(--dark)}
 
-.track{position:relative;height:260vh}
+.track{position:relative;height:300vh}
 .stage{position:sticky;top:0;height:100vh;display:flex;align-items:center;justify-content:center;padding:2rem 1rem}
 
-/* Card — matches module-01 / module-06 */
-.card{width:100%;max-width:680px;background:var(--bg);border:0.5px solid var(--border);border-radius:6px;overflow:hidden}
+/* Card */
+.card{width:100%;max-width:680px;background:var(--bg);border:0.5px solid var(--border);border-radius:6px;overflow:hidden;position:relative}
 .status-badge{position:absolute;top:0;right:0;font-size:9.5px;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;background:var(--surface);border:0.5px solid var(--border);color:var(--muted);padding:4px 12px;border-radius:0 6px 0 4px}
-
-/* Header */
-.top-bar{padding:1.5rem 2rem 0;position:relative}
+.top-bar{padding:1.5rem 2rem 0}
 .eyebrow{font-size:10px;font-weight:500;letter-spacing:0.16em;text-transform:uppercase;color:var(--muted)}
 .title-area{padding:0.6rem 2rem 0.2rem}
 .headline{font-family:var(--sans);font-size:clamp(19px,2.8vw,24px);font-weight:600;color:var(--dark);line-height:1.25;margin-bottom:0.2rem;letter-spacing:-0.02em}
 .subhead{font-size:12.5px;color:var(--muted);line-height:1.5}
 
-/* Field — full-width, surface background, bordered like module-06 */
-.field-wrap{background:var(--surface);border-top:0.5px solid var(--border);border-bottom:0.5px solid var(--border);display:flex;justify-content:center;padding:1.5rem 0;overflow:hidden;position:relative}
+/* Field */
+.field-wrap{background:var(--surface);border-top:0.5px solid var(--border);border-bottom:0.5px solid var(--border);display:flex;justify-content:center;padding:1.5rem 0;overflow:hidden}
 .diagram{position:relative;width:min(500px,calc(100% - 3rem));aspect-ratio:560/430}
 .diagram svg{width:100%;height:100%;display:block}
 
@@ -35,29 +33,40 @@ html,body{background:var(--bg);font-family:var(--sans);color:var(--dark)}
 @keyframes flow{to{stroke-dashoffset:-300}}
 .arc{animation:flow 9s linear infinite;transition:stroke 0.25s}
 
-/* Node hover — pill fill brightens */
+/* Node hover — inner nodes dim slightly, outer nodes tint */
 .nd{cursor:pointer}
-.nd .pf{fill-opacity:0.07;transition:fill-opacity 0.22s}
-.nd:hover .pf{fill-opacity:0.18}
+.nd-inner .pf{fill-opacity:1;transition:fill-opacity 0.2s}
+.nd-inner:hover .pf{fill-opacity:0.78}
+.nd-outer .pf{fill-opacity:0.07;transition:fill-opacity 0.2s}
+.nd-outer:hover .pf{fill-opacity:0.18}
 
-/* Info panel — 2-col like module-01 */
-.info-panel{padding:1.1rem 2rem 1.4rem;min-height:96px;transition:opacity 0.18s}
+/* Info panel */
+.info-panel{min-height:98px;transition:opacity 0.18s}
 .info-panel.dim{opacity:0}
-.info-grid{display:grid;grid-template-columns:1fr 1.65fr;gap:1.75rem;align-items:start}
-.info-left{border-right:0.5px solid var(--border);padding-right:1.75rem}
-.ilabel{font-size:10px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;display:block;margin-bottom:0.3rem;transition:color 0.25s}
-.iname{font-size:15px;font-weight:600;color:var(--dark);line-height:1.3;margin-bottom:0.55rem;letter-spacing:-0.01em}
-.iconnect{display:flex;gap:5px;align-items:flex-start}
-.iarrow{font-size:11px;color:var(--muted);flex-shrink:0;margin-top:2px}
-.ilink{font-size:11.5px;color:var(--muted);line-height:1.5}
-.iinsight{font-family:var(--serif);font-size:14px;font-weight:400;color:var(--dark);line-height:1.75}
+
+/* Default view — 2 col */
+.pv-default{padding:1.1rem 2rem 1.4rem;display:grid;grid-template-columns:1fr 1.65fr;gap:1.75rem;align-items:start}
+.pv-left{border-right:0.5px solid var(--border);padding-right:1.75rem}
+.plabel{font-size:10px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:var(--coral);display:block;margin-bottom:0.3rem}
+.pname{font-size:15px;font-weight:600;color:var(--dark);line-height:1.3;margin-bottom:0.55rem;letter-spacing:-0.01em}
+.pconnect{display:flex;gap:5px;align-items:flex-start}
+.parrow{font-size:11px;color:var(--muted);flex-shrink:0;margin-top:2px}
+.plink{font-size:11.5px;color:var(--muted);line-height:1.5}
+.pinsight{font-family:var(--serif);font-size:14px;color:var(--dark);line-height:1.75}
+
+/* Connect view — full width, 2 col items */
+.pv-connect{padding:1.1rem 2rem 1.4rem;display:none}
+.cv-label{font-size:10px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:var(--coral);display:block;margin-bottom:0.65rem}
+.cv-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.4rem}
+.cv-item-title{font-size:12.5px;font-weight:600;color:var(--dark);margin-bottom:0.28rem;letter-spacing:-0.01em}
+.cv-item-body{font-family:var(--serif);font-size:13px;color:var(--muted);line-height:1.65}
 
 /* Foot */
-.foot{text-align:center;font-size:11px;font-weight:400;color:var(--muted);padding:0.55rem 0 0.8rem;border-top:0.5px solid var(--border);background:var(--surface);letter-spacing:0.02em;transition:color 0.4s}
+.foot{text-align:center;font-size:11px;color:var(--muted);padding:0.55rem 0 0.8rem;border-top:0.5px solid var(--border);background:var(--surface);letter-spacing:0.02em;transition:color 0.4s}
 
-@media(max-width:500px){
-  .info-grid{grid-template-columns:1fr}
-  .info-left{border-right:none;border-bottom:0.5px solid var(--border);padding-right:0;padding-bottom:0.75rem;margin-bottom:0.75rem}
+@media(max-width:520px){
+  .pv-default,.cv-grid{grid-template-columns:1fr}
+  .pv-left{border-right:none;border-bottom:0.5px solid var(--border);padding-right:0;padding-bottom:0.75rem;margin-bottom:0.75rem}
 }
 </style>
 </head>
@@ -66,57 +75,78 @@ html,body{background:var(--bg);font-family:var(--sans);color:var(--dark)}
 <div class="track" id="track">
   <div class="stage">
     <div class="card">
+      <span class="status-badge">Interactive</span>
       <div class="top-bar">
         <span class="eyebrow">AI Fluency for K&ndash;12 Educators &nbsp;&middot;&nbsp; Module 4</span>
-        <span class="status-badge">Interactive</span>
       </div>
       <div class="title-area">
         <h1 class="headline">Four behaviors. Two loops.</h1>
         <p class="subhead">Start with what you do every day &mdash; then see what surrounds it.</p>
       </div>
 
-      <!-- Diagram field -->
       <div class="field-wrap">
         <div class="diagram" id="wrap">
           <svg id="svg" viewBox="80 57 400 307" preserveAspectRatio="xMidYMid meet" style="overflow:visible">
             <defs>
               <marker id="arr" markerWidth="8" markerHeight="8" refX="5.5" refY="4" orient="auto">
-                <path d="M1.5,1.5 L6,4 L1.5,6.5"
-                  fill="none" stroke="rgba(20,20,19,0.28)"
-                  stroke-width="1.2" stroke-linejoin="round" stroke-linecap="round"/>
+                <path d="M1.5,1.5 L6,4 L1.5,6.5" fill="none" stroke="rgba(20,20,19,0.28)" stroke-width="1.2" stroke-linejoin="round" stroke-linecap="round"/>
+              </marker>
+              <marker id="arr-c" markerWidth="8" markerHeight="8" refX="5.5" refY="4" orient="auto">
+                <path d="M1.5,1.5 L6,4 L1.5,6.5" fill="none" stroke="rgba(217,119,87,0.6)" stroke-width="1.2" stroke-linejoin="round" stroke-linecap="round"/>
               </marker>
             </defs>
 
-            <!-- Outer group — hidden until scroll reveals it -->
+            <!-- OUTER GROUP -->
             <g id="og" style="opacity:0">
               <ellipse id="outerE" cx="280" cy="210" rx="236" ry="170"
                 fill="none" stroke="rgba(20,20,19,0.1)" stroke-width="0.5"
                 style="transition:stroke 0.25s"/>
 
-              <!-- Delegation -->
-              <g id="nDel" class="nd" transform="translate(280,40)">
+              <!-- Delegation — coral outline -->
+              <g id="nDel" class="nd nd-outer" transform="translate(280,40)">
                 <rect x="-70" y="-17" width="140" height="34" rx="17" fill="#f0eee6"/>
-                <rect class="pf" x="-70" y="-17" width="140" height="34" rx="17" fill="#9a6e2a"/>
-                <rect x="-70" y="-17" width="140" height="34" rx="17"
-                  fill="none" stroke="#9a6e2a" stroke-width="0.5"/>
+                <rect class="pf" x="-70" y="-17" width="140" height="34" rx="17" fill="#d97757"/>
+                <rect x="-70" y="-17" width="140" height="34" rx="17" fill="none" stroke="#d97757" stroke-width="0.5"/>
                 <text text-anchor="middle" dominant-baseline="middle"
-                  font-family="DM Sans,sans-serif" font-size="12" font-weight="600"
-                  fill="#9a6e2a" letter-spacing="0.04em">Delegation</text>
+                  font-family="DM Sans,sans-serif" font-size="12.5" font-weight="500"
+                  fill="#d97757" letter-spacing="0.01em">Delegation</text>
               </g>
 
-              <!-- Diligence -->
-              <g id="nDil" class="nd" transform="translate(280,380)">
+              <!-- Diligence — coral outline -->
+              <g id="nDil" class="nd nd-outer" transform="translate(280,380)">
                 <rect x="-70" y="-17" width="140" height="34" rx="17" fill="#f0eee6"/>
-                <rect class="pf" x="-70" y="-17" width="140" height="34" rx="17" fill="#3d6b4f"/>
-                <rect x="-70" y="-17" width="140" height="34" rx="17"
-                  fill="none" stroke="#3d6b4f" stroke-width="0.5"/>
+                <rect class="pf" x="-70" y="-17" width="140" height="34" rx="17" fill="#d97757"/>
+                <rect x="-70" y="-17" width="140" height="34" rx="17" fill="none" stroke="#d97757" stroke-width="0.5"/>
                 <text text-anchor="middle" dominant-baseline="middle"
-                  font-family="DM Sans,sans-serif" font-size="12" font-weight="600"
-                  fill="#3d6b4f" letter-spacing="0.04em">Diligence</text>
+                  font-family="DM Sans,sans-serif" font-size="12.5" font-weight="500"
+                  fill="#d97757" letter-spacing="0.01em">Diligence</text>
               </g>
             </g>
 
-            <!-- Inner arcs (animated, drawn before nodes so nodes sit on top) -->
+            <!-- PHASE 3: connection annotations -->
+            <g id="cg" style="opacity:0">
+              <!-- Delegation enters the inner loop (Description) -->
+              <path d="M 264,57 C 218,128 174,164 152,193"
+                fill="none" stroke="rgba(217,119,87,0.4)" stroke-width="0.75"
+                stroke-dasharray="3 4" marker-end="url(#arr-c)"/>
+              <rect x="183" y="131" width="40" height="16" rx="8"
+                fill="#f0eee6" stroke="rgba(217,119,87,0.3)" stroke-width="0.5"/>
+              <text x="203" y="139" text-anchor="middle" dominant-baseline="middle"
+                font-family="DM Sans,sans-serif" font-size="9" font-weight="500"
+                fill="rgba(217,119,87,0.8)" letter-spacing="0.06em">enters</text>
+
+              <!-- Discernment informs Delegation -->
+              <path d="M 390,193 C 414,124 358,71 295,57"
+                fill="none" stroke="rgba(217,119,87,0.4)" stroke-width="0.75"
+                stroke-dasharray="3 4" marker-end="url(#arr-c)"/>
+              <rect x="354" y="97" width="44" height="16" rx="8"
+                fill="#f0eee6" stroke="rgba(217,119,87,0.3)" stroke-width="0.5"/>
+              <text x="376" y="105" text-anchor="middle" dominant-baseline="middle"
+                font-family="DM Sans,sans-serif" font-size="9" font-weight="500"
+                fill="rgba(217,119,87,0.8)" letter-spacing="0.06em">informs</text>
+            </g>
+
+            <!-- Inner arcs (drawn before nodes so nodes sit cleanly on top) -->
             <path id="arcTop" class="arc"
               d="M 154,210 C 154,106 406,106 406,210"
               fill="none" stroke="rgba(20,20,19,0.14)" stroke-width="1"
@@ -126,47 +156,59 @@ html,body{background:var(--bg);font-family:var(--sans);color:var(--dark)}
               fill="none" stroke="rgba(20,20,19,0.14)" stroke-width="1"
               stroke-dasharray="4 6" marker-end="url(#arr)"/>
 
-            <!-- Description (opaque bg rect blocks arcs from bleeding through) -->
-            <g id="nDes" class="nd" transform="translate(154,210)">
+            <!-- Description — solid coral fill, white text -->
+            <g id="nDes" class="nd nd-inner" transform="translate(154,210)">
               <rect x="-70" y="-17" width="140" height="34" rx="17" fill="#f0eee6"/>
               <rect class="pf" x="-70" y="-17" width="140" height="34" rx="17" fill="#d97757"/>
-              <rect x="-70" y="-17" width="140" height="34" rx="17"
-                fill="none" stroke="#d97757" stroke-width="0.5"/>
               <text text-anchor="middle" dominant-baseline="middle"
-                font-family="DM Sans,sans-serif" font-size="12" font-weight="600"
-                fill="#d97757" letter-spacing="0.04em">Description</text>
+                font-family="DM Sans,sans-serif" font-size="12.5" font-weight="500"
+                fill="#faf9f5" letter-spacing="0.01em">Description</text>
             </g>
 
-            <!-- Discernment -->
-            <g id="nDsc" class="nd" transform="translate(406,210)">
+            <!-- Discernment — solid coral fill, white text -->
+            <g id="nDsc" class="nd nd-inner" transform="translate(406,210)">
               <rect x="-70" y="-17" width="140" height="34" rx="17" fill="#f0eee6"/>
-              <rect class="pf" x="-70" y="-17" width="140" height="34" rx="17" fill="#6a9bcc"/>
-              <rect x="-70" y="-17" width="140" height="34" rx="17"
-                fill="none" stroke="#6a9bcc" stroke-width="0.5"/>
+              <rect class="pf" x="-70" y="-17" width="140" height="34" rx="17" fill="#d97757"/>
               <text text-anchor="middle" dominant-baseline="middle"
-                font-family="DM Sans,sans-serif" font-size="12" font-weight="600"
-                fill="#6a9bcc" letter-spacing="0.04em">Discernment</text>
+                font-family="DM Sans,sans-serif" font-size="12.5" font-weight="500"
+                fill="#faf9f5" letter-spacing="0.01em">Discernment</text>
             </g>
 
           </svg>
         </div>
       </div>
 
-      <!-- Info panel — content updates on node hover -->
+      <!-- Info panel — switches between node detail and loop interaction views -->
       <div class="info-panel" id="infoPanel">
-        <div class="info-grid">
-          <div class="info-left">
-            <span class="ilabel" id="ilabel">Description</span>
-            <div class="iname" id="iname">Tell AI exactly what you need.</div>
-            <div class="iconnect">
-              <span class="iarrow">&#8594;</span>
-              <span class="ilink" id="ilink">Discernment evaluates every output Description produces.</span>
+
+        <div class="pv-default" id="pvDefault">
+          <div class="pv-left">
+            <span class="plabel" id="plabel">Description</span>
+            <div class="pname" id="pname">Tell AI exactly what you need.</div>
+            <div class="pconnect">
+              <span class="parrow">&#8594;</span>
+              <span class="plink" id="plink">Discernment evaluates every output Description produces.</span>
             </div>
           </div>
-          <div class="info-right">
-            <p class="iinsight" id="iinsight">Specify the product, process, and performance standard. The more precise you are, the more useful AI becomes.</p>
+          <div>
+            <p class="pinsight" id="pinsight">Specify the product, process, and performance standard. The more precise you are, the more useful AI becomes.</p>
           </div>
         </div>
+
+        <div class="pv-connect" id="pvConnect">
+          <span class="cv-label">How the loops interact</span>
+          <div class="cv-grid">
+            <div>
+              <div class="cv-item-title">Delegation activates Description</div>
+              <p class="cv-item-body">The outer loop decides whether to enter the inner loop at all. Before you open a chat, Delegation asks: is AI the right tool here?</p>
+            </div>
+            <div>
+              <div class="cv-item-title">Discernment informs Delegation</div>
+              <p class="cv-item-body">What you learn in the inner loop feeds back out. Discernment reveals the questions that only Delegation can answer -- about what to hand off next time.</p>
+            </div>
+          </div>
+        </div>
+
       </div>
 
       <div class="foot" id="foot">Hover a node to explore &mdash; then scroll to see the full picture</div>
@@ -176,65 +218,62 @@ html,body{background:var(--bg);font-family:var(--sans);color:var(--dark)}
 
 <script>
 var nodes = {
-  nDes: {
-    label:'Description', color:'#d97757',
-    name:'Tell AI exactly what you need.',
-    insight:'Specify the product, process, and performance standard. The more precise you are, the more useful AI becomes.',
-    link:'Discernment evaluates every output Description produces.',
-    arcs:['arcTop','arcBot'], ac:'rgba(217,119,87,0.42)'
-  },
-  nDsc: {
-    label:'Discernment', color:'#6a9bcc',
-    name:'Evaluate what AI gives back.',
-    insight:'Check for accuracy, alignment, and fit. This is the step most people skip -- and the one that matters most.',
-    link:'Informs better Description -- and surfaces questions for Delegation.',
-    arcs:['arcTop','arcBot'], ac:'rgba(106,155,204,0.42)'
-  },
-  nDel: {
-    label:'Delegation', color:'#9a6e2a',
-    name:'Decide what belongs to AI.',
-    insight:"Not every task should be handed off. Ask: does this serve my students? Does AI genuinely add value here, or am I just offloading?",
-    link:'Determines whether to enter the Description loop at all.',
-    arcs:['outerE'], ac:'rgba(154,110,42,0.35)'
-  },
-  nDil: {
-    label:'Diligence', color:'#3d6b4f',
-    name:'Own the professional responsibility.',
-    insight:"Privacy, accuracy, and transparency don't transfer to AI. The work is yours. AI assistance does not carry that responsibility.",
-    link:'Holds every Description and Discernment interaction to a professional standard.',
-    arcs:['outerE'], ac:'rgba(61,107,79,0.35)'
-  }
+  nDes:{label:'Description',name:'Tell AI exactly what you need.',insight:'Specify the product, process, and performance standard. The more precise you are, the more useful AI becomes.',link:'Discernment evaluates every output Description produces.',arcs:['arcTop','arcBot'],ac:'rgba(217,119,87,0.42)'},
+  nDsc:{label:'Discernment',name:'Evaluate what AI gives back.',insight:'Check for accuracy, alignment, and fit for your students. This is the step most people skip -- and the one that matters most.',link:'Informs better Description -- and surfaces questions for Delegation.',arcs:['arcTop','arcBot'],ac:'rgba(217,119,87,0.42)'},
+  nDel:{label:'Delegation',name:'Decide what belongs to AI.',insight:"Not every task should be handed off. Ask: does this serve my students? Does AI genuinely add value here, or am I just offloading?",link:'Determines whether to enter the Description loop at all.',arcs:['outerE'],ac:'rgba(217,119,87,0.35)'},
+  nDil:{label:'Diligence',name:'Own the professional responsibility.',insight:"Privacy, accuracy, and transparency don't transfer to AI. The work is yours. AI assistance does not carry that responsibility.",link:'Holds every Description and Discernment interaction to a professional standard.',arcs:['outerE'],ac:'rgba(217,119,87,0.35)'}
 };
 
-var panel   = document.getElementById('infoPanel');
-var ilabel  = document.getElementById('ilabel');
-var iname   = document.getElementById('iname');
-var iinsight= document.getElementById('iinsight');
-var ilink   = document.getElementById('ilink');
-var foot    = document.getElementById('foot');
-var ft;
+var panel    = document.getElementById('infoPanel');
+var pvDef    = document.getElementById('pvDefault');
+var pvCon    = document.getElementById('pvConnect');
+var plabel   = document.getElementById('plabel');
+var pname    = document.getElementById('pname');
+var pinsight = document.getElementById('pinsight');
+var plink    = document.getElementById('plink');
+var foot     = document.getElementById('foot');
+var ft, revertFt;
+var inConnect = false;
 
-function setInfo(id, instant) {
+function setNodeInfo(id) {
   var d = nodes[id];
-  if (instant) {
-    ilabel.textContent  = d.label;  ilabel.style.color = d.color;
-    iname.textContent   = d.name;
-    iinsight.textContent= d.insight;
-    ilink.textContent   = d.link;
+  plabel.textContent  = d.label;
+  pname.textContent   = d.name;
+  pinsight.textContent= d.insight;
+  plink.textContent   = d.link;
+}
+
+function showDefaultView(id, fade) {
+  if (!fade) {
+    setNodeInfo(id);
+    pvDef.style.display = 'grid';
+    pvCon.style.display = 'none';
     return;
   }
   panel.classList.add('dim');
   clearTimeout(ft);
   ft = setTimeout(function() {
-    ilabel.textContent  = d.label;  ilabel.style.color = d.color;
-    iname.textContent   = d.name;
-    iinsight.textContent= d.insight;
-    ilink.textContent   = d.link;
+    setNodeInfo(id);
+    pvDef.style.display = 'grid';
+    pvCon.style.display = 'none';
     panel.classList.remove('dim');
   }, 160);
 }
 
-setInfo('nDes', true);
+function showConnectView(fade) {
+  if (!fade) {
+    pvDef.style.display = 'none';
+    pvCon.style.display = 'block';
+    return;
+  }
+  panel.classList.add('dim');
+  clearTimeout(ft);
+  ft = setTimeout(function() {
+    pvDef.style.display = 'none';
+    pvCon.style.display = 'block';
+    panel.classList.remove('dim');
+  }, 160);
+}
 
 function resetArcs() {
   ['arcTop','arcBot','outerE'].forEach(function(i) {
@@ -243,45 +282,77 @@ function resetArcs() {
   });
 }
 
+// Initialize
+setNodeInfo('nDes');
+
 Object.keys(nodes).forEach(function(id) {
   var el = document.getElementById(id);
   var d  = nodes[id];
   if (!el) return;
   el.addEventListener('mouseenter', function() {
-    setInfo(id);
+    clearTimeout(revertFt);
+    // Always show node detail on hover, even in connect view
+    if (inConnect && pvCon.style.display !== 'none') {
+      showDefaultView(id, true);
+    } else {
+      showDefaultView(id, pvDef.style.display === 'none');
+    }
     d.arcs.forEach(function(aid) {
       var a = document.getElementById(aid);
       if (a) a.style.stroke = d.ac;
     });
   });
-  el.addEventListener('mouseleave', resetArcs);
+  el.addEventListener('mouseleave', function() {
+    resetArcs();
+    if (inConnect) {
+      // Revert to connect view after a beat
+      revertFt = setTimeout(function() { showConnectView(true); }, 900);
+    }
+  });
 });
 
-// Scroll-driven viewBox zoom
+// Scroll
 var track = document.getElementById('track');
 var svg   = document.getElementById('svg');
 var og    = document.getElementById('og');
+var cg    = document.getElementById('cg');
 var vbA   = [80,57,400,307];
 var vbB   = [0,0,560,430];
+var lp    = -1;
 var fmsgs = [
   'Hover a node to explore \u2014 then scroll to see the full picture',
-  'The outer loop is coming into view\u2026',
-  'All four Ds visible. Hover any node to explore connections.'
+  'Keep scrolling\u2026',
+  'Scroll to see how the loops interact with each other',
+  'All connections in view \u2014 hover any node to explore'
 ];
-var lp = -1;
 
-function ease(t){ return t<0.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2; }
-function lerp(a,b,t){ return a+(b-a)*t; }
+function ease(t){return t<0.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;}
+function lerp(a,b,t){return a+(b-a)*t;}
 
 window.addEventListener('scroll', function() {
-  var sc = track.offsetHeight - window.innerHeight;
-  var raw= Math.max(0,Math.min(1,-track.getBoundingClientRect().top/sc));
-  var p  = ease(raw);
+  var sc  = track.offsetHeight - window.innerHeight;
+  var raw = Math.max(0, Math.min(1, -track.getBoundingClientRect().top / sc));
+  var p   = ease(raw);
+
   svg.setAttribute('viewBox', vbA.map(function(a,i){return lerp(a,vbB[i],p);}).join(' '));
-  og.style.opacity = Math.max(0,Math.min(1,(raw-0.35)/0.4)).toFixed(3);
-  var ph = raw<0.1?0:raw>0.8?2:1;
-  if (ph!==lp){ lp=ph; foot.textContent=fmsgs[ph]; }
-},{passive:true});
+  og.style.opacity = Math.max(0, Math.min(1, (raw - 0.28) / 0.32)).toFixed(3);
+  cg.style.opacity = Math.max(0, Math.min(1, (raw - 0.68) / 0.18)).toFixed(3);
+
+  var ph = raw < 0.08 ? 0 : raw > 0.65 ? 3 : raw > 0.38 ? 2 : 1;
+  if (ph !== lp) {
+    lp = ph;
+    foot.textContent = fmsgs[ph];
+    if (ph === 3 && !inConnect) {
+      inConnect = true;
+      clearTimeout(revertFt);
+      showConnectView(true);
+    } else if (ph < 3 && inConnect) {
+      inConnect = false;
+      clearTimeout(revertFt);
+      showDefaultView('nDes', true);
+    }
+  }
+}, {passive:true});
 </script>
 </body>
 </html>
