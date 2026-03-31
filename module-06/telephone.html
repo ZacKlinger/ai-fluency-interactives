@@ -9,7 +9,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,300..700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-:root{--bg:#faf9f5;--surface:#f0eee6;--dark:#141413;--muted:rgba(20,20,19,0.42);--border:rgba(20,20,19,0.1);--coral:#d97757;--sans:'DM Sans',Arial,sans-serif}
+:root{--bg:#faf9f5;--surface:#f0eee6;--dark:#141413;--muted:rgba(20,20,19,0.42);--border:rgba(20,20,19,0.1);--coral:#d97757;--sans:'DM Sans',Arial,sans-serif;--serif:'Source Serif 4',Georgia,serif}
 html,body{min-height:100vh;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:2rem 1rem;font-family:var(--sans);color:var(--dark)}
 .stage{width:100%;max-width:760px;position:relative}
 .status-badge{position:absolute;top:0;right:0;z-index:10;font-size:9.5px;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;background:var(--surface);border:0.5px solid var(--border);color:var(--muted);padding:4px 12px;border-radius:0 6px 0 4px}
@@ -186,6 +186,11 @@ document.querySelectorAll('.ctx-btn').forEach(function(btn){
 window.addEventListener('load',function(){requestAnimationFrame(function(){requestAnimationFrame(function(){resize();initParts();buildCache();loop();});});});
 window.addEventListener('resize',resize);
 if(window.ResizeObserver){new ResizeObserver(resize).observe(wrap);}
+
+// Clicking the canvas triggers the first context button if it hasn't been clicked yet
+wrap.addEventListener('click',function(){
+  if(!act[0]){document.querySelector('.ctx-btn[data-i="0"]').click();}
+});
 </script>
 </body>
 </html>
