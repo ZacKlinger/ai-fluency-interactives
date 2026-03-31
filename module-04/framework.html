@@ -28,8 +28,8 @@ html,body{background:var(--bg);font-family:var(--sans);color:var(--dark)}
 .field-wrap{background:var(--surface);border-top:0.5px solid var(--border);border-bottom:0.5px solid var(--border);display:flex;justify-content:center;padding:2rem 0;overflow:hidden;position:relative}
 
 /* Node popup */
-.node-popup{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) scale(0.97);width:min(272px,calc(100% - 4rem));background:var(--bg);border:0.5px solid var(--border);border-radius:6px;padding:1.1rem 1.4rem;z-index:20;opacity:0;pointer-events:none;transition:opacity 0.14s,transform 0.14s}
-.node-popup.open{opacity:1;pointer-events:auto;transform:translate(-50%,-50%) scale(1)}
+.node-popup{position:absolute;top:0;left:0;width:min(272px,calc(100% - 4rem));background:var(--bg);border:0.5px solid var(--border);border-radius:6px;padding:1.1rem 1.4rem;z-index:20;opacity:0;pointer-events:none;transition:opacity 0.14s,transform 0.14s;transform:scale(0.97)}
+.node-popup.open{opacity:1;pointer-events:auto;transform:scale(1)}
 .popup-label{font-size:9.5px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:var(--coral);display:block;margin-bottom:0.35rem}
 .popup-name{font-family:var(--serif);font-variation-settings:'opsz' 16;font-size:15px;font-weight:500;color:var(--dark);line-height:1.25;margin-bottom:0.3rem;letter-spacing:-0.01em}
 .popup-body{font-size:12px;color:var(--muted);line-height:1.6}
@@ -268,7 +268,22 @@ Object.keys(nodes).forEach(function(id) {
   el.addEventListener('mouseleave', function() { resetArcs(); });
   el.addEventListener('click', function(e) {
     e.stopPropagation();
-    if (activeNode === id) { closePopup(); } else { openPopup(id); }
+    if (activeNode === id) { closePopup(); return; }
+    // Position popup centered over the clicked node
+    var nr = el.getBoundingClientRect();
+    var wr = document.getElementById('fieldWrap').getBoundingClientRect();
+    var popW = Math.min(272, wr.width - 32);
+    var cx = nr.left + nr.width / 2 - wr.left;
+    var cy = nr.top  + nr.height / 2 - wr.top;
+    popup.style.width = popW + 'px';
+    // Place popup; clamp so it stays within fieldWrap
+    var left = Math.max(8, Math.min(cx - popW / 2, wr.width - popW - 8));
+    popup.style.left = left + 'px';
+    // Measure popup height after setting content, then center vertically
+    openPopup(id);
+    var ph = popup.offsetHeight;
+    var top = Math.max(8, Math.min(cy - ph / 2, wr.height - ph - 8));
+    popup.style.top = top + 'px';
   });
 });
 
