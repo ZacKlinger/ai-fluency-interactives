@@ -25,7 +25,7 @@ html,body{background:var(--bg);font-family:var(--sans);color:var(--dark)}
 .subhead{font-size:12.5px;color:var(--muted);line-height:1.5}
 
 /* Field */
-.field-wrap{background:var(--surface);border-top:0.5px solid var(--border);border-bottom:0.5px solid var(--border);display:flex;justify-content:center;padding:1.5rem 0;overflow:hidden}
+.field-wrap{background:var(--surface);border-top:0.5px solid var(--border);border-bottom:0.5px solid var(--border);display:flex;justify-content:center;padding:2rem 0;overflow:hidden}
 .diagram{position:relative;width:min(500px,calc(100% - 3rem));aspect-ratio:560/430}
 .diagram svg{width:100%;height:100%;display:block}
 
@@ -104,46 +104,40 @@ html,body{background:var(--bg);font-family:var(--sans);color:var(--dark)}
 
               <!-- Delegation — coral outline -->
               <g id="nDel" class="nd nd-outer" transform="translate(280,40)">
-                <rect x="-70" y="-17" width="140" height="34" rx="17" fill="#f0eee6"/>
-                <rect class="pf" x="-70" y="-17" width="140" height="34" rx="17" fill="#d97757"/>
-                <rect x="-70" y="-17" width="140" height="34" rx="17" fill="none" stroke="#d97757" stroke-width="0.5"/>
+                <rect x="-80" y="-21" width="160" height="42" rx="5" fill="#f0eee6"/>
+                <rect class="pf" x="-80" y="-21" width="160" height="42" rx="5" fill="#d97757"/>
+                <rect x="-80" y="-21" width="160" height="42" rx="5" fill="none" stroke="#d97757" stroke-width="0.5"/>
                 <text text-anchor="middle" dominant-baseline="middle"
-                  font-family="DM Sans,sans-serif" font-size="12.5" font-weight="500"
+                  font-family="DM Sans,sans-serif" font-size="13" font-weight="500"
                   fill="#d97757" letter-spacing="0.01em">Delegation</text>
               </g>
 
               <!-- Diligence — coral outline -->
               <g id="nDil" class="nd nd-outer" transform="translate(280,380)">
-                <rect x="-70" y="-17" width="140" height="34" rx="17" fill="#f0eee6"/>
-                <rect class="pf" x="-70" y="-17" width="140" height="34" rx="17" fill="#d97757"/>
-                <rect x="-70" y="-17" width="140" height="34" rx="17" fill="none" stroke="#d97757" stroke-width="0.5"/>
+                <rect x="-80" y="-21" width="160" height="42" rx="5" fill="#f0eee6"/>
+                <rect class="pf" x="-80" y="-21" width="160" height="42" rx="5" fill="#d97757"/>
+                <rect x="-80" y="-21" width="160" height="42" rx="5" fill="none" stroke="#d97757" stroke-width="0.5"/>
                 <text text-anchor="middle" dominant-baseline="middle"
-                  font-family="DM Sans,sans-serif" font-size="12.5" font-weight="500"
+                  font-family="DM Sans,sans-serif" font-size="13" font-weight="500"
                   fill="#d97757" letter-spacing="0.01em">Diligence</text>
               </g>
             </g>
 
-            <!-- PHASE 3: connection annotations -->
+            <!-- PHASE 3: loop role labels -->
             <g id="cg" style="opacity:0">
-              <!-- Delegation enters the inner loop (Description) -->
-              <path d="M 264,57 C 218,128 174,164 152,193"
-                fill="none" stroke="rgba(217,119,87,0.4)" stroke-width="0.75"
-                stroke-dasharray="3 4" marker-end="url(#arr-c)"/>
-              <rect x="183" y="131" width="40" height="16" rx="8"
-                fill="#f0eee6" stroke="rgba(217,119,87,0.3)" stroke-width="0.5"/>
-              <text x="203" y="139" text-anchor="middle" dominant-baseline="middle"
-                font-family="DM Sans,sans-serif" font-size="9" font-weight="500"
-                fill="rgba(217,119,87,0.8)" letter-spacing="0.06em">enters</text>
+              <!-- Inner loop label — above inner arc center -->
+              <rect x="224" y="78" width="112" height="18" rx="3"
+                fill="#f0eee6" stroke="rgba(217,119,87,0.25)" stroke-width="0.5"/>
+              <text x="280" y="87" text-anchor="middle" dominant-baseline="middle"
+                font-family="DM Sans,sans-serif" font-size="8.5" font-weight="600"
+                fill="rgba(217,119,87,0.75)" letter-spacing="0.10em">QUALITY CYCLE</text>
 
-              <!-- Discernment informs Delegation -->
-              <path d="M 390,193 C 414,124 358,71 295,57"
-                fill="none" stroke="rgba(217,119,87,0.4)" stroke-width="0.75"
-                stroke-dasharray="3 4" marker-end="url(#arr-c)"/>
-              <rect x="354" y="97" width="44" height="16" rx="8"
-                fill="#f0eee6" stroke="rgba(217,119,87,0.3)" stroke-width="0.5"/>
-              <text x="376" y="105" text-anchor="middle" dominant-baseline="middle"
-                font-family="DM Sans,sans-serif" font-size="9" font-weight="500"
-                fill="rgba(217,119,87,0.8)" letter-spacing="0.06em">informs</text>
+              <!-- Outer loop label — upper-right region, between Delegation and Discernment -->
+              <rect x="365" y="79" width="140" height="18" rx="3"
+                fill="#f0eee6" stroke="rgba(217,119,87,0.25)" stroke-width="0.5"/>
+              <text x="435" y="88" text-anchor="middle" dominant-baseline="middle"
+                font-family="DM Sans,sans-serif" font-size="8.5" font-weight="600"
+                fill="rgba(217,119,87,0.75)" letter-spacing="0.10em">PROTECTIVE AGENCY</text>
             </g>
 
             <!-- Inner arcs (drawn before nodes so nodes sit cleanly on top) -->
@@ -158,19 +152,19 @@ html,body{background:var(--bg);font-family:var(--sans);color:var(--dark)}
 
             <!-- Description — solid coral fill, white text -->
             <g id="nDes" class="nd nd-inner" transform="translate(154,210)">
-              <rect x="-70" y="-17" width="140" height="34" rx="17" fill="#f0eee6"/>
-              <rect class="pf" x="-70" y="-17" width="140" height="34" rx="17" fill="#d97757"/>
+              <rect x="-80" y="-21" width="160" height="42" rx="5" fill="#f0eee6"/>
+              <rect class="pf" x="-80" y="-21" width="160" height="42" rx="5" fill="#d97757"/>
               <text text-anchor="middle" dominant-baseline="middle"
-                font-family="DM Sans,sans-serif" font-size="12.5" font-weight="500"
+                font-family="DM Sans,sans-serif" font-size="13" font-weight="500"
                 fill="#faf9f5" letter-spacing="0.01em">Description</text>
             </g>
 
             <!-- Discernment — solid coral fill, white text -->
             <g id="nDsc" class="nd nd-inner" transform="translate(406,210)">
-              <rect x="-70" y="-17" width="140" height="34" rx="17" fill="#f0eee6"/>
-              <rect class="pf" x="-70" y="-17" width="140" height="34" rx="17" fill="#d97757"/>
+              <rect x="-80" y="-21" width="160" height="42" rx="5" fill="#f0eee6"/>
+              <rect class="pf" x="-80" y="-21" width="160" height="42" rx="5" fill="#d97757"/>
               <text text-anchor="middle" dominant-baseline="middle"
-                font-family="DM Sans,sans-serif" font-size="12.5" font-weight="500"
+                font-family="DM Sans,sans-serif" font-size="13" font-weight="500"
                 fill="#faf9f5" letter-spacing="0.01em">Discernment</text>
             </g>
 
@@ -196,15 +190,15 @@ html,body{background:var(--bg);font-family:var(--sans);color:var(--dark)}
         </div>
 
         <div class="pv-connect" id="pvConnect">
-          <span class="cv-label">How the loops interact</span>
+          <span class="cv-label">Two distinct loops</span>
           <div class="cv-grid">
             <div>
-              <div class="cv-item-title">Delegation activates Description</div>
-              <p class="cv-item-body">The outer loop decides whether to enter the inner loop at all. Before you open a chat, Delegation asks: is AI the right tool here?</p>
+              <div class="cv-item-title">Inner Loop &mdash; Quality Cycle</div>
+              <p class="cv-item-body">An iterative cycle for getting AI right. You craft a Description, evaluate the output with Discernment, and refine &mdash; repeating until the result genuinely serves your students.</p>
             </div>
             <div>
-              <div class="cv-item-title">Discernment informs Delegation</div>
-              <p class="cv-item-body">What you learn in the inner loop feeds back out. Discernment reveals the questions that only Delegation can answer -- about what to hand off next time.</p>
+              <div class="cv-item-title">Outer Loop &mdash; Protective Agency</div>
+              <p class="cv-item-body">A guardrail for professional ethics. Delegation asks whether AI belongs here at all. Diligence ensures you remain accountable for every outcome &mdash; regardless of who (or what) produced it.</p>
             </div>
           </div>
         </div>
@@ -219,9 +213,9 @@ html,body{background:var(--bg);font-family:var(--sans);color:var(--dark)}
 <script>
 var nodes = {
   nDes:{label:'Description',name:'Tell AI exactly what you need.',insight:'Specify the product, process, and performance standard. The more precise you are, the more useful AI becomes.',link:'Discernment evaluates every output Description produces.',arcs:['arcTop','arcBot'],ac:'rgba(217,119,87,0.42)'},
-  nDsc:{label:'Discernment',name:'Evaluate what AI gives back.',insight:'Check for accuracy, alignment, and fit for your students. This is the step most people skip -- and the one that matters most.',link:'Informs better Description -- and surfaces questions for Delegation.',arcs:['arcTop','arcBot'],ac:'rgba(217,119,87,0.42)'},
-  nDel:{label:'Delegation',name:'Decide what belongs to AI.',insight:"Not every task should be handed off. Ask: does this serve my students? Does AI genuinely add value here, or am I just offloading?",link:'Determines whether to enter the Description loop at all.',arcs:['outerE'],ac:'rgba(217,119,87,0.35)'},
-  nDil:{label:'Diligence',name:'Own the professional responsibility.',insight:"Privacy, accuracy, and transparency don't transfer to AI. The work is yours. AI assistance does not carry that responsibility.",link:'Holds every Description and Discernment interaction to a professional standard.',arcs:['outerE'],ac:'rgba(217,119,87,0.35)'}
+  nDsc:{label:'Discernment',name:'Evaluate what AI gives back.',insight:'Check for accuracy, alignment, and fit for your students. This is the step most people skip -- and the one that matters most.',link:'Refines your next Description -- the cycle continues until the output is right.',arcs:['arcTop','arcBot'],ac:'rgba(217,119,87,0.42)'},
+  nDel:{label:'Delegation',name:'Decide what belongs to AI.',insight:"Not every task should be handed off. Ask: does this serve my students? Does AI genuinely add value here, or am I just offloading?",link:'Paired with Diligence to close the loop of professional responsibility.',arcs:['outerE'],ac:'rgba(217,119,87,0.35)'},
+  nDil:{label:'Diligence',name:'Own the professional responsibility.',insight:"Privacy, accuracy, and transparency don't transfer to AI. The work is yours. AI assistance does not carry that responsibility.",link:'Paired with Delegation to form the full arc of ethical practice.',arcs:['outerE'],ac:'rgba(217,119,87,0.35)'}
 };
 
 var panel    = document.getElementById('infoPanel');
@@ -322,8 +316,8 @@ var lp    = -1;
 var fmsgs = [
   'Hover a node to explore \u2014 then scroll to see the full picture',
   'Keep scrolling\u2026',
-  'Scroll to see how the loops interact with each other',
-  'All connections in view \u2014 hover any node to explore'
+  'Keep scrolling to reveal both loops',
+  'Both loops in view \u2014 hover any node to explore'
 ];
 
 function ease(t){return t<0.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;}
