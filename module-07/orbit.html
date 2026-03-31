@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>The Build &mdash; Module 7</title>
+<title>The Loops &mdash; Module 7</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
 <style>
@@ -18,357 +18,310 @@ body{
   min-height:100vh;display:flex;flex-direction:column;
   align-items:center;justify-content:center;padding:24px;
 }
-.wrap{width:100%;max-width:540px}
+.wrap{width:100%;max-width:520px}
 .eyebrow{
   text-align:center;font-size:11px;letter-spacing:.08em;
   text-transform:uppercase;color:var(--muted);margin-bottom:8px;
 }
 h1{
   text-align:center;font-family:'Source Serif 4',serif;
-  font-size:20px;font-weight:400;line-height:1.35;margin-bottom:20px;
+  font-size:20px;font-weight:400;line-height:1.35;margin-bottom:18px;
 }
-
-/* Document card */
-.doc-card{
-  background:var(--bg);
-  border:.5px solid var(--border);
-  border-radius:8px;overflow:hidden;
+canvas{display:block;width:100%;border-radius:8px;background:var(--surface);touch-action:none}
+.desc{min-height:44px;margin-top:14px;text-align:center;padding:0 4px}
+.desc p{
+  font-family:'Source Serif 4',serif;font-size:15px;
+  line-height:1.6;color:var(--dark);opacity:0;transition:opacity .45s;
 }
-.doc-head{
-  display:flex;justify-content:space-between;align-items:center;
-  padding:11px 16px;border-bottom:.5px solid var(--border);
-  background:var(--surface);
+.desc p.show{opacity:1}
+.btns{display:flex;gap:10px;margin-top:14px;justify-content:center}
+.lbtn{
+  flex:1;max-width:210px;padding:10px 16px;
+  border-radius:6px;font:600 13px 'DM Sans',sans-serif;
+  cursor:pointer;transition:background .2s,border-color .2s,color .2s,box-shadow .2s,opacity .2s;
 }
-.doc-title{font:500 11px 'DM Sans',sans-serif;color:var(--muted)}
-.prog-dots{display:flex;gap:5px;align-items:center}
-.prog-dot{
-  width:6px;height:6px;border-radius:50%;
-  background:rgba(20,20,19,0.13);transition:background .4s;
+.lbtn.outer{
+  background:none;color:var(--dark);
+  border:.5px solid rgba(20,20,19,0.28);
 }
-.prog-dot.done{background:rgba(20,20,19,0.5)}
-.prog-dot.active{background:rgba(20,20,19,0.85)}
-
-.doc-body{padding:20px 20px 16px;min-height:220px}
-.doc-text{
-  font:400 14px/1.75 'Source Serif 4',serif;
-  color:var(--dark);white-space:pre-wrap;word-break:break-word;
+.lbtn.outer:hover:not(:disabled){border-color:rgba(20,20,19,0.6)}
+.lbtn.outer.lit{
+  background:rgba(20,20,19,0.88);color:#fff;
+  border-color:transparent;
+  box-shadow:0 2px 12px rgba(20,20,19,0.22);
 }
-.doc-text::after{
-  content:'|';
-  font-weight:300;color:rgba(20,20,19,0.55);
-  animation:blink .85s step-end infinite;
+.lbtn.outer.pulse{animation:pdark 0.75s ease-in-out 3}
+@keyframes pdark{
+  0%,100%{box-shadow:0 2px 12px rgba(20,20,19,0.2)}
+  50%{box-shadow:0 2px 22px rgba(20,20,19,0.5)}
 }
-.doc-text.complete::after{animation:none;opacity:0}
-@keyframes blink{0%,100%{opacity:.75}50%{opacity:0}}
-
-/* D pills */
-.doc-pills{
-  display:flex;gap:6px;flex-wrap:wrap;
-  padding:10px 16px 12px;border-top:.5px solid var(--border);
-  min-height:44px;
+.lbtn.inner{
+  background:none;color:var(--coral);
+  border:.5px solid rgba(217,119,87,0.32);
+  opacity:.38;pointer-events:none;
 }
-.d-pill{
-  font:600 10px 'DM Sans',sans-serif;letter-spacing:.04em;
-  padding:3px 9px;border-radius:20px;
-  opacity:0;transform:translateY(3px);
-  transition:opacity .4s,transform .4s;
+.lbtn.inner.ready{opacity:1;pointer-events:auto}
+.lbtn.inner:hover:not(:disabled){border-color:rgba(217,119,87,0.7)}
+.lbtn.inner.lit{
+  background:var(--coral);color:#fff;
+  border-color:transparent;
+  box-shadow:0 2px 12px rgba(217,119,87,0.3);
 }
-.d-pill.show{opacity:1;transform:none}
-.d-pill.dk{background:rgba(20,20,19,0.86);color:#fff}
-.d-pill.co{background:var(--coral);color:#fff}
-
-/* Stage area */
-.stage-area{
-  margin-top:18px;min-height:72px;
-  transition:opacity .25s;
-}
-.stage-area.fade{opacity:0}
-.stage-label{
-  font:600 11px 'DM Sans',sans-serif;letter-spacing:.06em;
-  text-transform:uppercase;color:rgba(20,20,19,0.45);
-  margin-bottom:6px;
-  transition:color .3s;
-}
-.stage-label.dk{color:rgba(20,20,19,0.7)}
-.stage-label.co{color:var(--coral)}
-.stage-desc{
-  font:400 15px/1.6 'Source Serif 4',serif;
-  color:var(--dark);
-}
-
-/* Apply button */
-.apply-btn{
-  display:block;width:100%;margin-top:18px;
-  background:var(--coral);border:none;border-radius:6px;
-  padding:12px 20px;font:600 14px 'DM Sans',sans-serif;
-  color:#fff;cursor:pointer;
-  transition:background .15s,box-shadow .15s,opacity .2s;
-  box-shadow:0 2px 8px rgba(217,119,87,0);
-}
-.apply-btn:hover:not(:disabled){
-  background:#c46846;
-  box-shadow:0 2px 12px rgba(217,119,87,0.35);
-}
-.apply-btn:disabled{opacity:0.38;cursor:default}
-.apply-btn.gone{display:none}
-
-/* Payoff */
-.payoff{
-  margin-top:20px;text-align:center;
-  font:400 15px/1.65 'Source Serif 4',serif;
-  color:var(--dark);opacity:0;transition:opacity .7s;
-}
-.payoff.show{opacity:1}
-.payoff strong{font-weight:600}
-
-.hint{font-size:12px;color:var(--muted);text-align:center;margin-top:8px}
+.hint{font-size:12px;color:var(--muted);text-align:center;margin-top:8px;min-height:18px}
 </style>
 </head>
 <body>
 <div class="wrap">
   <div class="eyebrow">Module 7 &middot; Tying It All Together</div>
-  <h1>One task. Five moves. The full 4D workflow.</h1>
-
-  <div class="doc-card">
-    <div class="doc-head">
-      <span class="doc-title">Ms. Okafor &mdash; Lesson Plan</span>
-      <div class="prog-dots" id="prog"></div>
-    </div>
-    <div class="doc-body">
-      <div class="doc-text" id="doc"></div>
-    </div>
-    <div class="doc-pills" id="pills"></div>
+  <h1>Two loops. One framework. Watch it come alive.</h1>
+  <canvas id="c"></canvas>
+  <div class="desc"><p id="desc"></p></div>
+  <div class="btns">
+    <button class="lbtn outer" id="btn-out" onclick="clickOuter()">Outer Loop</button>
+    <button class="lbtn inner" id="btn-in"  onclick="clickInner()">Inner Loop</button>
   </div>
-
-  <div class="stage-area" id="stage-area">
-    <div class="stage-label" id="stage-label"></div>
-    <p class="stage-desc" id="stage-desc"></p>
-  </div>
-
-  <button class="apply-btn" id="btn" onclick="advance()" disabled>...</button>
-
-  <div class="payoff" id="payoff">
-    <strong>Five moves. One complete workflow.</strong><br>
-    Now do it with something of your own.
-  </div>
-
-  <div class="hint" id="hint">Follow Ms. Okafor through a full 4D lesson planning workflow</div>
+  <div class="hint" id="hint">Start with the outer loop</div>
 </div>
 
 <script>
-var docEl  = document.getElementById('doc');
-var progEl = document.getElementById('prog');
-var pillsEl= document.getElementById('pills');
-var stageArea = document.getElementById('stage-area');
-var labelEl= document.getElementById('stage-label');
-var descEl = document.getElementById('stage-desc');
-var btnEl  = document.getElementById('btn');
-var payoffEl = document.getElementById('payoff');
-var hintEl = document.getElementById('hint');
+var C   = document.getElementById('c');
+var CTX = C.getContext('2d');
+var descEl  = document.getElementById('desc');
+var btnOut  = document.getElementById('btn-out');
+var btnIn   = document.getElementById('btn-in');
+var hintEl  = document.getElementById('hint');
 
-// ── Data ──────────────────────────────────────────────────────
+// ── Layout ────────────────────────────────────────────────────
+var W,H,CX,CY,R1,R2,N=5;
 
-var BLOCKS = [
-  // 0: Initial task (no pill, shown on load)
-  {
-    text: 'Need: Differentiated reading passages on\nthe circulatory system for 7th grade science.\n\n3 reading levels (4th, 6th, 8th grade).\n4 students with IEPs. Multilingual learners.\nEnd goal: claim-evidence-reasoning task.',
-    pill: null,
-    speed: 22,
-  },
-  // 1: Delegation
-  {
-    text: '\n\nDelegation: AI drafts the reading scaffold.\nMs. Okafor reviews, adapts, and owns\nthe final product and its pedagogical fit.',
-    pill: {label:'Delegation', dk:true},
-    speed: 24,
-  },
-  // 2: Diligence
-  {
-    text: '\n\nDiligence:\n\u2713 District-approved tool confirmed\n\u2713 No student names in prompt\n\u2713 IEP details de-identified\n\u2713 Anonymized class context only',
-    pill: {label:'Diligence', dk:true},
-    speed: 24,
-  },
-  // 3: Description
-  {
-    text: '\n\nPrompt: "Write 3 informational passages on\nthe circulatory system at 4th, 6th, and 8th\ngrade reading levels. Include: chamber, valve,\nartery, vein. Align to NGSS LS1.A. Each\npassage should set up a CER writing task."',
-    pill: {label:'Description', dk:false},
-    speed: 20,
-  },
-  // 4: Discernment
-  {
-    text: '\n\nDiscernment review:\n\u2713 Reading levels accurate\n\u2713 Science accurate\n\u26a0 8th grade passage: "blood vessels" too\n  generic -- revised to distinguish arteries,\n  veins, and capillaries specifically\n\u2713 CER task setup confirmed in all three',
-    pill: {label:'Discernment', dk:false},
-    speed: 20,
-  },
-  // 5: Diligence (final sign-off)
-  {
-    text: '\n\n\u2713 No student data included\n\u2713 Science verified by teacher\n\u2713 Pedagogical judgment applied\n\u2713 Ready for classroom use',
-    pill: {label:'Diligence \u2713', dk:true},
-    speed: 24,
-  },
-];
-
-// Info shown AFTER each block types (before next click)
-var INFO = [
-  // After block 0
-  {
-    d: null,
-    desc: 'Ms. Okafor has a task. Before opening AI -- does it belong here, and on what terms?',
-    btn: 'Apply Delegation \u2192',
-  },
-  // After block 1 (Delegation applied)
-  {
-    d: 'Delegation',
-    dk: true,
-    desc: 'Scope set. AI drafts, Ms. Okafor owns. Next -- is it safe to proceed?',
-    btn: 'Apply Diligence \u2192',
-  },
-  // After block 2 (Diligence)
-  {
-    d: 'Diligence',
-    dk: true,
-    desc: 'Guardrails confirmed. Now tell AI exactly what you need.',
-    btn: 'Apply Description \u2192',
-  },
-  // After block 3 (Description)
-  {
-    d: 'Description',
-    dk: false,
-    desc: 'AI returned three passages. Does the output hold up?',
-    btn: 'Apply Discernment \u2192',
-  },
-  // After block 4 (Discernment)
-  {
-    d: 'Discernment',
-    dk: false,
-    desc: 'Error caught and fixed. One last step -- your professional sign-off.',
-    btn: 'Apply Diligence \u2192',
-  },
-  // After block 5 (final Diligence) -- complete
-  {d: null, desc: null, btn: null},
-];
+function resize(){
+  W = C.offsetWidth;
+  H = Math.round(W * 0.90);
+  C.width  = Math.round(W * devicePixelRatio);
+  C.height = Math.round(H * devicePixelRatio);
+  C.style.height = H + 'px';
+  CTX.setTransform(1,0,0,1,0,0);
+  CTX.scale(devicePixelRatio, devicePixelRatio);
+  CX = W / 2;
+  CY = H / 2;
+  var S = Math.min(W, H);
+  R1 = S * 0.30;  // outer loop radius
+  R2 = R1 * 0.42; // inner loop amplitude → flower petals
+}
 
 // ── State ─────────────────────────────────────────────────────
-var blockIdx = -1;
-var fullText = '';
-var typing   = false;
-var typeTimer = null;
+// IDLE → OUTER → TRACING → DONE → COMPLETE
+var STATE = 'IDLE';
+var traceT = 0;
+var tracePts = [];
+var SPEED = (2 * Math.PI) / 6.5; // rad/s  (completes in ~6.5s)
+var lastT  = performance.now();
 
-// ── Progress dots ─────────────────────────────────────────────
-(function buildDots(){
-  for(var i=0;i<5;i++){
-    var d=document.createElement('div');
-    d.className='prog-dot';
-    progEl.appendChild(d);
-  }
-})();
+// Smoothed alphas for ring glows
+var outerA = 0.18;  // outer ring alpha
+var innerA = 0.0;   // inner ring alpha
+var traceA = 0.0;   // trace alpha
 
-function updateDots(bi){
-  // dots 0-4 correspond to blocks 1-5
-  var dots=progEl.querySelectorAll('.prog-dot');
-  var di=bi-1; // -1 when only block0 shown
-  dots.forEach(function(d,i){
-    d.classList.remove('done','active');
-    if(i<di) d.classList.add('done');
-    else if(i===di) d.classList.add('active');
-  });
+// ── Helpers ───────────────────────────────────────────────────
+function lerp(a,b,t){ return a + (b-a)*t; }
+
+function pt(t){
+  return {
+    x: CX + R1*Math.cos(t) + R2*Math.cos(N*t),
+    y: CY + R1*Math.sin(t) - R2*Math.sin(N*t)
+  };
 }
 
-// ── Typewriter ────────────────────────────────────────────────
-function typeBlock(bi, onDone){
-  typing=true;
-  btnEl.disabled=true;
-  var chars=BLOCKS[bi].text.split('');
-  var spd=BLOCKS[bi].speed;
-  var i=0;
-  function tick(){
-    if(i<chars.length){
-      fullText+=chars[i++];
-      docEl.textContent=fullText;
-      typeTimer=setTimeout(tick,spd);
+function setDesc(text){
+  descEl.classList.remove('show');
+  setTimeout(function(){ descEl.textContent = text; descEl.classList.add('show'); }, 180);
+}
+
+// ── Interactions ──────────────────────────────────────────────
+function clickOuter(){
+  if(STATE === 'IDLE'){
+    STATE = 'OUTER';
+    btnOut.classList.add('lit');
+    btnIn.classList.add('ready');
+    setDesc('Delegation and Diligence anchor every decision. The outer loop sets the terms.');
+    hintEl.textContent = 'Now activate the inner loop';
+  } else if(STATE === 'DONE'){
+    // Final sign-off
+    STATE = 'COMPLETE';
+    btnOut.classList.remove('pulse');
+    setDesc('The outer loop closes. Your professional sign-off before anything reaches students.');
+    hintEl.textContent = '';
+    setTimeout(function(){
+      setDesc('Two loops working together. That is the complete 4D workflow. Now it is yours to run.');
+    }, 2200);
+  }
+}
+
+function clickInner(){
+  if(STATE !== 'OUTER') return;
+  STATE = 'TRACING';
+  btnIn.classList.add('lit');
+  tracePts = [];
+  traceT = 0;
+  setDesc('Description and Discernment — the inner loop does the quality work.');
+  hintEl.textContent = 'Watch both loops build the framework...';
+}
+
+// ── Update ────────────────────────────────────────────────────
+function update(dt){
+  // Target alphas by state
+  var tOuter = (STATE==='IDLE') ? 0.18 : 0.62;
+  var tInner = (STATE==='TRACING'||STATE==='DONE'||STATE==='COMPLETE') ? 0.55 : 0.0;
+  var tTrace = (STATE==='TRACING'||STATE==='DONE'||STATE==='COMPLETE') ? 1.0 : 0.0;
+
+  outerA = lerp(outerA, tOuter, 0.06);
+  innerA = lerp(innerA, tInner, 0.06);
+  traceA = lerp(traceA, tTrace, 0.08);
+
+  if(STATE === 'TRACING'){
+    traceT += SPEED * dt;
+    if(traceT < 2*Math.PI){
+      tracePts.push(pt(traceT));
     } else {
-      typing=false;
-      if(onDone) onDone();
+      traceT = 2 * Math.PI;
+      // Fill in any remaining points
+      if(tracePts.length < 500){
+        for(var tt = tracePts.length/500*2*Math.PI; tt <= 2*Math.PI; tt += 0.02){
+          tracePts.push(pt(tt));
+        }
+      }
+      STATE = 'DONE';
+      btnOut.classList.add('pulse');
+      hintEl.textContent = 'Close the outer loop to complete the workflow';
+      setDesc('The pattern is complete — but the outer loop needs to sign off.');
     }
   }
-  tick();
 }
 
-// ── Pills ─────────────────────────────────────────────────────
-function addPill(pill){
-  if(!pill) return;
-  var p=document.createElement('span');
-  p.className='d-pill '+(pill.dk?'dk':'co');
-  p.textContent=pill.label;
-  pillsEl.appendChild(p);
-  // Trigger animation
-  requestAnimationFrame(function(){
-    requestAnimationFrame(function(){ p.classList.add('show'); });
-  });
-}
+// ── Draw ──────────────────────────────────────────────────────
+function draw(){
+  CTX.clearRect(0,0,W,H);
 
-// ── Stage info ────────────────────────────────────────────────
-function showInfo(bi){
-  var info=INFO[bi];
+  // ── Outer ring ──
+  CTX.beginPath();
+  CTX.arc(CX, CY, R1+R2, 0, Math.PI*2);
+  if(STATE==='IDLE') CTX.setLineDash([7,6]);
+  else               CTX.setLineDash([]);
+  CTX.strokeStyle = 'rgba(20,20,19,'+ outerA +')';
+  CTX.lineWidth = (STATE==='COMPLETE') ? 1.8 : 1;
+  CTX.stroke();
+  CTX.setLineDash([]);
 
-  // Fade area in after brief pause
-  stageArea.classList.remove('fade');
-
-  if(info.d){
-    labelEl.textContent=info.d;
-    labelEl.className='stage-label '+(info.dk?'dk':'co');
-  } else {
-    labelEl.textContent='';
-    labelEl.className='stage-label';
+  // ── Inner ring ──
+  if(innerA > 0.01){
+    CTX.beginPath();
+    CTX.arc(CX, CY, R2, 0, Math.PI*2);
+    CTX.setLineDash([4,4]);
+    CTX.strokeStyle = 'rgba(217,119,87,'+ innerA +')';
+    CTX.lineWidth = 1;
+    CTX.stroke();
+    CTX.setLineDash([]);
   }
 
-  if(info.desc){
-    descEl.textContent=info.desc;
-  } else {
-    descEl.textContent='';
+  // ── Outer-loop orbiting dot (OUTER state) ──
+  if(STATE === 'OUTER'){
+    var angle = performance.now() * 0.00085;
+    var dx = CX + (R1+R2) * Math.cos(angle);
+    var dy = CY + (R1+R2) * Math.sin(angle);
+    // Trail
+    for(var i=1;i<=6;i++){
+      var ta = angle - i*0.18;
+      CTX.beginPath();
+      CTX.arc(CX+(R1+R2)*Math.cos(ta), CY+(R1+R2)*Math.sin(ta), 3-i*0.35, 0, Math.PI*2);
+      CTX.fillStyle = 'rgba(20,20,19,'+(0.12-i*0.017)+')';
+      CTX.fill();
+    }
+    CTX.beginPath();
+    CTX.arc(dx, dy, 4.5, 0, Math.PI*2);
+    CTX.fillStyle = 'rgba(20,20,19,0.72)';
+    CTX.fill();
   }
 
-  if(info.btn){
-    btnEl.textContent=info.btn;
-    btnEl.disabled=false;
-    btnEl.classList.remove('gone');
-  } else {
-    // Complete
-    btnEl.classList.add('gone');
-    docEl.classList.add('complete');
-    setTimeout(function(){
-      payoffEl.classList.add('show');
-      hintEl.style.opacity='0';
-    },400);
+  // ── Trace path ──
+  if(tracePts.length > 1 && traceA > 0.01){
+    CTX.beginPath();
+    CTX.moveTo(tracePts[0].x, tracePts[0].y);
+    for(var i=1; i<tracePts.length; i++){
+      CTX.lineTo(tracePts[i].x, tracePts[i].y);
+    }
+    var lw = STATE==='COMPLETE' ? 2.2 : 1.6;
+    CTX.strokeStyle = 'rgba(217,119,87,'+ (traceA * 0.82) +')';
+    CTX.lineWidth = lw;
+    CTX.lineJoin = 'round';
+    CTX.stroke();
+  }
+
+  // ── Complete glow on outer ring ──
+  if(STATE === 'COMPLETE'){
+    var pulse = 0.28 + 0.18 * Math.sin(performance.now() * 0.0025);
+    CTX.beginPath();
+    CTX.arc(CX, CY, R1+R2, 0, Math.PI*2);
+    CTX.strokeStyle = 'rgba(20,20,19,'+ pulse +')';
+    CTX.lineWidth = 2.5;
+    CTX.stroke();
+    // Faint inner glow fill
+    var grad = CTX.createRadialGradient(CX,CY,0,CX,CY,R1+R2);
+    grad.addColorStop(0, 'rgba(217,119,87,0.06)');
+    grad.addColorStop(0.6,'rgba(217,119,87,0.04)');
+    grad.addColorStop(1,  'rgba(217,119,87,0)');
+    CTX.fillStyle = grad;
+    CTX.beginPath();
+    CTX.arc(CX,CY,R1+R2,0,Math.PI*2);
+    CTX.fill();
+  }
+
+  // ── D labels ──
+  drawLabels();
+}
+
+function drawLabels(){
+  // Outer loop labels (Delegation, Diligence) — shown when OUTER+
+  if(STATE==='IDLE') return;
+  CTX.font = '500 10px "DM Sans"';
+  CTX.textAlign = 'center';
+  CTX.textBaseline = 'middle';
+
+  var outerLabelA = Math.min(1,(outerA - 0.18) / 0.44);
+  if(outerLabelA > 0){
+    CTX.fillStyle = 'rgba(20,20,19,'+(outerLabelA * 0.62)+')';
+    var lr = R1 + R2 + 22;
+    // Delegation ~215°, Diligence ~325°
+    CTX.fillText('Delegation',
+      CX + lr * Math.cos(3.75), CY + lr * Math.sin(3.75));
+    CTX.fillText('Diligence',
+      CX + lr * Math.cos(5.67), CY + lr * Math.sin(5.67));
+  }
+
+  // Inner loop labels (Description, Discernment) — shown when TRACING+
+  var innerLabelA = Math.min(1, innerA / 0.55);
+  if(innerLabelA > 0.05){
+    CTX.fillStyle = 'rgba(217,119,87,'+(innerLabelA * 0.75)+')';
+    var ir = R2 + 20;
+    // Description ~135°, Discernment ~45°
+    CTX.fillText('Description',
+      CX + ir * Math.cos(2.36), CY + ir * Math.sin(2.36));
+    CTX.fillText('Discernment',
+      CX + ir * Math.cos(0.79), CY + ir * Math.sin(0.79));
   }
 }
 
-// ── Advance ───────────────────────────────────────────────────
-function advance(){
-  if(typing) return;
-  var next=blockIdx+1;
-  if(next>=BLOCKS.length) return;
-
-  blockIdx=next;
-
-  // Fade stage area out while typing
-  stageArea.classList.add('fade');
-
-  typeBlock(blockIdx, function(){
-    addPill(BLOCKS[blockIdx].pill);
-    updateDots(blockIdx);
-    setTimeout(function(){
-      showInfo(blockIdx);
-    },180);
-  });
+// ── Loop ──────────────────────────────────────────────────────
+function loop(ts){
+  var dt = Math.min((ts - lastT) / 1000, 0.05);
+  lastT = ts;
+  update(dt);
+  draw();
+  requestAnimationFrame(loop);
 }
 
-// ── Init ──────────────────────────────────────────────────────
-// Type initial block on load
-blockIdx=0;
-typeBlock(0, function(){
-  updateDots(0);
-  showInfo(0);
-});
+window.addEventListener('resize', function(){ resize(); });
+resize();
+requestAnimationFrame(function(ts){ lastT = ts; loop(ts); });
 </script>
 </body>
 </html>
