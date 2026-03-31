@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>What's Worth Delegating - Module 5 - AI Fluency for K-12 Educators</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,300..700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#faf9f5;--surface:#f0eee6;--dark:#141413;
+  --muted:rgba(20,20,19,0.42);--border:rgba(20,20,19,0.1);
+  --coral:#d97757;--blue:#6a9bcc;--green:#3d6b4f;
+  --sans:'DM Sans',Arial,sans-serif;--serif:'Source Serif 4',Georgia,serif;
+}
+html,body{min-height:100vh;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:2rem 1rem;font-family:var(--sans);color:var(--dark)}
+.stage{width:100%;max-width:720px;position:relative}
+.status-badge{position:absolute;top:0;right:0;z-index:10;font-size:9.5px;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;background:var(--surface);border:0.5px solid var(--border);color:var(--muted);padding:4px 12px;border-radius:0 6px 0 4px}
+.card{background:var(--bg);border:0.5px solid var(--border);border-radius:6px;overflow:hidden}
+.top-bar{padding:1.75rem 2rem 0;padding-right:9rem}
+.eyebrow{font-size:10px;font-weight:500;letter-spacing:0.16em;text-transform:uppercase;color:var(--muted)}
+.title-area{padding:0.75rem 2rem 0.5rem}
+.headline{font-family:var(--serif);font-variation-settings:'opsz' 24;font-size:clamp(20px,2.8vw,26px);font-weight:600;color:var(--dark);line-height:1.2;margin-bottom:0.25rem;letter-spacing:-0.025em}
+.subhead{font-size:13px;color:var(--muted);line-height:1.5}
+
+/* Progress */
+.progress-wrap{padding:0 2rem 0.9rem}
+.progress-track{height:2px;background:var(--border);border-radius:1px;position:relative}
+.progress-fill{height:100%;background:var(--coral);border-radius:1px;transition:width 0.4s ease;width:0%}
+.progress-label{font-size:10px;color:var(--muted);margin-bottom:0.4rem;display:flex;justify-content:space-between}
+
+/* Arena */
+.arena{padding:1.75rem 2rem 1.75rem;background:var(--surface);border-top:0.5px solid var(--border);border-bottom:0.5px solid var(--border);display:flex;flex-direction:column;align-items:center;gap:1.6rem;min-height:320px;justify-content:center}
+
+/* Deck */
+.deck-wrap{position:relative;width:100%;max-width:440px;height:130px}
+.task-card{
+  position:absolute;inset:0;
+  background:var(--bg);border:0.5px solid var(--border);border-radius:6px;
+  padding:1.5rem 1.75rem;
+  display:flex;align-items:center;
+  transition:transform 0.3s ease,opacity 0.3s ease;
+  pointer-events:none;
+}
+.task-card.active{z-index:10;pointer-events:auto}
+.task-card.behind-1{transform:translateY(7px) scale(0.97);opacity:0.55;z-index:5}
+.task-card.behind-2{transform:translateY(14px) scale(0.94);opacity:0.28;z-index:1}
+.task-text{font-family:var(--serif);font-variation-settings:'opsz' 15;font-size:15px;font-weight:400;color:var(--dark);line-height:1.5}
+
+/* Fly animations */
+.fly-left{transform:translateX(-130%) rotate(-10deg) !important;opacity:0 !important;transition:transform 0.28s ease-in,opacity 0.2s !important}
+.fly-up{transform:translateY(-90px) scale(0.92) !important;opacity:0 !important;transition:transform 0.28s ease-in,opacity 0.2s !important}
+.fly-right{transform:translateX(130%) rotate(10deg) !important;opacity:0 !important;transition:transform 0.28s ease-in,opacity 0.2s !important}
+
+/* Zone buttons */
+.zones{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0.55rem;width:100%;max-width:480px}
+.zone-btn{
+  font-family:var(--sans);font-size:11.5px;font-weight:500;
+  padding:0.7rem 0.5rem;border-radius:4px;cursor:pointer;
+  border:0.5px solid var(--border);background:var(--bg);color:var(--muted);
+  transition:background 0.15s,border-color 0.15s,color 0.15s,transform 0.1s;
+  text-align:center;line-height:1.35;
+}
+.zone-btn:hover{transform:translateY(-2px)}
+.zone-btn:active{transform:translateY(0)}
+.zone-btn.z-mine:hover{background:var(--dark);border-color:var(--dark);color:#fff}
+.zone-btn.z-collab:hover{background:var(--coral);border-color:var(--coral);color:#fff}
+.zone-btn.z-ai:hover{background:var(--blue);border-color:var(--blue);color:#fff}
+.zone-btn.z-mine.chosen{background:var(--dark);border-color:var(--dark);color:#fff}
+.zone-btn.z-collab.chosen{background:var(--coral);border-color:var(--coral);color:#fff}
+.zone-btn.z-ai.chosen{background:var(--blue);border-color:var(--blue);color:#fff}
+.zone-name{display:block;font-weight:600;font-size:12px;margin-bottom:2px}
+.zone-sub{display:block;font-size:10px;opacity:0.7}
+
+/* Key hint */
+.key-hint{font-size:10px;color:var(--muted);letter-spacing:0.04em;opacity:0.7}
+
+/* Results */
+.results{padding:2rem;display:none}
+.results.visible{display:block}
+.result-hed{font-family:var(--serif);font-variation-settings:'opsz' 22;font-size:clamp(18px,2.6vw,24px);font-weight:600;color:var(--dark);letter-spacing:-0.025em;line-height:1.2;margin-bottom:0.3rem}
+.result-sub{font-size:13px;color:var(--muted);line-height:1.5;margin-bottom:1.5rem}
+.result-sub strong{color:var(--dark);font-weight:600}
+.result-cols{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px;background:var(--border);border:0.5px solid var(--border);border-radius:6px;overflow:hidden;margin-bottom:1.25rem}
+.result-col{background:var(--bg);padding:1.1rem 1rem}
+.result-col-label{font-size:9.5px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;margin-bottom:0.75rem;display:flex;align-items:center;gap:0.4rem}
+.result-col-label .count{font-size:11px;opacity:0.6;font-weight:400;letter-spacing:0}
+.col-mine .result-col-label{color:var(--dark)}
+.col-collab .result-col-label{color:var(--coral)}
+.col-ai .result-col-label{color:var(--blue)}
+.result-item{font-size:11.5px;color:var(--muted);line-height:1.45;margin-bottom:0.4rem;padding-left:0.8rem;position:relative}
+.result-item::before{content:'';position:absolute;left:0;top:0.52em;width:3px;height:3px;border-radius:50%}
+.col-mine .result-item::before{background:var(--dark)}
+.col-collab .result-item::before{background:var(--coral)}
+.col-ai .result-item::before{background:var(--blue)}
+.result-item.empty{opacity:0.35;font-style:italic;padding-left:0}
+.result-item.empty::before{display:none}
+.insight{background:var(--surface);border:0.5px solid var(--border);border-radius:6px;padding:1.1rem 1.3rem;font-size:13px;color:var(--muted);line-height:1.65;margin-bottom:1.2rem}
+.insight strong{color:var(--dark);font-weight:600}
+.restart{font-family:var(--sans);font-size:12px;font-weight:500;padding:0.45rem 1.1rem;border-radius:3px;cursor:pointer;border:0.5px solid var(--border);background:transparent;color:var(--muted);transition:border-color 0.15s,color 0.15s}
+.restart:hover{border-color:var(--coral);color:var(--coral)}
+
+/* Footer */
+.foot{text-align:center;font-size:11px;color:var(--muted);padding:0.65rem 0 1rem;border-top:0.5px solid var(--border);background:var(--surface);letter-spacing:0.02em}
+</style>
+</head>
+<body>
+<div class="stage">
+  <div class="status-badge">Draft &middot; Module 5</div>
+  <div class="card">
+    <div class="top-bar"><span class="eyebrow">AI Fluency for K&ndash;12 Educators &nbsp;&middot;&nbsp; Module 5</span></div>
+    <div class="title-area">
+      <h1 class="headline">What's worth delegating?</h1>
+      <p class="subhead">Eighteen teaching tasks. For each one, make a call: keep it, build it together, or hand it off.</p>
+    </div>
+    <div class="progress-wrap">
+      <div class="progress-label">
+        <span id="progressText">Task 1 of 18</span>
+        <span id="progressPct">0%</span>
+      </div>
+      <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    </div>
+    <div class="arena" id="arena">
+      <div class="deck-wrap" id="deckWrap"></div>
+      <div class="zones">
+        <button class="zone-btn z-mine" id="btn0" onclick="choose(0)">
+          <span class="zone-name">Mine</span>
+          <span class="zone-sub">Needs my judgment</span>
+        </button>
+        <button class="zone-btn z-collab" id="btn1" onclick="choose(1)">
+          <span class="zone-name">We build it</span>
+          <span class="zone-sub">AI drafts, I refine</span>
+        </button>
+        <button class="zone-btn z-ai" id="btn2" onclick="choose(2)">
+          <span class="zone-name">AI leads</span>
+          <span class="zone-sub">Delegate &mdash; I review</span>
+        </button>
+      </div>
+      <span class="key-hint">Keys: &larr; Mine &nbsp;&nbsp; &uarr; We build it &nbsp;&nbsp; &rarr; AI leads</span>
+    </div>
+    <div class="results" id="results"></div>
+    <div class="foot" id="foot">Trust your instincts &mdash; there are no wrong answers here</div>
+  </div>
+</div>
+
+<script>
+var tasks=[
+  {t:"Write a rubric for next week's persuasive essay assignment",mins:40},
+  {t:"Notice when a student seems withdrawn or emotionally off",mins:0},
+  {t:"Draft personal progress updates for 28 families before conferences",mins:100},
+  {t:"Build genuine trust with a student who has been refusing to engage",mins:0},
+  {t:"Generate 20 quiz questions aligned to your current unit",mins:25},
+  {t:"Adapt a lesson plan for a student with a reading disability",mins:55},
+  {t:"Find three different explanations for a concept your class is stuck on",mins:18},
+  {t:"Write substantive, personalized feedback on 30 student essays",mins:160},
+  {t:"Call a parent about a pattern of escalating behavior",mins:0},
+  {t:"Create reading materials differentiated across five levels",mins:85},
+  {t:"Design a project-based unit on a topic you've never taught before",mins:90},
+  {t:"Decide whether a student is ready to move to the next unit",mins:0},
+  {t:"Draft a college recommendation letter for a student you know well",mins:50},
+  {t:"Plan a substitute lesson that doesn't require your presence",mins:20},
+  {t:"Analyze your class's assessment data for patterns and outliers",mins:40},
+  {t:"Facilitate a discussion about a difficult or polarizing current event",mins:0},
+  {t:"Write a monthly family newsletter about what the class is building",mins:30},
+  {t:"Identify which students need intervention before the next unit",mins:0},
+];
+
+// Shuffle
+for(var i=tasks.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var tmp=tasks[i];tasks[i]=tasks[j];tasks[j]=tmp;}
+
+var choices=[];
+var cur=0;
+var busy=false;
+
+function buildDeck(){
+  var wrap=document.getElementById('deckWrap');
+  wrap.innerHTML='';
+  var remaining=tasks.length-cur;
+  for(var i=0;i<Math.min(3,remaining);i++){
+    var el=document.createElement('div');
+    el.className='task-card'+(i===0?' active':(i===1?' behind-1':' behind-2'));
+    el.id='tc'+i;
+    if(i===0)el.innerHTML='<span class="task-text">'+tasks[cur].t+'</span>';
+    wrap.appendChild(el);
+  }
+}
+
+function flashBtn(idx){
+  var ids=['btn0','btn1','btn2'];
+  var b=document.getElementById(ids[idx]);
+  b.classList.add('chosen');
+  setTimeout(function(){b.classList.remove('chosen');},280);
+}
+
+function choose(zone){
+  if(busy||cur>=tasks.length)return;
+  busy=true;
+  flashBtn(zone);
+  choices.push({task:tasks[cur],zone:zone});
+  var active=document.querySelector('.task-card.active');
+  active.classList.add(zone===0?'fly-left':(zone===2?'fly-right':'fly-up'));
+  setTimeout(function(){
+    cur++;
+    var pct=Math.round(cur/tasks.length*100);
+    document.getElementById('progressFill').style.width=pct+'%';
+    if(cur>=tasks.length){
+      document.getElementById('progressText').textContent='Done';
+      document.getElementById('progressPct').textContent='100%';
+      showResults();
+      busy=false;
+      return;
+    }
+    document.getElementById('progressText').textContent='Task '+(cur+1)+' of '+tasks.length;
+    document.getElementById('progressPct').textContent=pct+'%';
+    buildDeck();
+    busy=false;
+  },300);
+}
+
+function showResults(){
+  document.getElementById('arena').style.display='none';
+  document.getElementById('foot').style.display='none';
+  var mine=choices.filter(function(c){return c.zone===0;});
+  var collab=choices.filter(function(c){return c.zone===1;});
+  var ai=choices.filter(function(c){return c.zone===2;});
+  var mins=0;
+  collab.forEach(function(c){mins+=Math.round(c.task.mins*0.5);});
+  ai.forEach(function(c){mins+=c.task.mins;});
+  var timeStr=mins>=60?(Math.round(mins/6)/10)+' hours':mins+' minutes';
+
+  function items(arr,cls){
+    if(!arr.length)return '<p class="result-item empty">Nothing here</p>';
+    return arr.map(function(c){return '<p class="result-item '+cls+'">'+c.task.t+'</p>';}).join('');
+  }
+
+  var insight='';
+  var ambition=ai.length+collab.length;
+  if(mine.length>=12){
+    insight='<strong>You kept a lot close &mdash; that protective instinct makes sense.</strong> The tasks in your Mine column are genuinely irreplaceable. But look at what stayed there: are there tasks where AI could free you up to spend more time on the ones only you can do?';
+  } else if(ai.length>=10){
+    insight='<strong>You delegate with real ambition.</strong> The tasks you handed off are exactly where AI can multiply your reach. Remember: the "AI leads" column still needs your eye before anything reaches a student. That review is the practice &mdash; and it gets faster.';
+  } else if(collab.length>=8){
+    insight='<strong>You gravitate toward collaboration &mdash; a sophisticated instinct.</strong> The middle ground is where the most interesting work happens. You bring the professional judgment; AI handles the volume. That is augmentation.';
+  } else {
+    insight='<strong>A balanced profile.</strong> You protected the work that needs human presence and freed up time where AI genuinely earns it. The "We build it" column is where your craft as a delegator will grow most.';
+  }
+
+  var r=document.getElementById('results');
+  r.innerHTML=
+    '<p class="result-hed">Your delegation profile.</p>'+
+    '<p class="result-sub">Based on your choices, you could recover roughly <strong>'+timeStr+' per week</strong>. Here is how your instincts broke down.</p>'+
+    '<div class="result-cols">'+
+      '<div class="result-col col-mine">'+
+        '<div class="result-col-label">Mine <span class="count">('+mine.length+')</span></div>'+
+        items(mine,'')+'</div>'+
+      '<div class="result-col col-collab">'+
+        '<div class="result-col-label">We build it <span class="count">('+collab.length+')</span></div>'+
+        items(collab,'')+'</div>'+
+      '<div class="result-col col-ai">'+
+        '<div class="result-col-label">AI leads <span class="count">('+ai.length+')</span></div>'+
+        items(ai,'')+'</div>'+
+    '</div>'+
+    '<div class="insight">'+insight+'</div>'+
+    '<button class="restart" onclick="restart()">Try again &rarr;</button>';
+  r.classList.add('visible');
+}
+
+function restart(){
+  choices=[];cur=0;busy=false;
+  for(var i=tasks.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var tmp=tasks[i];tasks[i]=tasks[j];tasks[j]=tmp;}
+  document.getElementById('progressFill').style.width='0%';
+  document.getElementById('progressText').textContent='Task 1 of '+tasks.length;
+  document.getElementById('progressPct').textContent='0%';
+  document.getElementById('results').classList.remove('visible');
+  document.getElementById('results').innerHTML='';
+  document.getElementById('arena').style.display='';
+  document.getElementById('foot').style.display='';
+  buildDeck();
+}
+
+document.addEventListener('keydown',function(e){
+  if(e.key==='ArrowLeft'||e.key==='1')choose(0);
+  if(e.key==='ArrowUp'||e.key==='2')choose(1);
+  if(e.key==='ArrowRight'||e.key==='3')choose(2);
+});
+
+buildDeck();
+</script>
+</body>
+</html>
