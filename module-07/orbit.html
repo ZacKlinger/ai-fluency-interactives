@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>4D Runner &mdash; Module 7</title>
+<title>The Build &mdash; Module 7</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
 <style>
@@ -18,486 +18,357 @@ body{
   min-height:100vh;display:flex;flex-direction:column;
   align-items:center;justify-content:center;padding:24px;
 }
-.wrap{width:100%;max-width:600px}
-.eyebrow{text-align:center;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
-h1{text-align:center;font-family:'Source Serif 4',serif;font-size:20px;font-weight:400;line-height:1.35;margin-bottom:18px}
-canvas{display:block;width:100%;border-radius:8px;background:var(--surface);touch-action:none;cursor:default}
-.msg{min-height:40px;margin-top:12px;text-align:center;padding:0 8px}
-.msg p{font:500 13px 'DM Sans',sans-serif;line-height:1.5;opacity:0;transition:opacity .25s}
-.msg p.show{opacity:1}
-.msg p.win{color:var(--green)}
-.msg p.fail{color:#b94a38}
-.hint{font-size:12px;color:var(--muted);text-align:center;margin-top:4px;min-height:18px}
+.wrap{width:100%;max-width:540px}
+.eyebrow{
+  text-align:center;font-size:11px;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--muted);margin-bottom:8px;
+}
+h1{
+  text-align:center;font-family:'Source Serif 4',serif;
+  font-size:20px;font-weight:400;line-height:1.35;margin-bottom:20px;
+}
+
+/* Document card */
+.doc-card{
+  background:var(--bg);
+  border:.5px solid var(--border);
+  border-radius:8px;overflow:hidden;
+}
+.doc-head{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:11px 16px;border-bottom:.5px solid var(--border);
+  background:var(--surface);
+}
+.doc-title{font:500 11px 'DM Sans',sans-serif;color:var(--muted)}
+.prog-dots{display:flex;gap:5px;align-items:center}
+.prog-dot{
+  width:6px;height:6px;border-radius:50%;
+  background:rgba(20,20,19,0.13);transition:background .4s;
+}
+.prog-dot.done{background:rgba(20,20,19,0.5)}
+.prog-dot.active{background:rgba(20,20,19,0.85)}
+
+.doc-body{padding:20px 20px 16px;min-height:220px}
+.doc-text{
+  font:400 14px/1.75 'Source Serif 4',serif;
+  color:var(--dark);white-space:pre-wrap;word-break:break-word;
+}
+.doc-text::after{
+  content:'|';
+  font-weight:300;color:rgba(20,20,19,0.55);
+  animation:blink .85s step-end infinite;
+}
+.doc-text.complete::after{animation:none;opacity:0}
+@keyframes blink{0%,100%{opacity:.75}50%{opacity:0}}
+
+/* D pills */
+.doc-pills{
+  display:flex;gap:6px;flex-wrap:wrap;
+  padding:10px 16px 12px;border-top:.5px solid var(--border);
+  min-height:44px;
+}
+.d-pill{
+  font:600 10px 'DM Sans',sans-serif;letter-spacing:.04em;
+  padding:3px 9px;border-radius:20px;
+  opacity:0;transform:translateY(3px);
+  transition:opacity .4s,transform .4s;
+}
+.d-pill.show{opacity:1;transform:none}
+.d-pill.dk{background:rgba(20,20,19,0.86);color:#fff}
+.d-pill.co{background:var(--coral);color:#fff}
+
+/* Stage area */
+.stage-area{
+  margin-top:18px;min-height:72px;
+  transition:opacity .25s;
+}
+.stage-area.fade{opacity:0}
+.stage-label{
+  font:600 11px 'DM Sans',sans-serif;letter-spacing:.06em;
+  text-transform:uppercase;color:rgba(20,20,19,0.45);
+  margin-bottom:6px;
+  transition:color .3s;
+}
+.stage-label.dk{color:rgba(20,20,19,0.7)}
+.stage-label.co{color:var(--coral)}
+.stage-desc{
+  font:400 15px/1.6 'Source Serif 4',serif;
+  color:var(--dark);
+}
+
+/* Apply button */
+.apply-btn{
+  display:block;width:100%;margin-top:18px;
+  background:var(--coral);border:none;border-radius:6px;
+  padding:12px 20px;font:600 14px 'DM Sans',sans-serif;
+  color:#fff;cursor:pointer;
+  transition:background .15s,box-shadow .15s,opacity .2s;
+  box-shadow:0 2px 8px rgba(217,119,87,0);
+}
+.apply-btn:hover:not(:disabled){
+  background:#c46846;
+  box-shadow:0 2px 12px rgba(217,119,87,0.35);
+}
+.apply-btn:disabled{opacity:0.38;cursor:default}
+.apply-btn.gone{display:none}
+
+/* Payoff */
+.payoff{
+  margin-top:20px;text-align:center;
+  font:400 15px/1.65 'Source Serif 4',serif;
+  color:var(--dark);opacity:0;transition:opacity .7s;
+}
+.payoff.show{opacity:1}
+.payoff strong{font-weight:600}
+
+.hint{font-size:12px;color:var(--muted);text-align:center;margin-top:8px}
 </style>
 </head>
 <body>
 <div class="wrap">
   <div class="eyebrow">Module 7 &middot; Tying It All Together</div>
-  <h1>Navigate the 4D workflow in real time.</h1>
-  <canvas id="c"></canvas>
-  <div class="msg"><p id="msg-text"></p></div>
-  <div class="hint" id="hint">Press Space or tap to start &nbsp;&middot;&nbsp; &larr;&rarr; to switch lanes</div>
+  <h1>One task. Five moves. The full 4D workflow.</h1>
+
+  <div class="doc-card">
+    <div class="doc-head">
+      <span class="doc-title">Ms. Okafor &mdash; Lesson Plan</span>
+      <div class="prog-dots" id="prog"></div>
+    </div>
+    <div class="doc-body">
+      <div class="doc-text" id="doc"></div>
+    </div>
+    <div class="doc-pills" id="pills"></div>
+  </div>
+
+  <div class="stage-area" id="stage-area">
+    <div class="stage-label" id="stage-label"></div>
+    <p class="stage-desc" id="stage-desc"></p>
+  </div>
+
+  <button class="apply-btn" id="btn" onclick="advance()" disabled>...</button>
+
+  <div class="payoff" id="payoff">
+    <strong>Five moves. One complete workflow.</strong><br>
+    Now do it with something of your own.
+  </div>
+
+  <div class="hint" id="hint">Follow Ms. Okafor through a full 4D lesson planning workflow</div>
 </div>
 
 <script>
-var C=document.getElementById('c');
-var CTX=C.getContext('2d');
-var msgP=document.getElementById('msg-text');
-var hintEl=document.getElementById('hint');
+var docEl  = document.getElementById('doc');
+var progEl = document.getElementById('prog');
+var pillsEl= document.getElementById('pills');
+var stageArea = document.getElementById('stage-area');
+var labelEl= document.getElementById('stage-label');
+var descEl = document.getElementById('stage-desc');
+var btnEl  = document.getElementById('btn');
+var payoffEl = document.getElementById('payoff');
+var hintEl = document.getElementById('hint');
 
-// Layout
-var W,H,LANE_W,PLAYER_Y,HEADER_H,PLAY_H,ORB_R,GATE_H,HIT_ZONE;
+// ── Data ──────────────────────────────────────────────────────
 
-var LANES=[
-  {name:'Delegation', sub:'Ethical Focus', dark:true,  x:0},
-  {name:'Diligence',  sub:'Ethical Focus', dark:true,  x:0},
-  {name:'Description',sub:'Quality Focus', dark:false, x:0},
-  {name:'Discernment',sub:'Quality Focus', dark:false, x:0},
+var BLOCKS = [
+  // 0: Initial task (no pill, shown on load)
+  {
+    text: 'Need: Differentiated reading passages on\nthe circulatory system for 7th grade science.\n\n3 reading levels (4th, 6th, 8th grade).\n4 students with IEPs. Multilingual learners.\nEnd goal: claim-evidence-reasoning task.',
+    pill: null,
+    speed: 22,
+  },
+  // 1: Delegation
+  {
+    text: '\n\nDelegation: AI drafts the reading scaffold.\nMs. Okafor reviews, adapts, and owns\nthe final product and its pedagogical fit.',
+    pill: {label:'Delegation', dk:true},
+    speed: 24,
+  },
+  // 2: Diligence
+  {
+    text: '\n\nDiligence:\n\u2713 District-approved tool confirmed\n\u2713 No student names in prompt\n\u2713 IEP details de-identified\n\u2713 Anonymized class context only',
+    pill: {label:'Diligence', dk:true},
+    speed: 24,
+  },
+  // 3: Description
+  {
+    text: '\n\nPrompt: "Write 3 informational passages on\nthe circulatory system at 4th, 6th, and 8th\ngrade reading levels. Include: chamber, valve,\nartery, vein. Align to NGSS LS1.A. Each\npassage should set up a CER writing task."',
+    pill: {label:'Description', dk:false},
+    speed: 20,
+  },
+  // 4: Discernment
+  {
+    text: '\n\nDiscernment review:\n\u2713 Reading levels accurate\n\u2713 Science accurate\n\u26a0 8th grade passage: "blood vessels" too\n  generic -- revised to distinguish arteries,\n  veins, and capillaries specifically\n\u2713 CER task setup confirmed in all three',
+    pill: {label:'Discernment', dk:false},
+    speed: 20,
+  },
+  // 5: Diligence (final sign-off)
+  {
+    text: '\n\n\u2713 No student data included\n\u2713 Science verified by teacher\n\u2713 Pedagogical judgment applied\n\u2713 Ready for classroom use',
+    pill: {label:'Diligence \u2713', dk:true},
+    speed: 24,
+  },
 ];
 
-var GATES=[
+// Info shown AFTER each block types (before next click)
+var INFO = [
+  // After block 0
   {
-    lane:0,
-    scenario:'A student wants AI to draft their essay',
-    win:'Delegation -- you decided AI\'s role before anything else.',
-    fail:'Start with Delegation. Decide how much to hand off before prompting.'
+    d: null,
+    desc: 'Ms. Okafor has a task. Before opening AI -- does it belong here, and on what terms?',
+    btn: 'Apply Delegation \u2192',
   },
+  // After block 1 (Delegation applied)
   {
-    lane:1,
-    scenario:'The AI-generated rubric mentions a student by name',
-    win:'Diligence -- you caught the privacy issue before it reached students.',
-    fail:'Diligence checks professional guardrails first. FERPA applies here.'
+    d: 'Delegation',
+    dk: true,
+    desc: 'Scope set. AI drafts, Ms. Okafor owns. Next -- is it safe to proceed?',
+    btn: 'Apply Diligence \u2192',
   },
+  // After block 2 (Diligence)
   {
-    lane:2,
-    scenario:'Your prompt is vague and AI keeps missing the mark',
-    win:'Description -- you told AI exactly what you needed.',
-    fail:'Description fixes the prompt. Give AI the context it needs.'
+    d: 'Diligence',
+    dk: true,
+    desc: 'Guardrails confirmed. Now tell AI exactly what you need.',
+    btn: 'Apply Description \u2192',
   },
+  // After block 3 (Description)
   {
-    lane:3,
-    scenario:'The AI feedback looks polished but contains a factual error',
-    win:'Discernment -- surface quality never fooled you.',
-    fail:'Discernment: always evaluate output critically, not just aesthetics.'
+    d: 'Description',
+    dk: false,
+    desc: 'AI returned three passages. Does the output hold up?',
+    btn: 'Apply Discernment \u2192',
   },
+  // After block 4 (Discernment)
   {
-    lane:1,
-    scenario:'Ready to send AI-generated feedback to 30 students',
-    win:'Diligence again -- the outer loop closes. Your signature, not AI\'s.',
-    fail:'Diligence closes the loop. Professional sign-off before delivery.'
+    d: 'Discernment',
+    dk: false,
+    desc: 'Error caught and fixed. One last step -- your professional sign-off.',
+    btn: 'Apply Diligence \u2192',
   },
+  // After block 5 (final Diligence) -- complete
+  {d: null, desc: null, btn: null},
 ];
 
-// State
-var STATE='IDLE'; // IDLE COUNTDOWN PLAYING WIN_PAUSE FAIL COMPLETE
-var player={lane:1, x:0, targetX:0, trail:[]};
-var gateY=0, gateSpeed=0, gateIdx=0, gateResolved=false;
-var cdNum=3, cdTimer=0;
-var flashAlpha=0, flashGreen=true;
-var pauseTimer=0;
-var touchStartX=0;
-var lastT=performance.now();
+// ── State ─────────────────────────────────────────────────────
+var blockIdx = -1;
+var fullText = '';
+var typing   = false;
+var typeTimer = null;
 
-function resize(){
-  W=C.offsetWidth;
-  H=Math.round(W*0.70);
-  C.width=Math.round(W*devicePixelRatio);
-  C.height=Math.round(H*devicePixelRatio);
-  C.style.height=H+'px';
-  CTX.setTransform(1,0,0,1,0,0);
-  CTX.scale(devicePixelRatio,devicePixelRatio);
-  LANE_W=W/4;
-  HEADER_H=40;
-  PLAYER_Y=H*0.83;
-  PLAY_H=PLAYER_Y-HEADER_H;
-  ORB_R=Math.max(10,Math.round(W*0.022));
-  GATE_H=Math.max(5,Math.round(H*0.012));
-  HIT_ZONE=ORB_R*1.8;
-  gateSpeed=PLAY_H/3.0; // px/s, arrive in ~3s
-  for(var i=0;i<4;i++) LANES[i].x=LANE_W*i+LANE_W/2;
-  player.x=LANES[player.lane].x;
-  player.targetX=LANES[player.lane].x;
+// ── Progress dots ─────────────────────────────────────────────
+(function buildDots(){
+  for(var i=0;i<5;i++){
+    var d=document.createElement('div');
+    d.className='prog-dot';
+    progEl.appendChild(d);
+  }
+})();
+
+function updateDots(bi){
+  // dots 0-4 correspond to blocks 1-5
+  var dots=progEl.querySelectorAll('.prog-dot');
+  var di=bi-1; // -1 when only block0 shown
+  dots.forEach(function(d,i){
+    d.classList.remove('done','active');
+    if(i<di) d.classList.add('done');
+    else if(i===di) d.classList.add('active');
+  });
 }
 
-function startGame(){
-  STATE='COUNTDOWN';
-  cdNum=3; cdTimer=0;
-  gateIdx=0;
-  player.lane=1;
-  player.x=LANES[1].x;
-  player.targetX=LANES[1].x;
-  player.trail=[];
-  spawnGate();
-  setMsg('','');
-  hintEl.textContent='\u2190\u2192 to switch lanes';
-}
-
-function spawnGate(){
-  gateY=HEADER_H;
-  gateResolved=false;
-}
-
-function setMsg(text,cls){
-  msgP.classList.remove('show','win','fail');
-  msgP.textContent=text;
-  if(text){
-    void msgP.offsetWidth;
-    msgP.classList.add('show');
-    if(cls) msgP.classList.add(cls);
-  }
-}
-
-function wrapLines(text,maxW){
-  CTX.textBaseline='top';
-  var words=text.split(' ');
-  var lines=[], line='';
-  for(var i=0;i<words.length;i++){
-    var test=line+(line?' ':'')+words[i];
-    if(CTX.measureText(test).width>maxW&&line){
-      lines.push(line); line=words[i];
-    } else { line=test; }
-  }
-  if(line) lines.push(line);
-  return lines;
-}
-
-// ── DRAW ──────────────────────────────────────────────────────
-function draw(){
-  CTX.clearRect(0,0,W,H);
-
-  // Lane backgrounds
-  for(var i=0;i<4;i++){
-    var lx=i*LANE_W;
-    CTX.fillStyle=LANES[i].dark?'rgba(20,20,19,0.055)':'rgba(217,119,87,0.065)';
-    CTX.fillRect(lx,0,LANE_W,H);
-  }
-
-  // Lane dividers
-  CTX.setLineDash([3,4]);
-  CTX.strokeStyle='rgba(20,20,19,0.11)';
-  CTX.lineWidth=0.5;
-  for(var i=1;i<4;i++){
-    CTX.beginPath();
-    CTX.moveTo(i*LANE_W,HEADER_H);
-    CTX.lineTo(i*LANE_W,PLAYER_Y+24);
-    CTX.stroke();
-  }
-  CTX.setLineDash([]);
-
-  // Header bottom line
-  CTX.strokeStyle='rgba(20,20,19,0.1)';
-  CTX.lineWidth=0.5;
-  CTX.beginPath();
-  CTX.moveTo(0,HEADER_H);
-  CTX.lineTo(W,HEADER_H);
-  CTX.stroke();
-
-  // Lane header labels
-  CTX.textAlign='center';
-  CTX.textBaseline='middle';
-  for(var i=0;i<4;i++){
-    var cx=i*LANE_W+LANE_W/2;
-    var isActive=(STATE!=='IDLE'&&STATE!=='COUNTDOWN'&&player.lane===i);
-    CTX.font='600 11px "DM Sans"';
-    CTX.fillStyle=LANES[i].dark?
-      (isActive?'rgba(20,20,19,0.9)':'rgba(20,20,19,0.5)'):
-      (isActive?'rgba(217,119,87,1.0)':'rgba(217,119,87,0.6)');
-    CTX.fillText(LANES[i].name,cx,HEADER_H/2);
-  }
-
-  // IDLE screen
-  if(STATE==='IDLE'){
-    CTX.font='400 14px "Source Serif 4"';
-    CTX.fillStyle='rgba(20,20,19,0.38)';
-    CTX.textAlign='center';
-    CTX.textBaseline='middle';
-    CTX.fillText('Five challenges. One workflow.',W/2,H*0.40);
-    CTX.font='500 12px "DM Sans"';
-    CTX.fillStyle='rgba(20,20,19,0.28)';
-    CTX.fillText('Outer loop \u2192 inner loop \u2192 outer loop',W/2,H*0.40+22);
-    drawOrb(false);
-    return;
-  }
-
-  // Gate + scenario text
-  if(STATE!=='COMPLETE'){
-    var g=GATES[Math.min(gateIdx,GATES.length-1)];
-    var proximity=(gateY-HEADER_H)/PLAY_H; // 0=spawn, 1=player
-    var textAlpha=Math.min(1,Math.max(0,proximity*2.4));
-
-    // Scenario text: hovers above the gate, pinned to a min y
-    if(textAlpha>0.02){
-      var scenTextY=Math.max(HEADER_H+H*0.08, gateY-H*0.09);
-      CTX.globalAlpha=textAlpha;
-      CTX.font='400 14px "Source Serif 4"';
-      CTX.fillStyle='rgba(20,20,19,0.88)';
-      CTX.textAlign='center';
-      var maxTW=W*0.78;
-      var lines=wrapLines(g.scenario,maxTW);
-      var lineH=20;
-      var totalH=lines.length*lineH;
-      var ty=scenTextY-totalH/2;
-      for(var li=0;li<lines.length;li++){
-        CTX.textBaseline='top';
-        CTX.fillText(lines[li],W/2,ty+li*lineH);
-      }
-      CTX.globalAlpha=1;
-    }
-
-    // Gate segments
-    for(var i=0;i<4;i++){
-      var segX=i*LANE_W;
-      var isCorrect=(i===g.lane);
-      // Subtle hint glow for correct lane as gate approaches
-      var alpha;
-      if(isCorrect){
-        var hintGlow=proximity>0.6?Math.min(1,(proximity-0.6)/0.3):0;
-        alpha=LANES[i].dark?(0.4+hintGlow*0.45):(0.45+hintGlow*0.4);
-      } else {
-        alpha=LANES[i].dark?0.28:0.32;
-      }
-      CTX.fillStyle=LANES[i].dark?
-        'rgba(20,20,19,'+alpha+')':
-        'rgba(217,119,87,'+(alpha*1.05)+')';
-      CTX.fillRect(segX,gateY-GATE_H/2,LANE_W,GATE_H);
+// ── Typewriter ────────────────────────────────────────────────
+function typeBlock(bi, onDone){
+  typing=true;
+  btnEl.disabled=true;
+  var chars=BLOCKS[bi].text.split('');
+  var spd=BLOCKS[bi].speed;
+  var i=0;
+  function tick(){
+    if(i<chars.length){
+      fullText+=chars[i++];
+      docEl.textContent=fullText;
+      typeTimer=setTimeout(tick,spd);
+    } else {
+      typing=false;
+      if(onDone) onDone();
     }
   }
+  tick();
+}
 
-  // Player trail
-  for(var t=0;t<player.trail.length;t++){
-    var tp=player.trail[t];
-    var ta=(t+1)/player.trail.length*0.18;
-    var tr=ORB_R*(0.35+0.4*((t+1)/player.trail.length));
-    CTX.beginPath();
-    CTX.arc(tp.x,PLAYER_Y,tr,0,Math.PI*2);
-    CTX.fillStyle='rgba(20,20,19,'+ta+')';
-    CTX.fill();
+// ── Pills ─────────────────────────────────────────────────────
+function addPill(pill){
+  if(!pill) return;
+  var p=document.createElement('span');
+  p.className='d-pill '+(pill.dk?'dk':'co');
+  p.textContent=pill.label;
+  pillsEl.appendChild(p);
+  // Trigger animation
+  requestAnimationFrame(function(){
+    requestAnimationFrame(function(){ p.classList.add('show'); });
+  });
+}
+
+// ── Stage info ────────────────────────────────────────────────
+function showInfo(bi){
+  var info=INFO[bi];
+
+  // Fade area in after brief pause
+  stageArea.classList.remove('fade');
+
+  if(info.d){
+    labelEl.textContent=info.d;
+    labelEl.className='stage-label '+(info.dk?'dk':'co');
+  } else {
+    labelEl.textContent='';
+    labelEl.className='stage-label';
   }
 
-  // Player orb
-  var inCorrect=STATE==='PLAYING'&&
-    player.lane===GATES[Math.min(gateIdx,GATES.length-1)].lane&&
-    (GATES[Math.min(gateIdx,GATES.length-1)].lane===player.lane);
-  drawOrb(inCorrect);
-
-  // Flash overlay
-  if(flashAlpha>0.005){
-    CTX.fillStyle=flashGreen?
-      'rgba(61,107,79,'+flashAlpha+')':
-      'rgba(185,74,56,'+flashAlpha+')';
-    CTX.fillRect(0,0,W,H);
+  if(info.desc){
+    descEl.textContent=info.desc;
+  } else {
+    descEl.textContent='';
   }
 
-  // Countdown overlay
-  if(STATE==='COUNTDOWN'){
-    CTX.fillStyle='rgba(250,249,245,0.78)';
-    CTX.fillRect(0,0,W,H);
-    var cdLabel=(cdNum>0)?String(cdNum):'Go';
-    CTX.font='700 60px "DM Sans"';
-    CTX.fillStyle='rgba(20,20,19,0.82)';
-    CTX.textAlign='center';
-    CTX.textBaseline='middle';
-    CTX.fillText(cdLabel,W/2,H/2);
-  }
-
-  // Progress dots
-  if(STATE!=='IDLE'&&STATE!=='COUNTDOWN'&&STATE!=='COMPLETE'){
-    var dotR=3,dotGap=10,dotY=H-11;
-    var tx=(GATES.length-1)*dotGap;
-    var dx=W/2-tx/2;
-    for(var i=0;i<GATES.length;i++){
-      CTX.beginPath();
-      CTX.arc(dx+i*dotGap,dotY,dotR,0,Math.PI*2);
-      CTX.fillStyle=i<gateIdx?
-        'rgba(20,20,19,0.6)':
-        (i===gateIdx?'rgba(20,20,19,0.88)':'rgba(20,20,19,0.18)');
-      CTX.fill();
-    }
-  }
-
-  // Complete screen
-  if(STATE==='COMPLETE'){
-    CTX.fillStyle='rgba(250,249,245,0.93)';
-    CTX.fillRect(0,0,W,H);
-    var rows=[
-      {t:'You just ran the full 4D workflow.',sz:17,wt:'600',gap:30},
-      {t:'',sz:8,wt:'400',gap:8},
-      {t:'Outer loop set the terms.',sz:15,wt:'400',gap:22},
-      {t:'Inner loop refined the work.',sz:15,wt:'400',gap:22},
-      {t:'Outer loop signed off.',sz:15,wt:'400',gap:22},
-      {t:'',sz:8,wt:'400',gap:8},
-      {t:"That's the practice.",sz:15,wt:'600',gap:22},
-      {t:'Start it tomorrow.',sz:15,wt:'400',gap:0},
-    ];
-    var cy=H*0.20;
-    CTX.textAlign='center';
-    for(var ri=0;ri<rows.length;ri++){
-      var row=rows[ri];
-      if(!row.t){cy+=row.gap;continue;}
-      CTX.font=row.wt+' '+row.sz+'px "Source Serif 4"';
-      CTX.fillStyle=row.wt==='600'?'rgba(20,20,19,0.9)':'rgba(20,20,19,0.65)';
-      CTX.textBaseline='top';
-      CTX.fillText(row.t,W/2,cy);
-      cy+=row.gap;
-    }
-    CTX.font='500 11px "DM Sans"';
-    CTX.fillStyle='rgba(20,20,19,0.32)';
-    CTX.textBaseline='bottom';
-    CTX.fillText('Press Space or tap to play again',W/2,H-12);
+  if(info.btn){
+    btnEl.textContent=info.btn;
+    btnEl.disabled=false;
+    btnEl.classList.remove('gone');
+  } else {
+    // Complete
+    btnEl.classList.add('gone');
+    docEl.classList.add('complete');
+    setTimeout(function(){
+      payoffEl.classList.add('show');
+      hintEl.style.opacity='0';
+    },400);
   }
 }
 
-function drawOrb(glowing){
-  var ox=player.x, oy=PLAYER_Y;
-  if(glowing){
-    var grd=CTX.createRadialGradient(ox,oy,0,ox,oy,ORB_R*3.5);
-    grd.addColorStop(0,'rgba(20,20,19,0.14)');
-    grd.addColorStop(1,'rgba(20,20,19,0)');
-    CTX.fillStyle=grd;
-    CTX.beginPath();
-    CTX.arc(ox,oy,ORB_R*3.5,0,Math.PI*2);
-    CTX.fill();
-  }
-  CTX.beginPath();
-  CTX.arc(ox,oy,ORB_R,0,Math.PI*2);
-  CTX.fillStyle='rgba(20,20,19,0.86)';
-  CTX.fill();
+// ── Advance ───────────────────────────────────────────────────
+function advance(){
+  if(typing) return;
+  var next=blockIdx+1;
+  if(next>=BLOCKS.length) return;
+
+  blockIdx=next;
+
+  // Fade stage area out while typing
+  stageArea.classList.add('fade');
+
+  typeBlock(blockIdx, function(){
+    addPill(BLOCKS[blockIdx].pill);
+    updateDots(blockIdx);
+    setTimeout(function(){
+      showInfo(blockIdx);
+    },180);
+  });
 }
 
-// ── UPDATE ─────────────────────────────────────────────────────
-function update(dt){
-  // Smooth player x
-  player.x+=(player.targetX-player.x)*Math.min(1,dt*14);
-
-  // Trail (only during active play)
-  if(STATE==='PLAYING'||STATE==='COUNTDOWN'){
-    player.trail.push({x:player.x});
-    if(player.trail.length>5) player.trail.shift();
-  }
-
-  if(STATE==='COUNTDOWN'){
-    cdTimer+=dt;
-    if(cdTimer>0.72){
-      cdTimer=0;
-      cdNum--;
-      if(cdNum<0) STATE='PLAYING';
-    }
-    return;
-  }
-
-  if(STATE==='PLAYING'){
-    gateY+=gateSpeed*dt;
-    if(!gateResolved&&gateY>=PLAYER_Y-HIT_ZONE){
-      gateResolved=true;
-      gateY=PLAYER_Y;
-      var g=GATES[gateIdx];
-      if(player.lane===g.lane){
-        STATE='WIN_PAUSE';
-        pauseTimer=1.7;
-        flashAlpha=0.28;
-        flashGreen=true;
-        setMsg(g.win,'win');
-      } else {
-        STATE='FAIL';
-        pauseTimer=0.55;
-        flashAlpha=0.22;
-        flashGreen=false;
-        setMsg(g.fail,'fail');
-      }
-    }
-    return;
-  }
-
-  if(STATE==='WIN_PAUSE'||STATE==='FAIL'){
-    flashAlpha=Math.max(0,flashAlpha-dt*1.6);
-    pauseTimer-=dt;
-    if(pauseTimer<=0){
-      if(STATE==='WIN_PAUSE'){
-        gateIdx++;
-        if(gateIdx>=GATES.length){
-          STATE='COMPLETE';
-          setMsg('','');
-          hintEl.textContent='Press Space or tap to play again';
-        } else {
-          STATE='PLAYING';
-          spawnGate();
-          setMsg('','');
-        }
-      } else {
-        STATE='PLAYING';
-        spawnGate();
-        setMsg('','');
-      }
-    }
-  }
-}
-
-// ── LOOP ───────────────────────────────────────────────────────
-function loop(ts){
-  var dt=Math.min((ts-lastT)/1000,0.05);
-  lastT=ts;
-  update(dt);
-  draw();
-  requestAnimationFrame(loop);
-}
-
-// ── INPUT ──────────────────────────────────────────────────────
-function moveLeft(){
-  if(player.lane>0){
-    player.lane--;
-    player.targetX=LANES[player.lane].x;
-  }
-}
-function moveRight(){
-  if(player.lane<3){
-    player.lane++;
-    player.targetX=LANES[player.lane].x;
-  }
-}
-function tryStart(){
-  if(STATE==='IDLE'||STATE==='COMPLETE') startGame();
-}
-
-document.addEventListener('keydown',function(e){
-  if(e.key==='ArrowLeft'||e.key==='a'||e.key==='A'){
-    if(STATE!=='IDLE'&&STATE!=='COMPLETE') e.preventDefault();
-    moveLeft();
-  } else if(e.key==='ArrowRight'||e.key==='d'||e.key==='D'){
-    if(STATE!=='IDLE'&&STATE!=='COMPLETE') e.preventDefault();
-    moveRight();
-  } else if(e.key===' '){
-    e.preventDefault();
-    tryStart();
-  }
+// ── Init ──────────────────────────────────────────────────────
+// Type initial block on load
+blockIdx=0;
+typeBlock(0, function(){
+  updateDots(0);
+  showInfo(0);
 });
-
-C.addEventListener('touchstart',function(e){
-  touchStartX=e.touches[0].clientX;
-  if(STATE==='IDLE'||STATE==='COMPLETE'){
-    startGame();
-    e.preventDefault();
-    return;
-  }
-  e.preventDefault();
-},{passive:false});
-
-C.addEventListener('touchend',function(e){
-  if(STATE==='IDLE'||STATE==='COMPLETE') return;
-  var dx=e.changedTouches[0].clientX-touchStartX;
-  if(dx<-18) moveLeft();
-  else if(dx>18) moveRight();
-  e.preventDefault();
-},{passive:false});
-
-window.addEventListener('resize',function(){
-  resize();
-  if(STATE==='IDLE') player.x=player.targetX=LANES[player.lane].x;
-  draw();
-});
-
-resize();
-player.x=player.targetX=LANES[player.lane].x;
-requestAnimationFrame(function(ts){lastT=ts;loop(ts);});
 </script>
 </body>
 </html>
