@@ -113,7 +113,7 @@ function initParts(){parts=[];for(var i=0;i<N;i++){var ang=Math.random()*Math.PI
 
 function activateBand(bi){
   var s=Math.floor(BS[bi]*N),e=Math.floor(BE[bi]*N);
-  for(var i=s;i<e;i++){var p=parts[i];if(p.shaped&&p.band===bi)continue;var pt=ptFrom(bi);p.tx=pt.x;p.ty=pt.y;p.shaped=true;p.band=bi;p.talpha=0.60+Math.random()*0.35;}
+  for(var i=s;i<e;i++){var p=parts[i];if(p.shaped&&p.band===bi)continue;var pt=ptFrom(bi);p.tx=pt.x;p.ty=pt.y;p.shaped=true;p.band=bi;p.talpha=0.40+Math.random()*0.12;}
 }
 
 function deactivateBand(bi){
@@ -139,7 +139,7 @@ function loop(){
       p.vx+=(p.tx-p.x)*0.003;p.vy+=(p.ty-p.y)*0.003;
       p.vx+=(Math.random()-0.5)*0.010;p.vy+=(Math.random()-0.5)*0.010;
       p.vx*=0.86;p.vy*=0.86;
-      p.talpha=0.60+glowCurrent*0.28;
+      p.talpha=0.40+glowCurrent*0.55;
     } else {
       p.vx+=(p.wx-p.x)*0.0005;p.vy+=(p.wy-p.y)*0.0005;
       p.vx+=(Math.random()-0.5)*0.025;p.vy+=(Math.random()-0.5)*0.025;
@@ -154,8 +154,8 @@ function loop(){
     if(p.x<-12)p.x=W+12;if(p.x>W+12)p.x=-12;
     if(p.y<-12)p.y=H+12;if(p.y>H+12)p.y=-12;
     p.alpha+=(p.talpha-p.alpha)*0.022;
-    var pulse=p.shaped?Math.sin(tick*(1.9+glowCurrent*1.2)+p.phase)*(0.04+glowCurrent*0.06):0;
-    var sz=p.sz+(p.shaped?actN*0.08+glowCurrent*0.7:0);
+    var pulse=p.shaped?Math.sin(tick*(1.9+glowCurrent*1.2)+p.phase)*(0.05+glowCurrent*0.12):0;
+    var sz=p.sz+(p.shaped?actN*0.08+glowCurrent*1.1:0);
     CTX.beginPath();CTX.arc(p.x,p.y,Math.max(0.4,sz),0,Math.PI*2);
     CTX.fillStyle='rgba(217,119,87,'+Math.min(1,Math.max(0,p.alpha+pulse))+')';
     CTX.fill();
