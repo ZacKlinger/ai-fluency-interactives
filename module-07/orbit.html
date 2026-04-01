@@ -108,8 +108,12 @@ html,body{background:var(--bg);font-family:var(--sans);color:var(--dark);min-hei
           <marker id="arr" markerWidth="8" markerHeight="8" refX="5.5" refY="4" orient="auto">
             <path d="M1.5,1.5 L6,4 L1.5,6.5" fill="none" stroke="rgba(20,20,19,0.28)" stroke-width="1.2" stroke-linejoin="round" stroke-linecap="round"/>
           </marker>
+          <clipPath id="vbClip">
+            <rect id="vbClipRect" x="0" y="0" width="560" height="430"/>
+          </clipPath>
         </defs>
 
+        <g clip-path="url(#vbClip)">
         <!-- Outer group: ellipse + Delegation + Diligence -->
         <g id="og">
           <ellipse id="outerE" cx="280" cy="210" rx="236" ry="170"
@@ -161,6 +165,7 @@ html,body{background:var(--bg);font-family:var(--sans);color:var(--dark);min-hei
             style="font-family:'Source Serif 4',Georgia,serif;font-size:15px;font-weight:400;font-variation-settings:'opsz' 15"
             fill="#faf9f5">Discernment</text>
         </g>
+        </g><!-- end vbClip group -->
       </svg>
     </div>
   </div>
@@ -246,9 +251,10 @@ var popupLabel = document.getElementById('popupLabel');
 var popupName  = document.getElementById('popupName');
 var popupBody  = document.getElementById('popupBody');
 
-var outerE = document.getElementById('outerE');
-var arcTop = document.getElementById('arcTop');
-var arcBot = document.getElementById('arcBot');
+var outerE     = document.getElementById('outerE');
+var arcTop     = document.getElementById('arcTop');
+var arcBot     = document.getElementById('arcBot');
+var vbClipRect = document.getElementById('vbClipRect');
 
 // Node data for explore mode
 var nodeData = {
@@ -318,21 +324,24 @@ var animTo    = [0,0,560,430];
 var currentVB = [0,0,560,430];
 var animDur  = 860;
 var animDone = null;
+var animEase = null;
 
 function easeOut(t){ return 1 - Math.pow(1 - t, 3); }
+function easeIn(t) { return t * t * t; }
 
-function setTarget(vb, dur, done){
+function setTarget(vb, dur, ease, done){
   animFrom  = currentVB.slice();
   animTo    = vb.slice();
   animStart = performance.now();
-  animDur   = dur !== undefined ? dur : 860;
+  animDur   = dur  !== undefined ? dur  : 860;
+  animEase  = ease || easeOut;
   animDone  = done || null;
 }
 
 function frame(ts){
   if(animStart !== null){
     var t = Math.min(1, (ts - animStart) / animDur);
-    var e = easeOut(t);
+    var e = animEase(t);
     currentVB = animFrom.map(function(v, i){ return v + (animTo[i] - v) * e; });
     svg.setAttribute('viewBox', currentVB.join(' '));
     if(t >= 1){
@@ -341,6 +350,10 @@ function frame(ts){
       if(animDone){ var cb = animDone; animDone = null; cb(); }
     }
   }
+  vbClipRect.setAttribute('x',      currentVB[0]);
+  vbClipRect.setAttribute('y',      currentVB[1]);
+  vbClipRect.setAttribute('width',  currentVB[2]);
+  vbClipRect.setAttribute('height', currentVB[3]);
   requestAnimationFrame(frame);
 }
 
@@ -374,6 +387,8 @@ function resetToNeutral(){
   setPF('nDil', 0.07);
   setPF('nDes', 1);
   setPF('nDsc', 1);
+  document.getElementById('nDel').style.opacity = '';
+  document.getElementById('nDil').style.opacity = '';
 }
 
 function applyExploreBase(){
@@ -405,8 +420,8 @@ function applyHighlight(idx){
     arcTop.style.stroke = 'rgba(204,107,90,0.68)';
     arcBot.style.stroke  = 'rgba(204,107,90,0.68)';
     outerE.setAttribute('stroke', 'rgba(20,20,19,0.06)');
-    setPF('nDel', 0.02);
-    setPF('nDil', 0.02);
+    document.getElementById('nDel').style.opacity = '0.12';
+    document.getElementById('nDil').style.opacity = '0.12';
   } else if(idx === 8){ // Explore
     applyExploreBase();
   }
@@ -472,12 +487,12 @@ function goToScene(idx){
     var nextIdx = idx + 1;
     var ns = SCENES[nextIdx];
     // Phase 1: zoom out (1000ms), then immediately phase 2: zoom in (1000ms)
-    setTarget(s.vb, 1000, function(){
+    setTarget(s.vb, 1000, easeIn, function(){
       sceneIdx = nextIdx;
       applyHighlight(nextIdx);
       if(ns.dot >= 0) updateDots(ns.dot);
       setJourneyInfo(ns);
-      setTarget(ns.vb, 1000, function(){
+      setTarget(ns.vb, 1000, easeOut, function(){
         locked = false;
         btnNext.textContent = ns.btn;
         btnNext.classList.toggle('cta', ns.type === 'content');
