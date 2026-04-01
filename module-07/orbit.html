@@ -316,23 +316,30 @@ var animStart = null;
 var animFrom  = [0,0,560,430];
 var animTo    = [0,0,560,430];
 var currentVB = [0,0,560,430];
-var ANIM_MS   = 860;
+var animDur  = 860;
+var animDone = null;
 
 function easeOut(t){ return 1 - Math.pow(1 - t, 3); }
 
-function setTarget(vb){
+function setTarget(vb, dur, done){
   animFrom  = currentVB.slice();
   animTo    = vb.slice();
   animStart = performance.now();
+  animDur   = dur !== undefined ? dur : 860;
+  animDone  = done || null;
 }
 
 function frame(ts){
   if(animStart !== null){
-    var t = Math.min(1, (ts - animStart) / ANIM_MS);
+    var t = Math.min(1, (ts - animStart) / animDur);
     var e = easeOut(t);
     currentVB = animFrom.map(function(v, i){ return v + (animTo[i] - v) * e; });
     svg.setAttribute('viewBox', currentVB.join(' '));
-    if(t >= 1){ currentVB = animTo.slice(); animStart = null; }
+    if(t >= 1){
+      currentVB = animTo.slice();
+      animStart = null;
+      if(animDone){ var cb = animDone; animDone = null; cb(); }
+    }
   }
   requestAnimationFrame(frame);
 }
@@ -462,10 +469,22 @@ function goToScene(idx){
   if(s.type === 'transition'){
     locked = true;
     btnNext.disabled = true;
-    setTimeout(function(){
-      locked = false;
-      goToScene(sceneIdx + 1);
-    }, 2000);
+    var nextIdx = idx + 1;
+    var ns = SCENES[nextIdx];
+    // Phase 1: zoom out (1000ms), then immediately phase 2: zoom in (1000ms)
+    setTarget(s.vb, 1000, function(){
+      sceneIdx = nextIdx;
+      applyHighlight(nextIdx);
+      if(ns.dot >= 0) updateDots(ns.dot);
+      setJourneyInfo(ns);
+      setTarget(ns.vb, 1000, function(){
+        locked = false;
+        btnNext.textContent = ns.btn;
+        btnNext.classList.toggle('cta', ns.type === 'content');
+        btnPrev.disabled = (nextIdx === 0);
+        btnNext.disabled = false;
+      });
+    });
   } else {
     btnNext.disabled = false;
   }
