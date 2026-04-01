@@ -3,14 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>The Loops &mdash; Module 7</title>
+<title>The Workflow &mdash; Module 7</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
 <style>
 :root{
   --bg:#faf9f5;--surface:#f0eee6;--dark:#141413;
   --muted:rgba(20,20,19,0.42);--border:rgba(20,20,19,0.1);
-  --coral:#d97757;--green:#3d6b4f;
+  --coral:#cc6b5a;
 }
 *{margin:0;padding:0;box-sizing:border-box}
 body{
@@ -18,310 +18,343 @@ body{
   min-height:100vh;display:flex;flex-direction:column;
   align-items:center;justify-content:center;padding:24px;
 }
-.wrap{width:100%;max-width:520px}
+.wrap{width:100%;max-width:540px}
 .eyebrow{
   text-align:center;font-size:11px;letter-spacing:.08em;
   text-transform:uppercase;color:var(--muted);margin-bottom:8px;
 }
 h1{
   text-align:center;font-family:'Source Serif 4',serif;
-  font-size:20px;font-weight:400;line-height:1.35;margin-bottom:18px;
+  font-size:20px;font-weight:400;line-height:1.35;margin-bottom:16px;
 }
-canvas{display:block;width:100%;border-radius:8px;background:var(--surface);touch-action:none}
-.desc{min-height:44px;margin-top:14px;text-align:center;padding:0 4px}
-.desc p{
-  font-family:'Source Serif 4',serif;font-size:15px;
-  line-height:1.6;color:var(--dark);opacity:0;transition:opacity .45s;
+.diagram-wrap{
+  background:var(--surface);border-radius:8px;
+  border:.5px solid var(--border);overflow:hidden;
+  position:relative;
 }
-.desc p.show{opacity:1}
-.btns{display:flex;gap:10px;margin-top:14px;justify-content:center}
-.lbtn{
-  flex:1;max-width:210px;padding:10px 16px;
-  border-radius:6px;font:600 13px 'DM Sans',sans-serif;
-  cursor:pointer;transition:background .2s,border-color .2s,color .2s,box-shadow .2s,opacity .2s;
+#svg{display:block;width:100%;height:auto}
+.caption-area{min-height:72px;margin-top:14px;text-align:center;padding:0 8px}
+.step-label{
+  font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--muted);margin-bottom:6px;min-height:15px;
 }
-.lbtn.outer{
-  background:none;color:var(--dark);
-  border:.5px solid rgba(20,20,19,0.28);
+.caption-text{
+  font-family:'Source Serif 4',serif;font-size:15px;line-height:1.6;
+  color:var(--dark);opacity:0;transition:opacity .4s;
 }
-.lbtn.outer:hover:not(:disabled){border-color:rgba(20,20,19,0.6)}
-.lbtn.outer.lit{
+.caption-text.show{opacity:1}
+.nav-row{display:flex;align-items:center;justify-content:center;gap:14px;margin-top:14px}
+.nav-btn{
+  padding:9px 20px;border-radius:6px;
+  font:600 13px 'DM Sans',sans-serif;cursor:pointer;
+  transition:background .2s,border-color .2s,color .2s,opacity .2s;
+}
+.nav-btn.prev{
+  background:none;color:var(--muted);
+  border:.5px solid var(--border);
+}
+.nav-btn.prev:hover:not(:disabled){border-color:rgba(20,20,19,0.4);color:var(--dark)}
+.nav-btn.prev:disabled{opacity:.28;cursor:default;pointer-events:none}
+.nav-btn.next{
   background:rgba(20,20,19,0.88);color:#fff;
-  border-color:transparent;
-  box-shadow:0 2px 12px rgba(20,20,19,0.22);
+  border:.5px solid transparent;
+  box-shadow:0 2px 12px rgba(20,20,19,0.18);
 }
-.lbtn.outer.pulse{animation:pdark 0.75s ease-in-out 3}
-@keyframes pdark{
-  0%,100%{box-shadow:0 2px 12px rgba(20,20,19,0.2)}
-  50%{box-shadow:0 2px 22px rgba(20,20,19,0.5)}
+.nav-btn.next:hover:not(:disabled){background:rgba(20,20,19,1)}
+.nav-btn.next:disabled{opacity:.45;cursor:default;pointer-events:none}
+.nav-btn.next.restart{
+  background:var(--coral);
+  box-shadow:0 2px 12px rgba(204,107,90,0.28);
 }
-.lbtn.inner{
-  background:none;color:var(--coral);
-  border:.5px solid rgba(217,119,87,0.32);
-  opacity:.38;pointer-events:none;
+.nav-btn.next.restart:hover{background:#b85d4c}
+.dots{display:flex;gap:7px;align-items:center}
+.dot{
+  width:6px;height:6px;border-radius:50%;
+  background:rgba(20,20,19,0.15);
+  transition:background .3s,transform .3s;
 }
-.lbtn.inner.ready{opacity:1;pointer-events:auto}
-.lbtn.inner:hover:not(:disabled){border-color:rgba(217,119,87,0.7)}
-.lbtn.inner.lit{
-  background:var(--coral);color:#fff;
-  border-color:transparent;
-  box-shadow:0 2px 12px rgba(217,119,87,0.3);
+.dot.active{background:rgba(20,20,19,0.72);transform:scale(1.3)}
+@keyframes flow{to{stroke-dashoffset:-300}}
+.arc{animation:flow 9s linear infinite}
+@keyframes outerPulse{
+  0%,100%{stroke:rgba(20,20,19,0.16)}
+  50%{stroke:rgba(20,20,19,0.44)}
 }
-.hint{font-size:12px;color:var(--muted);text-align:center;margin-top:8px;min-height:18px}
+.pulse-outer{animation:outerPulse 2.4s ease-in-out infinite}
 </style>
 </head>
 <body>
 <div class="wrap">
   <div class="eyebrow">Module 7 &middot; Tying It All Together</div>
-  <h1>Two loops. One framework. Watch it come alive.</h1>
-  <canvas id="c"></canvas>
-  <div class="desc"><p id="desc"></p></div>
-  <div class="btns">
-    <button class="lbtn outer" id="btn-out" onclick="clickOuter()">Outer Loop</button>
-    <button class="lbtn inner" id="btn-in"  onclick="clickInner()">Inner Loop</button>
+  <h1>Two loops. One workflow.</h1>
+
+  <div class="diagram-wrap">
+    <svg id="svg" width="560" height="430" viewBox="0 0 560 430"
+         preserveAspectRatio="xMidYMid meet">
+      <defs>
+        <marker id="arr" markerWidth="8" markerHeight="8" refX="5.5" refY="4" orient="auto">
+          <path d="M1.5,1.5 L6,4 L1.5,6.5" fill="none" stroke="rgba(20,20,19,0.28)"
+            stroke-width="1.2" stroke-linejoin="round" stroke-linecap="round"/>
+        </marker>
+      </defs>
+
+      <!-- Outer group: ellipse + Delegation + Diligence -->
+      <g id="og">
+        <ellipse id="outerE" cx="280" cy="210" rx="236" ry="170"
+          fill="none" stroke="rgba(20,20,19,0.12)" stroke-width="0.5"/>
+
+        <!-- Delegation -->
+        <g id="nDel" transform="translate(280,40)">
+          <rect x="-80" y="-30" width="160" height="60" rx="10" fill="#f0eee6"/>
+          <rect id="nDelFill" x="-80" y="-30" width="160" height="60" rx="10"
+            fill="#cc6b5a" fill-opacity="0.07"/>
+          <rect x="-80" y="-30" width="160" height="60" rx="10"
+            fill="none" stroke="#cc6b5a" stroke-width="0.5"/>
+          <text id="nDelTxt" text-anchor="middle" dominant-baseline="middle"
+            style="font-family:'Source Serif 4',Georgia,serif;font-size:15px;font-weight:400"
+            fill="#cc6b5a">Delegation</text>
+        </g>
+
+        <!-- Diligence -->
+        <g id="nDil" transform="translate(280,380)">
+          <rect x="-80" y="-30" width="160" height="60" rx="10" fill="#f0eee6"/>
+          <rect id="nDilFill" x="-80" y="-30" width="160" height="60" rx="10"
+            fill="#cc6b5a" fill-opacity="0.07"/>
+          <rect x="-80" y="-30" width="160" height="60" rx="10"
+            fill="none" stroke="#cc6b5a" stroke-width="0.5"/>
+          <text id="nDilTxt" text-anchor="middle" dominant-baseline="middle"
+            style="font-family:'Source Serif 4',Georgia,serif;font-size:15px;font-weight:400"
+            fill="#cc6b5a">Diligence</text>
+        </g>
+      </g>
+
+      <!-- Inner arcs -->
+      <path id="arcTop" class="arc"
+        d="M 154,210 C 154,106 406,106 406,210"
+        fill="none" stroke="rgba(20,20,19,0.14)" stroke-width="1"
+        stroke-dasharray="4 6" marker-end="url(#arr)"/>
+      <path id="arcBot" class="arc"
+        d="M 406,210 C 406,314 154,314 154,210"
+        fill="none" stroke="rgba(20,20,19,0.14)" stroke-width="1"
+        stroke-dasharray="4 6" marker-end="url(#arr)"/>
+
+      <!-- Description -->
+      <g id="nDes" transform="translate(154,210)">
+        <rect x="-80" y="-30" width="160" height="60" rx="10" fill="#f0eee6"/>
+        <rect id="nDesFill" x="-80" y="-30" width="160" height="60" rx="10"
+          fill="#cc6b5a" fill-opacity="1"/>
+        <text text-anchor="middle" dominant-baseline="middle"
+          style="font-family:'Source Serif 4',Georgia,serif;font-size:15px;font-weight:400"
+          fill="#faf9f5">Description</text>
+      </g>
+
+      <!-- Discernment -->
+      <g id="nDsc" transform="translate(406,210)">
+        <rect x="-80" y="-30" width="160" height="60" rx="10" fill="#f0eee6"/>
+        <rect id="nDscFill" x="-80" y="-30" width="160" height="60" rx="10"
+          fill="#cc6b5a" fill-opacity="1"/>
+        <text text-anchor="middle" dominant-baseline="middle"
+          style="font-family:'Source Serif 4',Georgia,serif;font-size:15px;font-weight:400"
+          fill="#faf9f5">Discernment</text>
+      </g>
+    </svg>
   </div>
-  <div class="hint" id="hint">Start with the outer loop</div>
+
+  <div class="caption-area">
+    <div class="step-label" id="stepLabel"></div>
+    <p class="caption-text" id="captionText"></p>
+  </div>
+
+  <div class="nav-row">
+    <button class="nav-btn prev" id="btnPrev" disabled>&#8592;</button>
+    <div class="dots" id="dots"></div>
+    <button class="nav-btn next" id="btnNext">Begin &#8594;</button>
+  </div>
 </div>
 
 <script>
-var C   = document.getElementById('c');
-var CTX = C.getContext('2d');
-var descEl  = document.getElementById('desc');
-var btnOut  = document.getElementById('btn-out');
-var btnIn   = document.getElementById('btn-in');
-var hintEl  = document.getElementById('hint');
+var svg       = document.getElementById('svg');
+var btnNext   = document.getElementById('btnNext');
+var btnPrev   = document.getElementById('btnPrev');
+var dotsEl    = document.getElementById('dots');
+var stepLabel = document.getElementById('stepLabel');
+var captionEl = document.getElementById('captionText');
 
-// ── Layout ────────────────────────────────────────────────────
-var W,H,CX,CY,R1,R2,N=5;
+var outerE   = document.getElementById('outerE');
+var arcTop   = document.getElementById('arcTop');
+var arcBot   = document.getElementById('arcBot');
+var nDelFill = document.getElementById('nDelFill');
+var nDilFill = document.getElementById('nDilFill');
+var nDesFill = document.getElementById('nDesFill');
+var nDscFill = document.getElementById('nDscFill');
 
-function resize(){
-  W = C.offsetWidth;
-  H = Math.round(W * 0.90);
-  C.width  = Math.round(W * devicePixelRatio);
-  C.height = Math.round(H * devicePixelRatio);
-  C.style.height = H + 'px';
-  CTX.setTransform(1,0,0,1,0,0);
-  CTX.scale(devicePixelRatio, devicePixelRatio);
-  CX = W / 2;
-  CY = H / 2;
-  var S = Math.min(W, H);
-  R1 = S * 0.30;  // outer loop radius
-  R2 = R1 * 0.42; // inner loop amplitude → flower petals
+// Scene definitions
+// type 'content' = click to advance, dot index shown
+// type 'transition' = auto-advances after 2s, button locked
+var SCENES = [
+  { vb:[0,0,560,430],    type:'content',    dot:0, label:'',
+    btn:'Begin \u2192',
+    caption:'A teacher. A task. The 4D workflow. Follow Marcus through the framework.' },
+  { vb:[160,-50,240,160],type:'content',    dot:1, label:'Step 1 of 4',
+    btn:'Continue \u2192',
+    caption:'Delegation: Marcus decides to design his PD session with AI \u2014 and sets the terms for what AI will handle.' },
+  { vb:[0,0,560,430],    type:'transition', dot:-1, label:'Step 1 of 4',
+    btn:'Continue \u2192', caption:'' },
+  { vb:[140,310,280,160],type:'content',    dot:2, label:'Step 2 of 4',
+    btn:'Continue \u2192',
+    caption:'Diligence: Before touching any tool \u2014 he checks district guidance and selects a compliant platform. Boundaries first.' },
+  { vb:[0,0,560,430],    type:'transition', dot:-1, label:'Step 2 of 4',
+    btn:'Continue \u2192', caption:'' },
+  { vb:[54,100,452,240], type:'content',    dot:3, label:'Step 3 of 4',
+    btn:'Continue \u2192',
+    caption:'Description + Discernment: He crafts a precise prompt. Evaluates what comes back. Refines. Repeats. This is where the quality happens.' },
+  { vb:[0,0,560,430],    type:'transition', dot:-1, label:'Step 3 of 4',
+    btn:'Continue \u2192', caption:'' },
+  { vb:[140,310,280,160],type:'content',    dot:4, label:'Step 4 of 4',
+    btn:'Complete \u2192',
+    caption:'Diligence again: The outer loop closes. Marcus reviews everything before it reaches a student. His name. His call.' },
+  { vb:[0,0,560,430],    type:'content',    dot:5, label:'',
+    btn:'Start over',
+    caption:'Outer loop. Inner loop. Outer loop. Two loops working together \u2014 a map you can follow for any task.' }
+];
+
+var DOT_COUNT = 6;
+var sceneIdx  = 0;
+var locked    = false;
+var currentVB = [0,0,560,430];
+var targetVB  = [0,0,560,430];
+
+// Build dots
+for(var i = 0; i < DOT_COUNT; i++){
+  var d = document.createElement('div');
+  d.className = 'dot' + (i === 0 ? ' active' : '');
+  dotsEl.appendChild(d);
 }
 
-// ── State ─────────────────────────────────────────────────────
-// IDLE → OUTER → TRACING → DONE → COMPLETE
-var STATE = 'IDLE';
-var traceT = 0;
-var tracePts = [];
-var SPEED = (2 * Math.PI) / 6.5; // rad/s  (completes in ~6.5s)
-var lastT  = performance.now();
+function lerp(a, b, t){ return a + (b - a) * t; }
 
-// Smoothed alphas for ring glows
-var outerA = 0.18;  // outer ring alpha
-var innerA = 0.0;   // inner ring alpha
-var traceA = 0.0;   // trace alpha
+function applyHighlight(idx){
+  // Reset
+  outerE.setAttribute('stroke', 'rgba(20,20,19,0.12)');
+  outerE.setAttribute('stroke-width', '0.5');
+  outerE.classList.remove('pulse-outer');
+  arcTop.setAttribute('stroke', 'rgba(20,20,19,0.14)');
+  arcBot.setAttribute('stroke', 'rgba(20,20,19,0.14)');
+  nDelFill.setAttribute('fill-opacity', '0.07');
+  nDilFill.setAttribute('fill-opacity', '0.07');
+  nDesFill.setAttribute('fill-opacity', '1');
+  nDscFill.setAttribute('fill-opacity', '1');
 
-// ── Helpers ───────────────────────────────────────────────────
-function lerp(a,b,t){ return a + (b-a)*t; }
-
-function pt(t){
-  return {
-    x: CX + R1*Math.cos(t) + R2*Math.cos(N*t),
-    y: CY + R1*Math.sin(t) - R2*Math.sin(N*t)
-  };
+  if(idx === 1){ // Delegation zoom
+    outerE.setAttribute('stroke', 'rgba(20,20,19,0.3)');
+    outerE.setAttribute('stroke-width', '1');
+    nDelFill.setAttribute('fill-opacity', '0.3');
+    nDesFill.setAttribute('fill-opacity', '0.45');
+    nDscFill.setAttribute('fill-opacity', '0.45');
+  } else if(idx === 3 || idx === 7){ // Diligence zoom
+    outerE.setAttribute('stroke', 'rgba(20,20,19,0.3)');
+    outerE.setAttribute('stroke-width', '1');
+    nDilFill.setAttribute('fill-opacity', '0.3');
+    nDesFill.setAttribute('fill-opacity', '0.45');
+    nDscFill.setAttribute('fill-opacity', '0.45');
+  } else if(idx === 5){ // Inner loop
+    arcTop.setAttribute('stroke', 'rgba(204,107,90,0.65)');
+    arcBot.setAttribute('stroke', 'rgba(204,107,90,0.65)');
+    outerE.setAttribute('stroke', 'rgba(20,20,19,0.06)');
+    nDelFill.setAttribute('fill-opacity', '0.02');
+    nDilFill.setAttribute('fill-opacity', '0.02');
+  } else if(idx === 8){ // Complete
+    outerE.setAttribute('stroke-width', '1.2');
+    outerE.classList.add('pulse-outer');
+    nDelFill.setAttribute('fill-opacity', '0.2');
+    nDilFill.setAttribute('fill-opacity', '0.2');
+    arcTop.setAttribute('stroke', 'rgba(204,107,90,0.45)');
+    arcBot.setAttribute('stroke', 'rgba(204,107,90,0.45)');
+  }
 }
 
-function setDesc(text){
-  descEl.classList.remove('show');
-  setTimeout(function(){ descEl.textContent = text; descEl.classList.add('show'); }, 180);
+function updateDots(dotIdx){
+  var all = dotsEl.querySelectorAll('.dot');
+  for(var i = 0; i < all.length; i++){
+    all[i].classList.toggle('active', i === dotIdx);
+  }
 }
 
-// ── Interactions ──────────────────────────────────────────────
-function clickOuter(){
-  if(STATE === 'IDLE'){
-    STATE = 'OUTER';
-    btnOut.classList.add('lit');
-    btnIn.classList.add('ready');
-    setDesc('Delegation and Diligence anchor every decision. The outer loop sets the terms.');
-    hintEl.textContent = 'Now activate the inner loop';
-  } else if(STATE === 'DONE'){
-    // Final sign-off
-    STATE = 'COMPLETE';
-    btnOut.classList.remove('pulse');
-    setDesc('The outer loop closes. Your professional sign-off before anything reaches students.');
-    hintEl.textContent = '';
+function setCaption(text, label){
+  captionEl.classList.remove('show');
+  stepLabel.textContent = label || '';
+  if(!text){ return; }
+  var t = text;
+  setTimeout(function(){
+    captionEl.textContent = t;
+    captionEl.classList.add('show');
+  }, 220);
+}
+
+function goToScene(idx){
+  if(idx < 0 || idx >= SCENES.length) return;
+  sceneIdx = idx;
+  var s = SCENES[idx];
+  targetVB = s.vb.slice();
+  applyHighlight(idx);
+
+  if(s.dot >= 0) updateDots(s.dot);
+
+  if(s.type !== 'transition'){
+    setCaption(s.caption, s.label);
+  }
+
+  btnNext.textContent = s.btn;
+  btnNext.classList.toggle('restart', idx === SCENES.length - 1);
+  btnPrev.disabled = (idx === 0);
+
+  if(s.type === 'transition'){
+    locked = true;
+    btnNext.disabled = true;
     setTimeout(function(){
-      setDesc('Two loops working together. That is the complete 4D workflow. Now it is yours to run.');
-    }, 2200);
+      locked = false;
+      goToScene(sceneIdx + 1);
+    }, 2000);
+  } else {
+    btnNext.disabled = false;
   }
 }
 
-function clickInner(){
-  if(STATE !== 'OUTER') return;
-  STATE = 'TRACING';
-  btnIn.classList.add('lit');
-  tracePts = [];
-  traceT = 0;
-  setDesc('Description and Discernment — the inner loop does the quality work.');
-  hintEl.textContent = 'Watch both loops build the framework...';
+btnNext.addEventListener('click', function(){
+  if(locked) return;
+  if(sceneIdx >= SCENES.length - 1){
+    goToScene(0);
+  } else {
+    goToScene(sceneIdx + 1);
+  }
+});
+
+btnPrev.addEventListener('click', function(){
+  if(locked) return;
+  // Walk back past transition scenes
+  var target = sceneIdx - 1;
+  while(target > 0 && SCENES[target].type === 'transition') target--;
+  goToScene(Math.max(0, target));
+});
+
+function frame(){
+  var snap = true;
+  var next = currentVB.map(function(v, i){
+    var n = lerp(v, targetVB[i], 0.055);
+    if(Math.abs(n - targetVB[i]) > 0.05) snap = false;
+    return n;
+  });
+  if(snap){
+    currentVB = targetVB.slice();
+  } else {
+    currentVB = next;
+  }
+  svg.setAttribute('viewBox', currentVB.join(' '));
+  requestAnimationFrame(frame);
 }
 
-// ── Update ────────────────────────────────────────────────────
-function update(dt){
-  // Target alphas by state
-  var tOuter = (STATE==='IDLE') ? 0.18 : 0.62;
-  var tInner = (STATE==='TRACING'||STATE==='DONE'||STATE==='COMPLETE') ? 0.55 : 0.0;
-  var tTrace = (STATE==='TRACING'||STATE==='DONE'||STATE==='COMPLETE') ? 1.0 : 0.0;
-
-  outerA = lerp(outerA, tOuter, 0.06);
-  innerA = lerp(innerA, tInner, 0.06);
-  traceA = lerp(traceA, tTrace, 0.08);
-
-  if(STATE === 'TRACING'){
-    traceT += SPEED * dt;
-    if(traceT < 2*Math.PI){
-      tracePts.push(pt(traceT));
-    } else {
-      traceT = 2 * Math.PI;
-      // Fill in any remaining points
-      if(tracePts.length < 500){
-        for(var tt = tracePts.length/500*2*Math.PI; tt <= 2*Math.PI; tt += 0.02){
-          tracePts.push(pt(tt));
-        }
-      }
-      STATE = 'DONE';
-      btnOut.classList.add('pulse');
-      hintEl.textContent = 'Close the outer loop to complete the workflow';
-      setDesc('The pattern is complete — but the outer loop needs to sign off.');
-    }
-  }
-}
-
-// ── Draw ──────────────────────────────────────────────────────
-function draw(){
-  CTX.clearRect(0,0,W,H);
-
-  // ── Outer ring ──
-  CTX.beginPath();
-  CTX.arc(CX, CY, R1+R2, 0, Math.PI*2);
-  if(STATE==='IDLE') CTX.setLineDash([7,6]);
-  else               CTX.setLineDash([]);
-  CTX.strokeStyle = 'rgba(20,20,19,'+ outerA +')';
-  CTX.lineWidth = (STATE==='COMPLETE') ? 1.8 : 1;
-  CTX.stroke();
-  CTX.setLineDash([]);
-
-  // ── Inner ring ──
-  if(innerA > 0.01){
-    CTX.beginPath();
-    CTX.arc(CX, CY, R2, 0, Math.PI*2);
-    CTX.setLineDash([4,4]);
-    CTX.strokeStyle = 'rgba(217,119,87,'+ innerA +')';
-    CTX.lineWidth = 1;
-    CTX.stroke();
-    CTX.setLineDash([]);
-  }
-
-  // ── Outer-loop orbiting dot (OUTER state) ──
-  if(STATE === 'OUTER'){
-    var angle = performance.now() * 0.00085;
-    var dx = CX + (R1+R2) * Math.cos(angle);
-    var dy = CY + (R1+R2) * Math.sin(angle);
-    // Trail
-    for(var i=1;i<=6;i++){
-      var ta = angle - i*0.18;
-      CTX.beginPath();
-      CTX.arc(CX+(R1+R2)*Math.cos(ta), CY+(R1+R2)*Math.sin(ta), 3-i*0.35, 0, Math.PI*2);
-      CTX.fillStyle = 'rgba(20,20,19,'+(0.12-i*0.017)+')';
-      CTX.fill();
-    }
-    CTX.beginPath();
-    CTX.arc(dx, dy, 4.5, 0, Math.PI*2);
-    CTX.fillStyle = 'rgba(20,20,19,0.72)';
-    CTX.fill();
-  }
-
-  // ── Trace path ──
-  if(tracePts.length > 1 && traceA > 0.01){
-    CTX.beginPath();
-    CTX.moveTo(tracePts[0].x, tracePts[0].y);
-    for(var i=1; i<tracePts.length; i++){
-      CTX.lineTo(tracePts[i].x, tracePts[i].y);
-    }
-    var lw = STATE==='COMPLETE' ? 2.2 : 1.6;
-    CTX.strokeStyle = 'rgba(217,119,87,'+ (traceA * 0.82) +')';
-    CTX.lineWidth = lw;
-    CTX.lineJoin = 'round';
-    CTX.stroke();
-  }
-
-  // ── Complete glow on outer ring ──
-  if(STATE === 'COMPLETE'){
-    var pulse = 0.28 + 0.18 * Math.sin(performance.now() * 0.0025);
-    CTX.beginPath();
-    CTX.arc(CX, CY, R1+R2, 0, Math.PI*2);
-    CTX.strokeStyle = 'rgba(20,20,19,'+ pulse +')';
-    CTX.lineWidth = 2.5;
-    CTX.stroke();
-    // Faint inner glow fill
-    var grad = CTX.createRadialGradient(CX,CY,0,CX,CY,R1+R2);
-    grad.addColorStop(0, 'rgba(217,119,87,0.06)');
-    grad.addColorStop(0.6,'rgba(217,119,87,0.04)');
-    grad.addColorStop(1,  'rgba(217,119,87,0)');
-    CTX.fillStyle = grad;
-    CTX.beginPath();
-    CTX.arc(CX,CY,R1+R2,0,Math.PI*2);
-    CTX.fill();
-  }
-
-  // ── D labels ──
-  drawLabels();
-}
-
-function drawLabels(){
-  // Outer loop labels (Delegation, Diligence) — shown when OUTER+
-  if(STATE==='IDLE') return;
-  CTX.font = '500 10px "DM Sans"';
-  CTX.textAlign = 'center';
-  CTX.textBaseline = 'middle';
-
-  var outerLabelA = Math.min(1,(outerA - 0.18) / 0.44);
-  if(outerLabelA > 0){
-    CTX.fillStyle = 'rgba(20,20,19,'+(outerLabelA * 0.62)+')';
-    var lr = R1 + R2 + 22;
-    // Delegation ~215°, Diligence ~325°
-    CTX.fillText('Delegation',
-      CX + lr * Math.cos(3.75), CY + lr * Math.sin(3.75));
-    CTX.fillText('Diligence',
-      CX + lr * Math.cos(5.67), CY + lr * Math.sin(5.67));
-  }
-
-  // Inner loop labels (Description, Discernment) — shown when TRACING+
-  var innerLabelA = Math.min(1, innerA / 0.55);
-  if(innerLabelA > 0.05){
-    CTX.fillStyle = 'rgba(217,119,87,'+(innerLabelA * 0.75)+')';
-    var ir = R2 + 20;
-    // Description ~135°, Discernment ~45°
-    CTX.fillText('Description',
-      CX + ir * Math.cos(2.36), CY + ir * Math.sin(2.36));
-    CTX.fillText('Discernment',
-      CX + ir * Math.cos(0.79), CY + ir * Math.sin(0.79));
-  }
-}
-
-// ── Loop ──────────────────────────────────────────────────────
-function loop(ts){
-  var dt = Math.min((ts - lastT) / 1000, 0.05);
-  lastT = ts;
-  update(dt);
-  draw();
-  requestAnimationFrame(loop);
-}
-
-window.addEventListener('resize', function(){ resize(); });
-resize();
-requestAnimationFrame(function(ts){ lastT = ts; loop(ts); });
+goToScene(0);
+requestAnimationFrame(frame);
 </script>
 </body>
 </html>
