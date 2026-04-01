@@ -326,8 +326,9 @@ var animDur  = 860;
 var animDone = null;
 var animEase = null;
 
-function easeOut(t){ return 1 - Math.pow(1 - t, 3); }
-function easeIn(t) { return t * t * t; }
+function easeOut(t)   { return 1 - Math.pow(1 - t, 3); }
+function easeIn(t)    { return t * t * t; }
+function easeInOut(t) { return (1 - Math.cos(Math.PI * t)) / 2; }
 
 function setTarget(vb, dur, ease, done){
   animFrom  = currentVB.slice();
@@ -487,12 +488,12 @@ function goToScene(idx){
     var nextIdx = idx + 1;
     var ns = SCENES[nextIdx];
     // Phase 1: zoom out (1000ms), then immediately phase 2: zoom in (1000ms)
-    setTarget(s.vb, 1000, easeIn, function(){
+    setTarget(s.vb, 1000, easeInOut, function(){
       sceneIdx = nextIdx;
       applyHighlight(nextIdx);
       if(ns.dot >= 0) updateDots(ns.dot);
       setJourneyInfo(ns);
-      setTarget(ns.vb, 1000, easeOut, function(){
+      setTarget(ns.vb, 1000, easeInOut, function(){
         locked = false;
         btnNext.textContent = ns.btn;
         btnNext.classList.toggle('cta', ns.type === 'content');
