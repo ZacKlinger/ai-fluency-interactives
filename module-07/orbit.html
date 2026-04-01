@@ -2,310 +2,461 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>The Workflow &mdash; Module 7</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The 4D Workflow - Module 7 - AI Fluency for K-12 Educators</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,300..700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-:root{
-  --bg:#faf9f5;--surface:#f0eee6;--dark:#141413;
-  --muted:rgba(20,20,19,0.42);--border:rgba(20,20,19,0.1);
-  --coral:#cc6b5a;
-}
-*{margin:0;padding:0;box-sizing:border-box}
-body{
-  background:var(--bg);color:var(--dark);font-family:'DM Sans',sans-serif;
-  min-height:100vh;display:flex;flex-direction:column;
-  align-items:center;justify-content:center;padding:24px;
-}
-.wrap{width:100%;max-width:540px}
-.eyebrow{
-  text-align:center;font-size:11px;letter-spacing:.08em;
-  text-transform:uppercase;color:var(--muted);margin-bottom:8px;
-}
-h1{
-  text-align:center;font-family:'Source Serif 4',serif;
-  font-size:20px;font-weight:400;line-height:1.35;margin-bottom:16px;
-}
-.diagram-wrap{
-  background:var(--surface);border-radius:8px;
-  border:.5px solid var(--border);overflow:hidden;
-  position:relative;
-}
-#svg{display:block;width:100%;height:auto}
-.caption-area{min-height:72px;margin-top:14px;text-align:center;padding:0 8px}
-.step-label{
-  font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;
-  color:var(--muted);margin-bottom:6px;min-height:15px;
-}
-.caption-text{
-  font-family:'Source Serif 4',serif;font-size:15px;line-height:1.6;
-  color:var(--dark);opacity:0;transition:opacity .4s;
-}
-.caption-text.show{opacity:1}
-.nav-row{display:flex;align-items:center;justify-content:center;gap:14px;margin-top:14px}
-.nav-btn{
-  padding:9px 20px;border-radius:6px;
-  font:600 13px 'DM Sans',sans-serif;cursor:pointer;
-  transition:background .2s,border-color .2s,color .2s,opacity .2s;
-}
-.nav-btn.prev{
-  background:none;color:var(--muted);
-  border:.5px solid var(--border);
-}
-.nav-btn.prev:hover:not(:disabled){border-color:rgba(20,20,19,0.4);color:var(--dark)}
-.nav-btn.prev:disabled{opacity:.28;cursor:default;pointer-events:none}
-.nav-btn.next{
-  background:rgba(20,20,19,0.88);color:#fff;
-  border:.5px solid transparent;
-  box-shadow:0 2px 12px rgba(20,20,19,0.18);
-}
-.nav-btn.next:hover:not(:disabled){background:rgba(20,20,19,1)}
-.nav-btn.next:disabled{opacity:.45;cursor:default;pointer-events:none}
-.nav-btn.next.restart{
-  background:var(--coral);
-  box-shadow:0 2px 12px rgba(204,107,90,0.28);
-}
-.nav-btn.next.restart:hover{background:#b85d4c}
-.dots{display:flex;gap:7px;align-items:center}
-.dot{
-  width:6px;height:6px;border-radius:50%;
-  background:rgba(20,20,19,0.15);
-  transition:background .3s,transform .3s;
-}
-.dot.active{background:rgba(20,20,19,0.72);transform:scale(1.3)}
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#faf9f5;--surface:#f0eee6;--dark:#141413;--muted:rgba(20,20,19,0.42);--border:rgba(20,20,19,0.1);--coral:#cc6b5a;--sans:'DM Sans',Arial,sans-serif;--serif:'Source Serif 4',Georgia,serif}
+html,body{background:var(--bg);font-family:var(--sans);color:var(--dark);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:2rem 1rem}
+
+/* Card — identical to module-04 */
+.card{width:100%;max-width:680px;background:var(--bg);border:0.5px solid var(--border);border-radius:6px;overflow:hidden;position:relative}
+.status-badge{position:absolute;top:0;right:0;font-size:9.5px;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;background:var(--surface);border:0.5px solid var(--border);color:var(--muted);padding:4px 12px;border-radius:0 6px 0 4px}
+.top-bar{padding:1.5rem 2rem 0}
+.eyebrow{font-size:10px;font-weight:500;letter-spacing:0.16em;text-transform:uppercase;color:var(--muted)}
+.title-area{padding:0.6rem 2rem 0.2rem}
+.headline{font-family:var(--serif);font-variation-settings:'opsz' 24;font-size:clamp(20px,2.8vw,26px);font-weight:600;color:var(--dark);line-height:1.2;margin-bottom:0.25rem;letter-spacing:-0.025em}
+.subhead{font-family:var(--serif);font-variation-settings:'opsz' 13;font-size:13px;font-weight:300;color:var(--muted);line-height:1.5;letter-spacing:0.005em}
+
+/* Field */
+.field-wrap{background:var(--surface);border-top:0.5px solid var(--border);border-bottom:0.5px solid var(--border);display:flex;justify-content:center;padding:2rem 0;overflow:hidden;position:relative}
+
+/* Node popup */
+.node-popup{position:absolute;top:0;left:0;width:min(272px,calc(100% - 4rem));background:var(--bg);border:0.5px solid var(--border);border-radius:6px;padding:1.1rem 1.4rem;z-index:20;opacity:0;pointer-events:none;transition:opacity 0.16s,transform 0.22s cubic-bezier(0.34,1.45,0.64,1);transform:scale(0.95);cursor:pointer}
+.node-popup.open{opacity:1;pointer-events:auto;transform:scale(1)}
+.popup-label{font-size:9.5px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:var(--coral);display:block;margin-bottom:0.35rem}
+.popup-name{font-family:var(--serif);font-variation-settings:'opsz' 16;font-size:15px;font-weight:500;color:var(--dark);line-height:1.25;margin-bottom:0.3rem;letter-spacing:-0.01em}
+.popup-body{font-size:12px;color:var(--muted);line-height:1.6}
+
+/* Diagram */
+.diagram{position:relative;width:min(500px,calc(100% - 3rem));aspect-ratio:560/430}
+.diagram svg{width:100%;height:100%;display:block}
+
+/* Arc flow */
 @keyframes flow{to{stroke-dashoffset:-300}}
-.arc{animation:flow 9s linear infinite}
-@keyframes outerPulse{
-  0%,100%{stroke:rgba(20,20,19,0.16)}
-  50%{stroke:rgba(20,20,19,0.44)}
-}
+.arc{animation:flow 9s linear infinite;transition:stroke 0.22s}
+
+/* Cursor for clickable nodes in explore mode */
+.nd-clickable{cursor:pointer}
+
+/* Info panels — grid stacked so both occupy same space */
+.info-panel{display:grid;grid-template-areas:"p";min-height:130px}
+.pv-default,.pv-connect,.pv-journey{grid-area:p;padding:1.2rem 2rem 1.5rem;display:grid;grid-template-columns:1fr 1.65fr;gap:1.75rem;align-items:start;transition:opacity 0.22s}
+.pv-default{opacity:1;pointer-events:auto}
+.pv-connect{opacity:0;pointer-events:none}
+.pv-journey{opacity:1;pointer-events:auto}
+.pv-default.hidden,.pv-journey.hidden{opacity:0;pointer-events:none}
+.pv-connect.visible{opacity:1;pointer-events:auto}
+.pv-left{border-right:0.5px solid var(--border);padding-right:1.75rem;min-height:88px}
+.plabel{font-size:10px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:var(--coral);display:block;margin-bottom:0.35rem}
+.pname{font-family:var(--serif);font-variation-settings:'opsz' 17;font-size:16px;font-weight:400;color:var(--dark);line-height:1.3;margin-bottom:0.45rem;letter-spacing:-0.015em}
+.pconnect{display:flex;gap:5px;align-items:flex-start}
+.parrow{font-size:11px;color:var(--muted);flex-shrink:0;margin-top:2px}
+.plink{font-size:11.5px;color:var(--muted);line-height:1.5}
+.pinsight{font-family:var(--serif);font-variation-settings:'opsz' 14;font-size:14px;color:var(--dark);line-height:1.75;transition:opacity 0.22s}
+.pinsight.fading{opacity:0}
+
+/* Foot */
+.foot{border-top:0.5px solid var(--border);background:var(--surface);min-height:40px;display:flex;align-items:center}
+.foot-nav{display:flex;align-items:center;justify-content:space-between;width:100%;padding:0.4rem 1.2rem 0.55rem}
+.foot-hint{font-size:11px;color:var(--muted);letter-spacing:0.02em;width:100%;text-align:center;padding:0.55rem 1.2rem}
+.foot-hint a{color:var(--coral);cursor:pointer;text-decoration:none}
+.foot-hint a:hover{text-decoration:underline}
+.nav-btn{background:none;border:none;padding:4px 11px;font:500 11.5px var(--sans);color:var(--muted);cursor:pointer;border-radius:4px;letter-spacing:0.02em;transition:background 0.15s,color 0.15s}
+.nav-btn:hover:not(:disabled){background:rgba(20,20,19,0.07);color:var(--dark)}
+.nav-btn:disabled{opacity:0.28;cursor:default}
+.nav-btn.cta{background:rgba(20,20,19,0.88);color:#fff;box-shadow:0 1px 8px rgba(20,20,19,0.18)}
+.nav-btn.cta:hover:not(:disabled){background:#141413}
+.dots{display:flex;gap:6px;align-items:center}
+.dot{width:5px;height:5px;border-radius:50%;background:rgba(20,20,19,0.15);transition:background 0.28s,transform 0.28s}
+.dot.active{background:rgba(20,20,19,0.68);transform:scale(1.35)}
+
+/* Outer ellipse pulse in explore mode */
+@keyframes outerPulse{0%,100%{stroke:rgba(20,20,19,0.14)}50%{stroke:rgba(20,20,19,0.38)}}
 .pulse-outer{animation:outerPulse 2.4s ease-in-out infinite}
+
+@media(max-width:520px){
+  .pv-default,.pv-connect,.pv-journey{grid-template-columns:1fr}
+  .pv-left{border-right:none;border-bottom:0.5px solid var(--border);padding-right:0;padding-bottom:0.75rem;margin-bottom:0.75rem;min-height:unset}
+}
 </style>
 </head>
 <body>
-<div class="wrap">
-  <div class="eyebrow">Module 7 &middot; Tying It All Together</div>
-  <h1>Two loops. One workflow.</h1>
-
-  <div class="diagram-wrap">
-    <svg id="svg" width="560" height="430" viewBox="0 0 560 430"
-         preserveAspectRatio="xMidYMid meet">
-      <defs>
-        <marker id="arr" markerWidth="8" markerHeight="8" refX="5.5" refY="4" orient="auto">
-          <path d="M1.5,1.5 L6,4 L1.5,6.5" fill="none" stroke="rgba(20,20,19,0.28)"
-            stroke-width="1.2" stroke-linejoin="round" stroke-linecap="round"/>
-        </marker>
-      </defs>
-
-      <!-- Outer group: ellipse + Delegation + Diligence -->
-      <g id="og">
-        <ellipse id="outerE" cx="280" cy="210" rx="236" ry="170"
-          fill="none" stroke="rgba(20,20,19,0.12)" stroke-width="0.5"/>
-
-        <!-- Delegation -->
-        <g id="nDel" transform="translate(280,40)">
-          <rect x="-80" y="-30" width="160" height="60" rx="10" fill="#f0eee6"/>
-          <rect id="nDelFill" x="-80" y="-30" width="160" height="60" rx="10"
-            fill="#cc6b5a" fill-opacity="0.07"/>
-          <rect x="-80" y="-30" width="160" height="60" rx="10"
-            fill="none" stroke="#cc6b5a" stroke-width="0.5"/>
-          <text id="nDelTxt" text-anchor="middle" dominant-baseline="middle"
-            style="font-family:'Source Serif 4',Georgia,serif;font-size:15px;font-weight:400"
-            fill="#cc6b5a">Delegation</text>
-        </g>
-
-        <!-- Diligence -->
-        <g id="nDil" transform="translate(280,380)">
-          <rect x="-80" y="-30" width="160" height="60" rx="10" fill="#f0eee6"/>
-          <rect id="nDilFill" x="-80" y="-30" width="160" height="60" rx="10"
-            fill="#cc6b5a" fill-opacity="0.07"/>
-          <rect x="-80" y="-30" width="160" height="60" rx="10"
-            fill="none" stroke="#cc6b5a" stroke-width="0.5"/>
-          <text id="nDilTxt" text-anchor="middle" dominant-baseline="middle"
-            style="font-family:'Source Serif 4',Georgia,serif;font-size:15px;font-weight:400"
-            fill="#cc6b5a">Diligence</text>
-        </g>
-      </g>
-
-      <!-- Inner arcs -->
-      <path id="arcTop" class="arc"
-        d="M 154,210 C 154,106 406,106 406,210"
-        fill="none" stroke="rgba(20,20,19,0.14)" stroke-width="1"
-        stroke-dasharray="4 6" marker-end="url(#arr)"/>
-      <path id="arcBot" class="arc"
-        d="M 406,210 C 406,314 154,314 154,210"
-        fill="none" stroke="rgba(20,20,19,0.14)" stroke-width="1"
-        stroke-dasharray="4 6" marker-end="url(#arr)"/>
-
-      <!-- Description -->
-      <g id="nDes" transform="translate(154,210)">
-        <rect x="-80" y="-30" width="160" height="60" rx="10" fill="#f0eee6"/>
-        <rect id="nDesFill" x="-80" y="-30" width="160" height="60" rx="10"
-          fill="#cc6b5a" fill-opacity="1"/>
-        <text text-anchor="middle" dominant-baseline="middle"
-          style="font-family:'Source Serif 4',Georgia,serif;font-size:15px;font-weight:400"
-          fill="#faf9f5">Description</text>
-      </g>
-
-      <!-- Discernment -->
-      <g id="nDsc" transform="translate(406,210)">
-        <rect x="-80" y="-30" width="160" height="60" rx="10" fill="#f0eee6"/>
-        <rect id="nDscFill" x="-80" y="-30" width="160" height="60" rx="10"
-          fill="#cc6b5a" fill-opacity="1"/>
-        <text text-anchor="middle" dominant-baseline="middle"
-          style="font-family:'Source Serif 4',Georgia,serif;font-size:15px;font-weight:400"
-          fill="#faf9f5">Discernment</text>
-      </g>
-    </svg>
+<div class="card">
+  <span class="status-badge">Interactive</span>
+  <div class="top-bar">
+    <span class="eyebrow">AI Fluency for K&ndash;12 Educators &nbsp;&middot;&nbsp; Module 7</span>
+  </div>
+  <div class="title-area">
+    <h1 class="headline">Two loops. One workflow.</h1>
+    <p class="subhead">Follow a task through the full 4D framework &mdash; then explore it yourself.</p>
   </div>
 
-  <div class="caption-area">
-    <div class="step-label" id="stepLabel"></div>
-    <p class="caption-text" id="captionText"></p>
+  <div class="field-wrap" id="fieldWrap">
+    <div class="node-popup" id="nodePopup">
+      <span class="popup-label" id="popupLabel"></span>
+      <div class="popup-name"  id="popupName"></div>
+      <p class="popup-body"    id="popupBody"></p>
+    </div>
+
+    <div class="diagram">
+      <svg id="svg" viewBox="0 0 560 430" preserveAspectRatio="xMidYMid meet">
+        <defs>
+          <marker id="arr" markerWidth="8" markerHeight="8" refX="5.5" refY="4" orient="auto">
+            <path d="M1.5,1.5 L6,4 L1.5,6.5" fill="none" stroke="rgba(20,20,19,0.28)" stroke-width="1.2" stroke-linejoin="round" stroke-linecap="round"/>
+          </marker>
+        </defs>
+
+        <!-- Outer group: ellipse + Delegation + Diligence -->
+        <g id="og">
+          <ellipse id="outerE" cx="280" cy="210" rx="236" ry="170"
+            fill="none" stroke="rgba(20,20,19,0.12)" stroke-width="0.5"/>
+
+          <g id="nDel" class="nd" transform="translate(280,40)">
+            <rect x="-80" y="-30" width="160" height="60" rx="10" fill="#f0eee6"/>
+            <rect class="pf" x="-80" y="-30" width="160" height="60" rx="10" fill="#cc6b5a" fill-opacity="0.07"/>
+            <rect x="-80" y="-30" width="160" height="60" rx="10" fill="none" stroke="#cc6b5a" stroke-width="0.5"/>
+            <text text-anchor="middle" dominant-baseline="middle"
+              style="font-family:'Source Serif 4',Georgia,serif;font-size:15px;font-weight:400;font-variation-settings:'opsz' 15"
+              fill="#cc6b5a">Delegation</text>
+          </g>
+
+          <g id="nDil" class="nd" transform="translate(280,380)">
+            <rect x="-80" y="-30" width="160" height="60" rx="10" fill="#f0eee6"/>
+            <rect class="pf" x="-80" y="-30" width="160" height="60" rx="10" fill="#cc6b5a" fill-opacity="0.07"/>
+            <rect x="-80" y="-30" width="160" height="60" rx="10" fill="none" stroke="#cc6b5a" stroke-width="0.5"/>
+            <text text-anchor="middle" dominant-baseline="middle"
+              style="font-family:'Source Serif 4',Georgia,serif;font-size:15px;font-weight:400;font-variation-settings:'opsz' 15"
+              fill="#cc6b5a">Diligence</text>
+          </g>
+        </g>
+
+        <!-- Inner arcs -->
+        <path id="arcTop" class="arc"
+          d="M 154,210 C 154,106 406,106 406,210"
+          fill="none" stroke="rgba(20,20,19,0.14)" stroke-width="1"
+          stroke-dasharray="4 6" marker-end="url(#arr)"/>
+        <path id="arcBot" class="arc"
+          d="M 406,210 C 406,314 154,314 154,210"
+          fill="none" stroke="rgba(20,20,19,0.14)" stroke-width="1"
+          stroke-dasharray="4 6" marker-end="url(#arr)"/>
+
+        <!-- Description -->
+        <g id="nDes" class="nd" transform="translate(154,210)">
+          <rect x="-80" y="-30" width="160" height="60" rx="10" fill="#f0eee6"/>
+          <rect class="pf" x="-80" y="-30" width="160" height="60" rx="10" fill="#cc6b5a" fill-opacity="1"/>
+          <text text-anchor="middle" dominant-baseline="middle"
+            style="font-family:'Source Serif 4',Georgia,serif;font-size:15px;font-weight:400;font-variation-settings:'opsz' 15"
+            fill="#faf9f5">Description</text>
+        </g>
+
+        <!-- Discernment -->
+        <g id="nDsc" class="nd" transform="translate(406,210)">
+          <rect x="-80" y="-30" width="160" height="60" rx="10" fill="#f0eee6"/>
+          <rect class="pf" x="-80" y="-30" width="160" height="60" rx="10" fill="#cc6b5a" fill-opacity="1"/>
+          <text text-anchor="middle" dominant-baseline="middle"
+            style="font-family:'Source Serif 4',Georgia,serif;font-size:15px;font-weight:400;font-variation-settings:'opsz' 15"
+            fill="#faf9f5">Discernment</text>
+        </g>
+      </svg>
+    </div>
   </div>
 
-  <div class="nav-row">
-    <button class="nav-btn prev" id="btnPrev" disabled>&#8592;</button>
-    <div class="dots" id="dots"></div>
-    <button class="nav-btn next" id="btnNext">Begin &#8594;</button>
+  <!-- Journey info panel (scenes 0-7) -->
+  <div class="info-panel" id="journeyPanel">
+    <div class="pv-journey" id="pvJourney">
+      <div class="pv-left">
+        <span class="plabel" id="jLoop"></span>
+        <div class="pname"   id="jName"></div>
+        <div class="pconnect">
+          <span class="parrow">&#8594;</span>
+          <span class="plink" id="jSub"></span>
+        </div>
+      </div>
+      <div><p class="pinsight" id="jInsight"></p></div>
+    </div>
+  </div>
+
+  <!-- Explore info panel (scene 8 only, same as module-04) -->
+  <div class="info-panel" id="explorePanel" style="display:none">
+    <div class="pv-default" id="pvDefault">
+      <div class="pv-left">
+        <span class="plabel">Quality Focus</span>
+        <div class="pname">Description + Discernment</div>
+        <div class="pconnect">
+          <span class="parrow">&#8594;</span>
+          <span class="plink">An iterative cycle to ensure a high-quality product.</span>
+        </div>
+      </div>
+      <div>
+        <p class="pinsight">You craft a description for what you need, evaluate what AI returns with Discernment, and refine &mdash; repeating the loop until the result genuinely serves your students.</p>
+      </div>
+    </div>
+    <div class="pv-connect" id="pvConnect">
+      <div class="pv-left">
+        <span class="plabel">Ethical Focus</span>
+        <div class="pname">Delegation + Diligence</div>
+        <div class="pconnect">
+          <span class="parrow">&#8594;</span>
+          <span class="plink">A protective agency for strong ethical standards.</span>
+        </div>
+      </div>
+      <div>
+        <p class="pinsight">Before and after the quality loop, these behaviors ask the harder questions: should AI be here at all, and are you fully accountable for what it produces?</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="foot" id="foot">
+    <div class="foot-nav" id="footJourney">
+      <button class="nav-btn" id="btnPrev" disabled>&#8592; Back</button>
+      <div class="dots" id="dots"></div>
+      <button class="nav-btn cta" id="btnNext">Begin &#8594;</button>
+    </div>
+    <div id="footExplore" style="display:none;width:100%">
+      <p class="foot-hint">Hover any node to explore &nbsp;&middot;&nbsp; <a id="restartLink">Restart journey</a></p>
+    </div>
   </div>
 </div>
 
 <script>
 var svg       = document.getElementById('svg');
+var fieldWrap = document.getElementById('fieldWrap');
 var btnNext   = document.getElementById('btnNext');
 var btnPrev   = document.getElementById('btnPrev');
 var dotsEl    = document.getElementById('dots');
-var stepLabel = document.getElementById('stepLabel');
-var captionEl = document.getElementById('captionText');
 
-var outerE   = document.getElementById('outerE');
-var arcTop   = document.getElementById('arcTop');
-var arcBot   = document.getElementById('arcBot');
-var nDelFill = document.getElementById('nDelFill');
-var nDilFill = document.getElementById('nDilFill');
-var nDesFill = document.getElementById('nDesFill');
-var nDscFill = document.getElementById('nDscFill');
+var jLoop    = document.getElementById('jLoop');
+var jName    = document.getElementById('jName');
+var jSub     = document.getElementById('jSub');
+var jInsight = document.getElementById('jInsight');
 
-// Scene definitions
-// type 'content' = click to advance, dot index shown
-// type 'transition' = auto-advances after 2s, button locked
+var journeyPanel = document.getElementById('journeyPanel');
+var explorePanel = document.getElementById('explorePanel');
+var footJourney  = document.getElementById('footJourney');
+var footExplore  = document.getElementById('footExplore');
+var pvDefault    = document.getElementById('pvDefault');
+var pvConnect    = document.getElementById('pvConnect');
+
+var popup      = document.getElementById('nodePopup');
+var popupLabel = document.getElementById('popupLabel');
+var popupName  = document.getElementById('popupName');
+var popupBody  = document.getElementById('popupBody');
+
+var outerE = document.getElementById('outerE');
+var arcTop = document.getElementById('arcTop');
+var arcBot = document.getElementById('arcBot');
+
+// Node data for explore mode
+var nodeData = {
+  nDes:{
+    arcs:['arcTop','arcBot'], ac:'rgba(204,107,90,0.52)', ethical:false,
+    label:'Description', name:'Tell AI exactly what you need.',
+    body:'Product, process, and performance standard. Precision here is everything -- the more specific you are, the more useful AI becomes.'
+  },
+  nDsc:{
+    arcs:['arcTop','arcBot'], ac:'rgba(204,107,90,0.52)', ethical:false,
+    label:'Discernment', name:'Evaluate what AI gives back.',
+    body:'Check for accuracy, alignment, and fit for your students. This is the step most people skip -- and the one that matters most.'
+  },
+  nDel:{
+    arcs:['outerE'], ac:'rgba(204,107,90,0.42)', ethical:true,
+    label:'Delegation', name:'Decide what AI should handle.',
+    body:'Not every task deserves to be handed off. Ask: does this genuinely serve my students, or am I just offloading?'
+  },
+  nDil:{
+    arcs:['outerE'], ac:'rgba(204,107,90,0.42)', ethical:true,
+    label:'Diligence', name:'Own the outcome.',
+    body:"Privacy, accuracy, and professional responsibility don't transfer to AI. The work is yours -- AI assistance doesn't change that."
+  }
+};
+
+// Scene definitions. type: 'content' | 'transition' | 'explore'
+// dot: index in dots row (-1 = transition, not shown)
 var SCENES = [
-  { vb:[0,0,560,430],    type:'content',    dot:0, label:'',
+  { vb:[0,0,560,430],     type:'content',    dot:0,
+    loop:'The 4D Framework', dname:'Four competencies. Two loops.', sub:'Start the journey',
     btn:'Begin \u2192',
-    caption:'A teacher. A task. The 4D workflow. Follow Marcus through the framework.' },
-  { vb:[160,-50,240,160],type:'content',    dot:1, label:'Step 1 of 4',
+    insight:'A workflow for AI tasks in any teaching context. Follow the full sequence -- then explore each node on your own.' },
+  { vb:[155,5,250,145],   type:'content',    dot:1,
+    loop:'Outer Loop', dname:'Delegation', sub:'Decide what to hand off',
     btn:'Continue \u2192',
-    caption:'Delegation: Marcus decides to design his PD session with AI \u2014 and sets the terms for what AI will handle.' },
-  { vb:[0,0,560,430],    type:'transition', dot:-1, label:'Step 1 of 4',
-    btn:'Continue \u2192', caption:'' },
-  { vb:[140,310,280,160],type:'content',    dot:2, label:'Step 2 of 4',
+    insight:'The first decision: is this a task AI should handle at all? Set the scope, define the terms, and keep professional judgment in your hands.' },
+  { vb:[0,0,560,430],     type:'transition', dot:-1, loop:'Outer Loop', dname:'Delegation', sub:'', btn:'', insight:'' },
+  { vb:[140,305,280,160], type:'content',    dot:2,
+    loop:'Outer Loop', dname:'Diligence', sub:'Set boundaries first',
     btn:'Continue \u2192',
-    caption:'Diligence: Before touching any tool \u2014 he checks district guidance and selects a compliant platform. Boundaries first.' },
-  { vb:[0,0,560,430],    type:'transition', dot:-1, label:'Step 2 of 4',
-    btn:'Continue \u2192', caption:'' },
-  { vb:[54,100,452,240], type:'content',    dot:3, label:'Step 3 of 4',
+    insight:'Before touching any tool: check your district guidelines, select a compliant platform, and confirm what data is and is not shareable.' },
+  { vb:[0,0,560,430],     type:'transition', dot:-1, loop:'Outer Loop', dname:'Diligence', sub:'', btn:'', insight:'' },
+  { vb:[54,100,452,240],  type:'content',    dot:3,
+    loop:'Inner Loop', dname:'Description + Discernment', sub:'Quality in action',
     btn:'Continue \u2192',
-    caption:'Description + Discernment: He crafts a precise prompt. Evaluates what comes back. Refines. Repeats. This is where the quality happens.' },
-  { vb:[0,0,560,430],    type:'transition', dot:-1, label:'Step 3 of 4',
-    btn:'Continue \u2192', caption:'' },
-  { vb:[140,310,280,160],type:'content',    dot:4, label:'Step 4 of 4',
-    btn:'Complete \u2192',
-    caption:'Diligence again: The outer loop closes. Marcus reviews everything before it reaches a student. His name. His call.' },
-  { vb:[0,0,560,430],    type:'content',    dot:5, label:'',
-    btn:'Start over',
-    caption:'Outer loop. Inner loop. Outer loop. Two loops working together \u2014 a map you can follow for any task.' }
+    insight:'Craft a precise prompt. Evaluate what comes back. Refine. Repeat. The inner loop runs as many times as the task demands -- until the result genuinely serves students.' },
+  { vb:[0,0,560,430],     type:'transition', dot:-1, loop:'Inner Loop', dname:'Description + Discernment', sub:'', btn:'', insight:'' },
+  { vb:[140,305,280,160], type:'content',    dot:4,
+    loop:'Outer Loop', dname:'Diligence', sub:'The loop closes',
+    btn:'Explore the framework \u2192',
+    insight:'Review everything before it reaches a student. Check for accuracy, privacy, and alignment. The outcome is yours -- AI assistance does not change that.' },
+  { vb:[0,0,560,430],     type:'explore',    dot:5,
+    loop:'', dname:'', sub:'', btn:'', insight:'' }
 ];
 
 var DOT_COUNT = 6;
 var sceneIdx  = 0;
 var locked    = false;
-var currentVB = [0,0,560,430];
-var targetVB  = [0,0,560,430];
+var exploring = false;
+var activeNode = null;
+var inEthical  = false;
 
-// Build dots
+// Time-based camera animation (cubic ease-out, no lerp hitch)
+var animStart = null;
+var animFrom  = [0,0,560,430];
+var animTo    = [0,0,560,430];
+var currentVB = [0,0,560,430];
+var ANIM_MS   = 860;
+
+function easeOut(t){ return 1 - Math.pow(1 - t, 3); }
+
+function setTarget(vb){
+  animFrom  = currentVB.slice();
+  animTo    = vb.slice();
+  animStart = performance.now();
+}
+
+function frame(ts){
+  if(animStart !== null){
+    var t = Math.min(1, (ts - animStart) / ANIM_MS);
+    var e = easeOut(t);
+    currentVB = animFrom.map(function(v, i){ return v + (animTo[i] - v) * e; });
+    svg.setAttribute('viewBox', currentVB.join(' '));
+    if(t >= 1){ currentVB = animTo.slice(); animStart = null; }
+  }
+  requestAnimationFrame(frame);
+}
+
+// Build step dots
 for(var i = 0; i < DOT_COUNT; i++){
   var d = document.createElement('div');
   d.className = 'dot' + (i === 0 ? ' active' : '');
   dotsEl.appendChild(d);
 }
 
-function lerp(a, b, t){ return a + (b - a) * t; }
+function updateDots(idx){
+  var all = dotsEl.querySelectorAll('.dot');
+  for(var i = 0; i < all.length; i++) all[i].classList.toggle('active', i === idx);
+}
 
-function applyHighlight(idx){
-  // Reset
+// Fill-opacity helper (inline style beats all CSS specificity)
+function setPF(nodeId, op){
+  var el = document.getElementById(nodeId);
+  if(!el) return;
+  var pf = el.querySelector('.pf');
+  if(pf) pf.style.fillOpacity = String(op);
+}
+
+function resetToNeutral(){
   outerE.setAttribute('stroke', 'rgba(20,20,19,0.12)');
   outerE.setAttribute('stroke-width', '0.5');
   outerE.classList.remove('pulse-outer');
-  arcTop.setAttribute('stroke', 'rgba(20,20,19,0.14)');
-  arcBot.setAttribute('stroke', 'rgba(20,20,19,0.14)');
-  nDelFill.setAttribute('fill-opacity', '0.07');
-  nDilFill.setAttribute('fill-opacity', '0.07');
-  nDesFill.setAttribute('fill-opacity', '1');
-  nDscFill.setAttribute('fill-opacity', '1');
+  arcTop.style.stroke = '';
+  arcBot.style.stroke  = '';
+  setPF('nDel', 0.07);
+  setPF('nDil', 0.07);
+  setPF('nDes', 1);
+  setPF('nDsc', 1);
+}
 
-  if(idx === 1){ // Delegation zoom
-    outerE.setAttribute('stroke', 'rgba(20,20,19,0.3)');
+function applyExploreBase(){
+  outerE.setAttribute('stroke-width', '1');
+  outerE.classList.add('pulse-outer');
+  arcTop.style.stroke = 'rgba(204,107,90,0.38)';
+  arcBot.style.stroke  = 'rgba(204,107,90,0.38)';
+  setPF('nDel', 0.18);
+  setPF('nDil', 0.18);
+  setPF('nDes', 1);
+  setPF('nDsc', 1);
+}
+
+function applyHighlight(idx){
+  resetToNeutral();
+  if(idx === 1){ // Delegation
+    outerE.setAttribute('stroke', 'rgba(20,20,19,0.32)');
     outerE.setAttribute('stroke-width', '1');
-    nDelFill.setAttribute('fill-opacity', '0.3');
-    nDesFill.setAttribute('fill-opacity', '0.45');
-    nDscFill.setAttribute('fill-opacity', '0.45');
-  } else if(idx === 3 || idx === 7){ // Diligence zoom
-    outerE.setAttribute('stroke', 'rgba(20,20,19,0.3)');
+    setPF('nDel', 0.28);
+    setPF('nDes', 0.42);
+    setPF('nDsc', 0.42);
+  } else if(idx === 3 || idx === 7){ // Diligence
+    outerE.setAttribute('stroke', 'rgba(20,20,19,0.32)');
     outerE.setAttribute('stroke-width', '1');
-    nDilFill.setAttribute('fill-opacity', '0.3');
-    nDesFill.setAttribute('fill-opacity', '0.45');
-    nDscFill.setAttribute('fill-opacity', '0.45');
+    setPF('nDil', 0.28);
+    setPF('nDes', 0.42);
+    setPF('nDsc', 0.42);
   } else if(idx === 5){ // Inner loop
-    arcTop.setAttribute('stroke', 'rgba(204,107,90,0.65)');
-    arcBot.setAttribute('stroke', 'rgba(204,107,90,0.65)');
+    arcTop.style.stroke = 'rgba(204,107,90,0.68)';
+    arcBot.style.stroke  = 'rgba(204,107,90,0.68)';
     outerE.setAttribute('stroke', 'rgba(20,20,19,0.06)');
-    nDelFill.setAttribute('fill-opacity', '0.02');
-    nDilFill.setAttribute('fill-opacity', '0.02');
-  } else if(idx === 8){ // Complete
-    outerE.setAttribute('stroke-width', '1.2');
-    outerE.classList.add('pulse-outer');
-    nDelFill.setAttribute('fill-opacity', '0.2');
-    nDilFill.setAttribute('fill-opacity', '0.2');
-    arcTop.setAttribute('stroke', 'rgba(204,107,90,0.45)');
-    arcBot.setAttribute('stroke', 'rgba(204,107,90,0.45)');
+    setPF('nDel', 0.02);
+    setPF('nDil', 0.02);
+  } else if(idx === 8){ // Explore
+    applyExploreBase();
   }
 }
 
-function updateDots(dotIdx){
-  var all = dotsEl.querySelectorAll('.dot');
-  for(var i = 0; i < all.length; i++){
-    all[i].classList.toggle('active', i === dotIdx);
-  }
-}
-
-function setCaption(text, label){
-  captionEl.classList.remove('show');
-  stepLabel.textContent = label || '';
-  if(!text){ return; }
-  var t = text;
+function setJourneyInfo(s){
+  jLoop.textContent = s.loop;
+  jInsight.classList.add('fading');
   setTimeout(function(){
-    captionEl.textContent = t;
-    captionEl.classList.add('show');
-  }, 220);
+    jName.textContent    = s.dname;
+    jSub.textContent     = s.sub;
+    jInsight.textContent = s.insight;
+    jInsight.classList.remove('fading');
+  }, 150);
 }
 
 function goToScene(idx){
   if(idx < 0 || idx >= SCENES.length) return;
   sceneIdx = idx;
   var s = SCENES[idx];
-  targetVB = s.vb.slice();
+  setTarget(s.vb);
   applyHighlight(idx);
-
   if(s.dot >= 0) updateDots(s.dot);
 
-  if(s.type !== 'transition'){
-    setCaption(s.caption, s.label);
+  if(s.type === 'explore'){
+    exploring = true;
+    journeyPanel.style.display = 'none';
+    explorePanel.style.display = '';
+    footJourney.style.display  = 'none';
+    footExplore.style.display  = '';
+    // Enable node click/hover
+    ['nDes','nDsc','nDel','nDil'].forEach(function(id){
+      document.getElementById(id).classList.add('nd-clickable');
+    });
+    pvDefault.classList.remove('hidden');
+    pvConnect.classList.remove('visible');
+    inEthical = false;
+    return;
   }
 
+  // Journey mode
+  if(exploring){
+    exploring = false;
+    closePopup();
+    ['nDes','nDsc','nDel','nDil'].forEach(function(id){
+      document.getElementById(id).classList.remove('nd-clickable');
+    });
+  }
+  explorePanel.style.display = 'none';
+  journeyPanel.style.display = '';
+  footJourney.style.display  = '';
+  footExplore.style.display  = 'none';
+
+  if(s.type !== 'transition') setJourneyInfo(s);
+
   btnNext.textContent = s.btn;
-  btnNext.classList.toggle('restart', idx === SCENES.length - 1);
+  btnNext.classList.toggle('cta', s.type === 'content');
   btnPrev.disabled = (idx === 0);
 
   if(s.type === 'transition'){
@@ -322,36 +473,91 @@ function goToScene(idx){
 
 btnNext.addEventListener('click', function(){
   if(locked) return;
-  if(sceneIdx >= SCENES.length - 1){
-    goToScene(0);
-  } else {
-    goToScene(sceneIdx + 1);
-  }
+  goToScene(sceneIdx + 1);
 });
 
 btnPrev.addEventListener('click', function(){
   if(locked) return;
-  // Walk back past transition scenes
   var target = sceneIdx - 1;
   while(target > 0 && SCENES[target].type === 'transition') target--;
   goToScene(Math.max(0, target));
 });
 
-function frame(){
-  var snap = true;
-  var next = currentVB.map(function(v, i){
-    var n = lerp(v, targetVB[i], 0.055);
-    if(Math.abs(n - targetVB[i]) > 0.05) snap = false;
-    return n;
-  });
-  if(snap){
-    currentVB = targetVB.slice();
-  } else {
-    currentVB = next;
-  }
-  svg.setAttribute('viewBox', currentVB.join(' '));
-  requestAnimationFrame(frame);
+document.getElementById('restartLink').addEventListener('click', function(){
+  goToScene(0);
+});
+
+// Explore mode: node interactions
+function openPopup(id){
+  var nd = nodeData[id];
+  popupLabel.textContent = nd.label;
+  popupName.textContent  = nd.name;
+  popupBody.textContent  = nd.body;
+  popup.classList.add('open');
+  activeNode = id;
 }
+function closePopup(){
+  popup.classList.remove('open');
+  activeNode = null;
+}
+
+Object.keys(nodeData).forEach(function(id){
+  var el = document.getElementById(id);
+  var nd = nodeData[id];
+  if(!el) return;
+
+  el.addEventListener('mouseenter', function(){
+    if(!exploring) return;
+    // Highlight arcs
+    nd.arcs.forEach(function(aid){
+      var a = document.getElementById(aid);
+      if(a) a.style.stroke = nd.ac;
+    });
+    // Brighten this node, nudge others
+    if(id === 'nDel' || id === 'nDil'){
+      setPF(id, 0.30);
+    } else {
+      setPF(id, 0.82);
+    }
+    // Switch info panel on ethical/quality split
+    if(nd.ethical && !inEthical){
+      inEthical = true;
+      pvDefault.classList.add('hidden');
+      pvConnect.classList.add('visible');
+    } else if(!nd.ethical && inEthical){
+      inEthical = false;
+      pvConnect.classList.remove('visible');
+      pvDefault.classList.remove('hidden');
+    }
+  });
+
+  el.addEventListener('mouseleave', function(){
+    if(!exploring) return;
+    applyExploreBase();
+  });
+
+  el.addEventListener('click', function(ev){
+    if(!exploring) return;
+    ev.stopPropagation();
+    if(activeNode === id){ closePopup(); return; }
+    var nr  = el.getBoundingClientRect();
+    var wr  = fieldWrap.getBoundingClientRect();
+    var popW = Math.min(272, wr.width - 32);
+    var cx  = nr.left + nr.width / 2  - wr.left;
+    var cy  = nr.top  + nr.height / 2 - wr.top;
+    popup.style.width = popW + 'px';
+    var left = Math.max(8, Math.min(cx - popW / 2, wr.width - popW - 8));
+    popup.style.left = left + 'px';
+    openPopup(id);
+    var ph  = popup.offsetHeight;
+    var top = Math.max(8, Math.min(cy - ph / 2, wr.height - ph - 8));
+    popup.style.top = top + 'px';
+  });
+});
+
+popup.addEventListener('click', function(ev){ ev.stopPropagation(); closePopup(); });
+document.addEventListener('click', function(){ if(exploring) closePopup(); });
+document.addEventListener('keydown', function(ev){ if(ev.key === 'Escape') closePopup(); });
 
 goToScene(0);
 requestAnimationFrame(frame);
