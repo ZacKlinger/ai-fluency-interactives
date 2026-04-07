@@ -479,11 +479,9 @@ function draw() {
       ctx.save();
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
-      var lh = 14, yS = n.y - lh / 2;
       ctx.font = (isH ? '500 12px' : '400 11px') + ' "DM Sans",Arial,sans-serif';
       ctx.fillStyle = isH ? 'rgba(20,20,19,' + (0.88 * vf) + ')' : 'rgba(20,20,19,' + (0.38 * vf) + ')';
-      ctx.fillText(n.l1, n.x, yS);
-      ctx.fillText(n.l2, n.x, yS + lh);
+      ctx.fillText(n.name, n.x, n.y);
       if (isH) {
         ctx.font = '600 8.5px "DM Sans",Arial,sans-serif';
         ctx.fillStyle = 'rgba(217,119,87,' + (0.75 * vf) + ')';
@@ -555,7 +553,7 @@ function drawTrackedText(c, text, cx, cy, tracking) {
 function showNode(n) {
   var env = n.ring === 'micro' ? 'In your classroom' : 'Beyond your classroom';
   document.getElementById('pl').textContent = env;
-  document.getElementById('pn').textContent = n.name;
+  document.getElementById('pn').textContent = n.l1 + ' ' + n.l2;
   document.getElementById('pd').textContent = n.desc;
   document.getElementById('pins').textContent = n.insight;
   document.getElementById('panc').textContent = n.anchor;
