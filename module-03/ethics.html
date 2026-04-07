@@ -88,6 +88,21 @@ canvas{display:block;width:100%;height:100%}
 .pinsight{font-family:var(--serif);font-size:16px;font-weight:400;color:var(--dark);line-height:1.75;margin-bottom:0.65rem}
 .panchor{font-family:var(--sans);font-size:12px;font-weight:500;color:var(--coral)}
 
+/* Scroll cue */
+.scroll-cue{
+  position:absolute;bottom:14px;left:50%;transform:translateX(-50%);
+  display:flex;flex-direction:column;align-items:center;gap:5px;
+  pointer-events:none;transition:opacity 0.6s;
+}
+.scroll-cue::before{
+  content:'';display:block;width:0.5px;height:16px;
+  background:rgba(20,20,19,0.2);
+}
+.scroll-cue span{
+  font-size:9px;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;
+  color:rgba(20,20,19,0.3);
+}
+
 /* Hint bar */
 .hint-bar{
   text-align:center;font-size:11px;font-weight:400;color:var(--muted);
@@ -114,6 +129,7 @@ canvas{display:block;width:100%;height:100%}
       </div>
       <div class="field-wrap" id="field">
         <canvas id="c"></canvas>
+        <div class="scroll-cue" id="scrollCue"><span>scroll</span></div>
       </div>
       <div class="panel">
         <div class="panel-inner" id="pi">
@@ -575,6 +591,10 @@ window.addEventListener('load', function() {
   });
 });
 window.addEventListener('resize', resize);
+window.addEventListener('scroll', function() {
+  var cue = document.getElementById('scrollCue');
+  if (cue) cue.style.opacity = '0';
+}, {passive:true,once:true});
 if (window.ResizeObserver) {
   new ResizeObserver(function() { resize(); }).observe(field);
 }
