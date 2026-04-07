@@ -3,473 +3,198 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>The Ethical Web - Module 3 - AI Fluency for K-12 Educators</title>
+<title>What AI carries with it - Module 3 - AI Fluency for K-12 Educators</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,300..700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --bg:#141413;
-  --surface:#1a1918;
-  --coral:#d97757;
-  --text:#faf9f5;
-  --muted:#9e9b8e;
-  --dim:rgba(250,249,245,0.08);
-  --sans:'DM Sans',Arial,sans-serif;
-  --serif:'Source Serif 4',Georgia,serif;
-}
-html,body{background:var(--bg);color:var(--text);font-family:var(--sans);overflow-x:hidden}
-#track{height:400vh;position:relative}
-canvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:1;pointer-events:none}
-.ov{position:fixed;z-index:2;pointer-events:none;left:0;right:0}
-#quote{
-  top:50%;left:50%;right:auto;
-  transform:translate(-50%,-50%);
-  font-family:var(--serif);
-  font-variation-settings:'opsz' 20;
-  font-size:clamp(17px,2.6vw,24px);
-  font-weight:400;
-  color:var(--muted);
-  text-align:center;
-  line-height:1.7;
-  max-width:520px;
-  padding:0 2rem;
-  opacity:0;
-}
-#scroll-hint{
-  position:fixed;z-index:2;pointer-events:none;
-  bottom:2.5rem;left:50%;transform:translateX(-50%);
-  opacity:0;
-}
-.sh-chev{
-  display:block;width:18px;height:18px;
-  border-right:1px solid var(--muted);
-  border-bottom:1px solid var(--muted);
-  transform:rotate(45deg);
-  opacity:0.35;
-  animation:shpulse 2.6s ease-in-out infinite;
-}
-@keyframes shpulse{
-  0%,100%{opacity:0.18;transform:rotate(45deg) translateY(0)}
-  50%{opacity:0.45;transform:rotate(45deg) translateY(4px)}
-}
-.ring-label{
-  position:fixed;z-index:2;pointer-events:none;
-  left:50%;transform:translateX(-50%);
-  font-size:11px;font-weight:400;letter-spacing:0.1em;
-  color:var(--muted);opacity:0;
-  text-transform:lowercase;
-  white-space:nowrap;
-}
-#closing{
-  position:fixed;z-index:2;pointer-events:none;
-  bottom:8%;left:50%;transform:translateX(-50%);
-  text-align:center;
-  font-size:clamp(12px,1.4vw,13px);font-weight:400;
-  color:var(--muted);
-  line-height:1.75;
-  max-width:460px;
-  padding:0 2rem;
-  opacity:0;
-}
-#card{
-  position:fixed;z-index:10;
-  width:min(310px,calc(100vw - 2.5rem));
-  background:var(--surface);
-  border:0.5px solid var(--dim);
-  border-radius:6px;
-  padding:1.2rem 1.4rem;
-  opacity:0;
-  transform:scale(0.96);
-  transition:opacity 0.16s,transform 0.2s cubic-bezier(0.34,1.3,0.64,1);
-  pointer-events:none;
-}
-#card.show{opacity:1;transform:scale(1)}
-.ct{font-size:13.5px;font-weight:500;color:var(--text);margin-bottom:0.55rem;line-height:1.3;letter-spacing:-0.01em}
-.ci{font-size:12px;font-weight:400;color:var(--muted);line-height:1.7;margin-bottom:0.7rem}
-.cd{font-size:11.5px;font-weight:400;color:rgba(158,155,142,0.65);line-height:1.7}
+:root{--bg:#faf9f5;--surface:#f0eee6;--dark:#141413;--muted:rgba(20,20,19,0.42);--border:rgba(20,20,19,0.1);--coral:#d97757;--blue:#6a9bcc;--green:#3d6b4f;--gray:#888780;--sans:'DM Sans',Arial,sans-serif;--serif:'Source Serif 4',Georgia,serif}
+html,body{min-height:100vh;background:var(--bg);font-family:var(--sans);color:var(--dark)}
+.track{position:relative;height:300vh}
+.stage{position:sticky;top:0;height:100vh;display:flex;align-items:center;justify-content:center;padding:2rem 1rem;width:100%;max-width:820px;margin:0 auto}
+.status-badge{position:absolute;top:0;right:0;z-index:10;font-size:9.5px;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;background:var(--surface);border:0.5px solid var(--border);color:var(--muted);padding:4px 12px;border-radius:0 6px 0 4px}
+.card{background:var(--bg);border:0.5px solid var(--border);border-radius:6px;overflow:hidden;color:var(--dark);width:100%}
+.top-bar{padding:1.75rem 2rem 0;padding-right:8rem}
+.eyebrow{font-size:10px;font-weight:500;letter-spacing:0.16em;text-transform:uppercase;color:var(--muted)}
+.title-area{padding:0.75rem 2rem 0}
+.headline{font-family:var(--serif);font-variation-settings:'opsz' 24;font-size:clamp(20px,3.2vw,28px);font-weight:600;color:var(--dark);line-height:1.2;margin-bottom:0.25rem;letter-spacing:-0.025em}
+.subhead{font-size:12px;font-weight:400;color:var(--muted);line-height:1.5}
+.field-wrap{position:relative;width:100%;height:420px;margin-top:0.5rem;cursor:none;background:var(--surface);border-top:0.5px solid var(--border);border-bottom:0.5px solid var(--border)}
+canvas{display:block;width:100%;height:100%}
+.panel{padding:1.25rem 2rem 1.75rem;background:var(--bg);min-height:230px}
+.panel-inner{display:grid;grid-template-columns:1fr 1.8fr;gap:2rem;align-items:start;opacity:0;transition:opacity 0.35s}
+.panel-inner.show{opacity:1}
+.pleft{border-right:0.5px solid var(--border);padding-right:2rem;min-height:175px}
+.plabel{font-size:10px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:var(--coral);margin-bottom:0.4rem;display:block}
+.pname{font-family:var(--sans);font-size:17px;font-weight:600;color:var(--dark);margin-bottom:0.3rem;line-height:1.3;letter-spacing:-0.01em}
+.pdesc{font-size:13px;font-weight:400;color:var(--muted);line-height:1.6;margin-bottom:0.75rem}
+.pinsight{font-family:var(--serif);font-size:16px;font-weight:400;color:var(--dark);line-height:1.75;margin-bottom:0.65rem}
+.panchor{font-family:var(--sans);font-size:12px;font-weight:500;color:var(--coral)}
+.hint-bar{text-align:center;font-size:11px;font-weight:400;color:var(--muted);padding:0.5rem 0 1.25rem;border-top:0.5px solid var(--border);background:var(--surface);transition:color 0.5s}
+@media(max-width:540px){.panel-inner{grid-template-columns:1fr}.pleft{border-right:none;border-bottom:0.5px solid var(--border);padding-right:0;padding-bottom:1rem;min-height:0}.field-wrap{height:340px}}
 </style>
 </head>
 <body>
-
-<div id="track"></div>
-<canvas id="c"></canvas>
-
-<div class="ov" id="quote">&ldquo;Using AI well means knowing what it carries with it.&rdquo;</div>
-<div id="scroll-hint"><span class="sh-chev"></span></div>
-<div class="ring-label" id="lbl-inner">in your classroom</div>
-<div class="ring-label" id="lbl-outer">beyond your classroom</div>
-<div class="ov" id="closing">These aren&rsquo;t problems to solve before you begin.<br>They&rsquo;re considerations to carry as you go.<br>We encourage you to explore any of these further on your own.</div>
-
-<div id="card">
-  <div class="ct" id="c-title"></div>
-  <p class="ci" id="c-intro"></p>
-  <p class="cd" id="c-deep"></p>
+<div class="track" id="track">
+  <div class="stage">
+    <div class="status-badge">Draft &middot; Module 3</div>
+    <div class="card">
+      <div class="top-bar"><span class="eyebrow">AI Fluency for K&ndash;12 Educators &nbsp;&middot;&nbsp; Module 3</span></div>
+      <div class="title-area">
+        <h1 class="headline">What AI carries with it.</h1>
+        <p class="subhead">Move through the field. Hover to sit with each one.</p>
+      </div>
+      <div class="field-wrap" id="field"><canvas id="c"></canvas></div>
+      <div class="panel">
+        <div class="panel-inner" id="pi">
+          <div class="pleft">
+            <span class="plabel" id="pl"></span>
+            <p class="pname" id="pn"></p>
+            <p class="pdesc" id="pd"></p>
+          </div>
+          <div>
+            <p class="pinsight" id="pins"></p>
+            <span class="panchor" id="panc"></span>
+          </div>
+        </div>
+      </div>
+      <div class="hint-bar" id="hint">Hover to explore &mdash; no path required.</div>
+    </div>
+  </div>
 </div>
-
 <script>
-var CV=document.getElementById('c'),CTX=CV.getContext('2d');
-var W=0,H=0,dpr=1,tick=0,mx=-9999,my=-9999;
-var scrollP=0,hovNode=null,cardNode=null;
-var loadFade=0;
+var canvas=document.getElementById('c'),ctx=canvas.getContext('2d'),field=document.getElementById('field');
+var W=0,H=0,dpr=1,mx=-999,my=-999,trail=[],activeNode=null,revealedSet={},scrollP=0;
 
-/* ── Node data ── */
-var inner=[
-  {id:0,label:'Student privacy',ang:-90,aOff:-4,rOff:0.05,
-   r:106,g:155,b:204,
-   intro:'When students interact with AI tools, they leave traces -- questions asked, mistakes made, patterns of thinking still in formation. These traces can persist in ways that neither you nor your students fully control.',
-   deep:'Every query a student makes is a data point. Some platforms retain and train on this input. A thirteen-year-old exploring a difficult topic deserves the same confidentiality they would expect in a conversation with you.'},
-  {id:1,label:"Children's data & model training",ang:-18,aOff:3,rOff:-0.03,
-   r:196,g:149,b:106,
-   intro:'The text your students type into an AI tool may not stay between them and the screen. Some models learn from their interactions, meaning student work could become training data without meaningful consent.',
-   deep:'Consent forms rarely capture what is actually happening. A parent signing off on "educational technology" may not understand that their child\'s writing patterns and areas of struggle could be absorbed into a system serving millions.'},
-  {id:2,label:'Equity of access',ang:54,aOff:-5,rOff:0.04,
-   r:106,g:171,b:122,
-   intro:'Not every student goes home to a device, a stable connection, or a household that can navigate new tools. When AI becomes part of the learning experience, the gap between who has access and who does not can quietly deepen.',
-   deep:'Access is not just about hardware. It includes digital literacy, language, and the implicit cultural knowledge that shapes how someone interacts with a tool trained primarily on English-language internet text.'},
-  {id:3,label:'Teacher accountability',ang:126,aOff:6,rOff:-0.02,
-   r:217,g:119,b:87,
-   intro:'When AI helps produce a lesson plan, a report, or a recommendation, the work still carries your name. The convenience of generation does not transfer the weight of professional responsibility.',
-   deep:'A parent does not see "co-authored with AI" at the bottom of a progress report. This is not a problem to avoid -- it is a reality to hold clearly. You are the professional in the room.'},
-  {id:4,label:'Bias in training data',ang:198,aOff:-3,rOff:0.06,
-   r:184,g:120,b:142,
-   intro:'AI models learn from the text humans have already written -- text that carries every bias we hold about race, gender, ability, and who gets to be seen as capable. The model does not know it is biased; it simply reflects.',
-   deep:'When AI suggests a student "might benefit from additional support," consider what patterns led to that suggestion. Training data encodes historical inequities as statistical likelihoods. Your professional judgment exists to interrupt that pattern.'}
+var nodes=[
+  /* ── Inner ring: Micro environment ── */
+  {l1:"What students",l2:"leave behind",fx:0.32,fy:0.26,name:"Student privacy",desc:"Students leave traces in AI tools -- questions asked, mistakes made, thinking still in formation.",ring:"micro",d4:"Micro",col:"rgba(106,155,204,",insight:"A thirteen-year-old exploring a difficult topic deserves the same confidentiality they would expect in a conversation with you.",anchor:"The traces persist."},
+  {l1:"Where student",l2:"writing goes",fx:0.68,fy:0.24,name:"Children's data & model training",desc:"Some models learn from student interactions. Work typed into a tool may become training data without meaningful consent.",ring:"micro",d4:"Micro",col:"rgba(196,149,106,",insight:"A parent signing off on 'educational technology' may not understand what that consent actually covers.",anchor:"Consent forms rarely capture reality."},
+  {l1:"Who gets",l2:"left out",fx:0.50,fy:0.48,name:"Equity of access",desc:"Not every student goes home to a device, a stable connection, or a household that can navigate new tools.",ring:"micro",d4:"Micro",col:"rgba(106,171,122,",insight:"Access includes digital literacy, language, and comfort with tools trained primarily on English-language internet text.",anchor:"The gap deepens quietly."},
+  {l1:"Whose name",l2:"is on it",fx:0.25,fy:0.70,name:"Teacher accountability",desc:"When AI helps produce a lesson, a report, or a recommendation, the work still carries your name.",ring:"micro",d4:"Micro",col:"rgba(217,119,87,",insight:"A parent does not see 'co-authored with AI' at the bottom of a progress report. You are the professional in the room.",anchor:"Convenience does not transfer responsibility."},
+  {l1:"What the data",l2:"already carries",fx:0.75,fy:0.68,name:"Bias in training data",desc:"AI learns from text that carries every bias we hold -- about race, gender, ability, and who gets to be seen as capable.",ring:"micro",d4:"Micro",col:"rgba(164,120,142,",insight:"Training data encodes historical inequities as statistical likelihoods. Your judgment exists to interrupt that pattern.",anchor:"The model reflects. It does not know."},
+
+  /* ── Outer ring: Macro environment ── */
+  {l1:"When confidence",l2:"has no source",fx:0.13,fy:0.18,name:"AI & truth",desc:"AI can sound authoritative, specific, and entirely wrong. Confidence has no relationship to accuracy.",ring:"macro",d4:"Macro",col:"rgba(194,166,96,",insight:"Hallucination invents facts with complete confidence. Sycophancy tells you what you want to hear. One fabricates; the other flatters.",anchor:"Neither serves your students."},
+  {l1:"The cost you",l2:"do not see",fx:0.87,fy:0.16,name:"Energy consumption",desc:"Every query consumes electricity, water, and materials. The cost is invisible at the point of use.",ring:"macro",d4:"Macro",col:"rgba(90,161,144,",insight:"This is not a reason to stop. It is a reason to use AI with the same intention you bring to any resource.",anchor:"Thoughtful use over reflexive use."},
+  {l1:"Who decides what",l2:"AI can do",fx:0.09,fy:0.50,name:"Power concentration",desc:"The companies building AI are few and largely unaccountable to the communities their tools reshape.",ring:"macro",d4:"Macro",col:"rgba(144,112,184,",insight:"Decisions about safety, values, and access ripple into your classroom without your input.",anchor:"Awareness is not helplessness."},
+  {l1:"Rules that have",l2:"not caught up",fx:0.91,fy:0.52,name:"Pace outrunning policy",desc:"AI capabilities evolve faster than the policies meant to govern them.",ring:"macro",d4:"Macro",col:"rgba(166,134,102,",insight:"Technology advances in months. Policy moves in years. In the meantime, your professional judgment is the policy.",anchor:"You are shaping the norms."},
+  {l1:"What changes in",l2:"five years",fx:0.50,fy:0.84,name:"Labor displacement",desc:"AI is changing what work looks like across industries, including education.",ring:"macro",d4:"Macro",col:"rgba(128,160,166,",insight:"Your ability to see a student, hold complexity, and make judgment calls -- these are not automatable. But they must be named and valued.",anchor:"Name what is human."}
 ];
 
-var outer=[
-  {id:5,label:'AI & truth',ang:-54,aOff:5,rOff:-0.04,
-   r:204,g:176,b:106,
-   intro:'AI can produce text that sounds authoritative, specific, and entirely wrong. The confidence of the output has no relationship to its accuracy.',
-   deep:'This shows up in two ways. Hallucination is when AI fabricates facts or citations with complete confidence -- inventing a study that does not exist. Sycophancy is subtler: the model tells you what you seem to want to hear, reinforcing assumptions rather than challenging them. One invents; the other flatters. Neither serves your students.'},
-  {id:6,label:'Energy consumption',ang:18,aOff:-4,rOff:0.03,
-   r:90,g:171,b:154,
-   intro:'Every AI query consumes computational resources -- electricity for servers, water for cooling, materials for hardware. The cost is invisible at the point of use, but it is real and growing.',
-   deep:'This is not a reason to stop using AI. It is a reason to use it with intention. When you choose thoughtful use over reflexive use, you are modeling the same resource awareness you teach your students.'},
-  {id:7,label:'Power concentration',ang:90,aOff:4,rOff:-0.05,
-   r:154,g:122,b:204,
-   intro:'The companies building the most powerful AI systems are few, well-funded, and largely unaccountable to the communities their tools reshape. Their decisions about safety and access ripple into your classroom without your input.',
-   deep:'When a handful of organizations determine what AI can do, whose values get encoded, and who gets access, the power dynamics are worth understanding -- even if they feel distant from daily work.'},
-  {id:8,label:'Pace outrunning policy',ang:162,aOff:-6,rOff:0.02,
-   r:176,g:144,b:112,
-   intro:'AI capabilities are evolving faster than the policies meant to govern them. Your district\'s acceptable use policy may not yet account for tools that did not exist when it was written.',
-   deep:'This gap is not a failure of your administration -- it is structural. Technology advances in months while policy moves in years. In the meantime, your professional judgment is the policy.'},
-  {id:9,label:'Labor displacement',ang:234,aOff:3,rOff:-0.03,
-   r:138,g:170,b:176,
-   intro:'AI is changing what work looks like across industries, including education. Some of the tasks that currently define your role may look different in five years.',
-   deep:'The question is not whether AI will change teaching, but which parts of teaching are most human and most necessary. Your ability to see a student, hold complexity, and make judgment calls in real time -- these are not automatable. But they must be named and valued.'}
-];
+function resize(){dpr=window.devicePixelRatio||1;var rect=field.getBoundingClientRect();W=rect.width;H=rect.height;if(W===0)W=field.offsetWidth;if(H===0)H=field.offsetHeight;canvas.width=Math.round(W*dpr);canvas.height=Math.round(H*dpr);canvas.style.width=W+'px';canvas.style.height=H+'px';ctx.setTransform(dpr,0,0,dpr,0,0);nodes.forEach(function(n){n.x=n.fx*W;n.y=n.fy*H;if(!n.r)n.r=26;if(n.pulse===undefined)n.pulse=Math.random()*Math.PI*2;});}
 
-var all=inner.concat(outer);
+field.addEventListener('mousemove',function(e){var r=field.getBoundingClientRect();mx=e.clientX-r.left;my=e.clientY-r.top;trail.push({x:mx,y:my,a:1,s:Math.random()*1.5+1});if(trail.length>48)trail.shift();});
+field.addEventListener('mouseleave',function(){mx=-999;my=-999;});
 
-/* ── Ambient particles ── */
-var NP=70,parts=[];
-function initParts(){
-  parts=[];
-  for(var i=0;i<NP;i++){
-    parts.push({
-      x:Math.random()*W,y:Math.random()*H,
-      vx:(Math.random()-0.5)*0.15,vy:(Math.random()-0.5)*0.15,
-      sz:0.5+Math.random()*1.2,
-      a:0.03+Math.random()*0.08,
-      phase:Math.random()*Math.PI*2
-    });
-  }
-}
-
-/* ── Geometry ── */
-var cx,cy,innerR,outerR,nodeR;
-
-function computeLayout(){
-  cx=W/2;cy=H/2;
-  var s=Math.min(W,H);
-  innerR=Math.max(72,s*0.17);
-  outerR=Math.max(150,s*0.33);
-  nodeR=Math.max(14,Math.min(24,s*0.028));
-
-  all.forEach(function(n){
-    var isInner=n.id<5;
-    var baseR=isInner?innerR:outerR;
-    var a=(n.ang+n.aOff)*Math.PI/180;
-    var r=baseR*(1+n.rOff);
-    n.rx=cx+Math.cos(a)*r;
-    n.ry=cy+Math.sin(a)*r;
-  });
-}
-
-function initScattered(){
-  all.forEach(function(n){
-    var isInner=n.id<5;
-    var sa=((n.id*137.5)%360)*Math.PI/180;
-    var sd=isInner?0.45+((n.id*0.11)%0.3):0.6+((n.id*0.09)%0.3);
-    n.sAng=sa;n.sDist=sd;
-    n.x=cx;n.y=cy;
-    n.dx=cx;n.dy=cy;
-    n.vis=0;
-    n.phase=n.id*1.17;
-  });
-}
-
-function getScattered(n){
-  var d=Math.max(W,H)*n.sDist;
-  return{x:cx+Math.cos(n.sAng)*d,y:cy+Math.sin(n.sAng)*d};
-}
-
-/* ── Resize ── */
-function resize(){
-  dpr=window.devicePixelRatio||1;
-  W=window.innerWidth;H=window.innerHeight;
-  CV.width=Math.round(W*dpr);CV.height=Math.round(H*dpr);
-  CV.style.width=W+'px';CV.style.height=H+'px';
-  CTX.setTransform(dpr,0,0,dpr,0,0);
-  computeLayout();
-  if(!parts.length)initParts();
-}
-
-/* ── Scroll ── */
-function updateScroll(){
-  var max=document.documentElement.scrollHeight-window.innerHeight;
-  scrollP=max>0?window.scrollY/max:0;
-}
-
-/* ── Math helpers ── */
+function dist(x1,y1,x2,y2){return Math.sqrt((x2-x1)*(x2-x1)+(y2-y1)*(y2-y1));}
 function clamp(v,lo,hi){return Math.max(lo,Math.min(hi,v));}
 function remap(v,a,b){return clamp((v-a)/(b-a),0,1);}
-function easeOut(t){return 1-Math.pow(1-t,3);}
-function lerp(a,b,t){return a+(b-a)*t;}
-function dist(x1,y1,x2,y2){var dx=x2-x1,dy=y2-y1;return Math.sqrt(dx*dx+dy*dy);}
-function rgba(n,a){return'rgba('+n.r+','+n.g+','+n.b+','+a+')';}
 
-/* ── Hover detection ── */
+function getScrollP(){var trackEl=document.getElementById('track');var maxS=trackEl.offsetHeight-window.innerHeight;return maxS>0?window.scrollY/maxS:0;}
+
 function getHov(){
-  if(mx<0||my<0)return null;
-  var best=null,bd=9999;
-  all.forEach(function(n){
-    if(n.vis<0.1)return;
-    var d=dist(mx,my,n.dx,n.dy);
-    if(d<bd){bd=d;best=n;}
-  });
-  return best&&bd<(nodeR+32)?best:null;
-}
-
-/* ── Card ── */
-var cardEl=document.getElementById('card');
-var cTitle=document.getElementById('c-title');
-var cIntro=document.getElementById('c-intro');
-var cDeep=document.getElementById('c-deep');
-
-function showCard(n){
-  if(cardNode===n)return;
-  cardNode=n;
-  cardEl.classList.remove('show');
-  cTitle.textContent=n.label;
-  cIntro.textContent=n.intro;
-  cDeep.textContent=n.deep;
-
-  var cw=cardEl.offsetWidth,ch=cardEl.offsetHeight;
-  var px=n.dx,py=n.dy;
-
-  var x=px+nodeR+18;
-  var y=py-ch/2;
-  if(x+cw>W-16)x=px-nodeR-18-cw;
-  if(x<16)x=16;
-  if(y<16)y=16;
-  if(y+ch>H-16)y=H-16-ch;
-
-  cardEl.style.left=x+'px';
-  cardEl.style.top=y+'px';
-  void cardEl.offsetWidth;
-  cardEl.classList.add('show');
-}
-
-function hideCard(){
-  if(!cardNode)return;
-  cardNode=null;
-  cardEl.classList.remove('show');
-}
-
-/* ── Draw ── */
-function draw(){
-  requestAnimationFrame(draw);
-  if(W===0){resize();return;}
-  tick+=0.007;
-  loadFade=Math.min(1,loadFade+0.008);
-  updateScroll();
-
-  CTX.clearRect(0,0,W,H);
-
-  /* Scroll-driven values */
-  var quoteA=loadFade*(1-remap(scrollP,0.18,0.30));
-  var hintA=loadFade*Math.max(0,1-remap(scrollP,0.06,0.18));
-
-  var iCoalesce=easeOut(remap(scrollP,0.25,0.45));
-  var iAlpha=remap(scrollP,0.25,0.35)*lerp(1,0.25,remap(scrollP,0.55,0.72));
-  var oCoalesce=easeOut(remap(scrollP,0.55,0.75));
-  var oAlpha=remap(scrollP,0.55,0.68);
-
-  var iLabelA=remap(scrollP,0.36,0.42)*lerp(1,0.2,remap(scrollP,0.55,0.72));
-  var oLabelA=remap(scrollP,0.64,0.72);
-  var closingA=remap(scrollP,0.84,0.96);
-
-  /* HTML overlays */
-  document.getElementById('quote').style.opacity=quoteA;
-  document.getElementById('scroll-hint').style.opacity=hintA*0.7;
-
-  var lblI=document.getElementById('lbl-inner');
-  lblI.style.opacity=iLabelA;
-  lblI.style.top=(cy-innerR-32)+'px';
-
-  var lblO=document.getElementById('lbl-outer');
-  lblO.style.opacity=oLabelA;
-  lblO.style.top=(cy+outerR+22)+'px';
-
-  document.getElementById('closing').style.opacity=closingA;
-
-  /* Ambient particles */
-  parts.forEach(function(p){
-    p.x+=p.vx;p.y+=p.vy;
-    if(p.x<-10)p.x=W+10;if(p.x>W+10)p.x=-10;
-    if(p.y<-10)p.y=H+10;if(p.y>H+10)p.y=-10;
-    var pulse=Math.sin(tick*0.8+p.phase)*0.02;
-    var a=p.a+pulse;
-    a*=lerp(0.4,1,remap(scrollP,0.10,0.30));
-    CTX.beginPath();
-    CTX.arc(p.x,p.y,p.sz,0,Math.PI*2);
-    CTX.fillStyle='rgba(250,249,245,'+clamp(a,0,1)+')';
-    CTX.fill();
-  });
-
-  /* Update node positions */
-  inner.forEach(function(n){
-    var s=getScattered(n);
-    var tx=lerp(s.x,n.rx,iCoalesce);
-    var ty=lerp(s.y,n.ry,iCoalesce);
-    n.x+=(tx-n.x)*0.09;
-    n.y+=(ty-n.y)*0.09;
-    n.vis=iAlpha;
-  });
-
-  outer.forEach(function(n){
-    var s=getScattered(n);
-    var tx=lerp(s.x,n.rx,oCoalesce);
-    var ty=lerp(s.y,n.ry,oCoalesce);
-    n.x+=(tx-n.x)*0.09;
-    n.y+=(ty-n.y)*0.09;
-    n.vis=oAlpha;
-  });
-
-  /* Compute display positions (parallax) before hover check */
-  all.forEach(function(n){
-    if(n.vis<0.01){n.dx=n.x;n.dy=n.y;return;}
-    var dx=mx-n.x,dy=my-n.y;
+  var b=null,bd=9999;
+  nodes.forEach(function(n){
+    if(n.vis<0.3)return;
     var d=dist(mx,my,n.x,n.y);
-    var inf=Math.max(0,1-d/320)*0.04;
-    n.dx=n.x+dx*inf;
-    n.dy=n.y+dy*inf;
+    if(d<bd){bd=d;b=n;}
   });
-
-  /* Hover check */
-  hovNode=getHov();
-  if(hovNode)showCard(hovNode);
-  else hideCard();
-
-  /* Draw connections */
-  drawConns(inner,iAlpha);
-  drawConns(outer,oAlpha);
-
-  /* Draw nodes */
-  all.forEach(function(n){
-    if(n.vis<0.01)return;
-    drawNode(n);
-  });
+  return b&&bd<(b.r+36)?b:null;
 }
 
-function drawConns(ring,alpha){
-  if(alpha<0.03)return;
-  for(var i=0;i<ring.length;i++){
-    var a=ring[i],b=ring[(i+1)%ring.length];
-    var isH=(hovNode===a||hovNode===b);
-    var la=alpha*(isH?0.16:0.035);
-    if(la<0.003)continue;
-    CTX.beginPath();
-    CTX.moveTo(a.dx,a.dy);
-    CTX.lineTo(b.dx,b.dy);
-    CTX.strokeStyle='rgba(250,249,245,'+la+')';
-    CTX.lineWidth=0.5;
-    CTX.stroke();
-  }
+function draw(){requestAnimationFrame(draw);if(W===0||H===0){resize();return;}
+scrollP=getScrollP();
+var innerVis=remap(scrollP,0.05,0.20);
+var outerVis=remap(scrollP,0.45,0.65);
+var innerDim=1-remap(scrollP,0.50,0.70)*0.5;
+var quoteA=(1-remap(scrollP,0.05,0.18));
+
+ctx.clearRect(0,0,W,H);
+
+/* Opening quote */
+if(quoteA>0.01){
+  var fs=Math.round(Math.max(14,Math.min(20,W*0.025)));
+  ctx.save();ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.font='400 '+fs+'px "Source Serif 4",Georgia,serif';
+  ctx.fillStyle='rgba(20,20,19,'+(quoteA*0.32)+')';
+  ctx.fillText('Using AI well means knowing',W/2,H/2-fs*0.6);
+  ctx.fillText('what it carries with it.',W/2,H/2+fs*0.6);
+  ctx.restore();
 }
 
-function drawNode(n){
-  var isH=hovNode===n;
-  var breath=Math.sin(tick*1.1+n.phase)*1.2;
-  var r=nodeR+breath;
-  var px=n.dx,py=n.dy;
+/* Trail */
+for(var i=0;i<trail.length;i++){var tr=trail[i];tr.a*=0.88;if(tr.a<0.008)continue;ctx.beginPath();ctx.arc(tr.x,tr.y,tr.s*(i/trail.length)+0.5,0,Math.PI*2);ctx.fillStyle='rgba(217,119,87,'+tr.a*0.3+')';ctx.fill();}
 
-  var baseA=n.vis*(isH?0.92:0.4);
+/* Nodes */
+var hov=getHov();
+nodes.forEach(function(n){
+  var isMicro=n.ring==='micro';
+  n.vis=isMicro?innerVis*innerDim:outerVis;
+  if(n.vis<0.01)return;
 
-  /* Subtle glow on hover */
-  if(isH&&n.vis>0.1){
-    var grd=CTX.createRadialGradient(px,py,r*0.5,px,py,r*3.2);
-    grd.addColorStop(0,rgba(n,0.12*n.vis));
-    grd.addColorStop(1,rgba(n,0));
-    CTX.beginPath();
-    CTX.arc(px,py,r*3.2,0,Math.PI*2);
-    CTX.fillStyle=grd;
-    CTX.fill();
+  var isH=hov===n,wasR=revealedSet[n.l1];
+  var tgt=isH?44:(wasR?32:24);
+  n.r=n.r+(tgt-n.r)*0.1;
+  n.pulse+=0.02;
+  var pls=isH?0:Math.sin(n.pulse)*2;
+  var vf=n.vis;
+
+  if(isH||wasR){
+    var grd=ctx.createRadialGradient(n.x,n.y,n.r*0.4,n.x,n.y,n.r+20);
+    grd.addColorStop(0,n.col+(isH?0.2*vf:0.08*vf)+')');
+    grd.addColorStop(1,n.col+'0)');
+    ctx.beginPath();ctx.arc(n.x,n.y,n.r+20+pls,0,Math.PI*2);ctx.fillStyle=grd;ctx.fill();
   }
 
-  /* Node fill */
-  CTX.beginPath();
-  CTX.arc(px,py,r,0,Math.PI*2);
-  CTX.fillStyle=rgba(n,baseA);
-  CTX.fill();
+  ctx.beginPath();ctx.arc(n.x,n.y,n.r+pls,0,Math.PI*2);
+  ctx.fillStyle=n.col+(isH?0.85*vf:(wasR?0.5*vf:0.15*vf))+')';ctx.fill();
+  ctx.strokeStyle=isH?'rgba(20,20,19,'+(0.25*vf)+')':'rgba(20,20,19,'+(0.07*vf)+')';ctx.lineWidth=0.5;ctx.stroke();
 
-  /* Node border */
-  CTX.strokeStyle=rgba(n,baseA*0.5);
-  CTX.lineWidth=0.5;
-  CTX.stroke();
-
-  /* Label */
-  if(n.vis>0.12){
-    var labelA=n.vis*(isH?0.88:0.45);
-    CTX.font='400 '+(isH?'11.5':'10.5')+'px "DM Sans",Arial,sans-serif';
-    CTX.textAlign='center';
-    CTX.textBaseline='top';
-    CTX.fillStyle='rgba(250,249,245,'+labelA+')';
-    CTX.fillText(n.label,px,py+r+9);
+  if(isH||wasR){
+    ctx.save();ctx.textAlign='center';ctx.textBaseline='middle';
+    var lh=16,yS=n.y-lh/2;
+    [n.l1,n.l2].forEach(function(ln,li){
+      ctx.font=(isH?'500 13px':'400 12px')+' "DM Sans",Arial,sans-serif';
+      ctx.fillStyle=isH?'rgba(20,20,19,'+(0.9*vf)+')':'rgba(20,20,19,'+(0.45*vf)+')';
+      ctx.fillText(ln,n.x,yS+li*lh);
+    });
+    if(isH){ctx.font='600 9px "DM Sans",Arial,sans-serif';ctx.fillStyle='rgba(217,119,87,'+(0.8*vf)+')';ctx.fillText(n.d4.toUpperCase(),n.x,n.y+n.r+15);}
+    ctx.restore();
+  } else {
+    ctx.beginPath();ctx.arc(n.x,n.y,3,0,Math.PI*2);ctx.fillStyle='rgba(20,20,19,'+(0.18*vf)+')';ctx.fill();
   }
-}
-
-/* ── Events ── */
-document.addEventListener('mousemove',function(e){mx=e.clientX;my=e.clientY;});
-document.addEventListener('mouseleave',function(){mx=-9999;my=-9999;});
-
-var touchSX,touchSY;
-document.addEventListener('touchstart',function(e){
-  var t=e.touches[0];touchSX=t.clientX;touchSY=t.clientY;
-},{passive:true});
-document.addEventListener('touchend',function(e){
-  var t=e.changedTouches[0];
-  if(Math.abs(t.clientX-touchSX)<12&&Math.abs(t.clientY-touchSY)<12){
-    mx=t.clientX;my=t.clientY;
-    // Clear after a moment so card can dismiss
-    setTimeout(function(){mx=-9999;my=-9999;},3000);
-  }
-},{passive:true});
-
-/* ── Init ── */
-window.addEventListener('load',function(){
-  requestAnimationFrame(function(){requestAnimationFrame(function(){
-    resize();
-    initScattered();
-    initParts();
-    draw();
-  });});
 });
-window.addEventListener('resize',function(){resize();});
-if(window.ResizeObserver){new ResizeObserver(function(){resize();}).observe(document.body);}
+
+/* Dashed line to hovered node */
+if(hov){ctx.beginPath();ctx.moveTo(mx,my);var ex=mx+(hov.x-mx)*0.3,ey=my+(hov.y-my)*0.3;ctx.quadraticCurveTo(ex,ey,hov.x,hov.y);ctx.strokeStyle='rgba(217,119,87,0.14)';ctx.lineWidth=1;ctx.setLineDash([3,5]);ctx.stroke();ctx.setLineDash([]);}
+
+/* Custom cursor */
+if(mx>0&&mx<W&&my>0&&my<H){ctx.beginPath();ctx.arc(mx,my,4,0,Math.PI*2);ctx.fillStyle='rgba(20,20,19,0.55)';ctx.fill();ctx.beginPath();ctx.arc(mx,my,9,0,Math.PI*2);ctx.strokeStyle='rgba(20,20,19,0.12)';ctx.lineWidth=0.5;ctx.stroke();}
+
+/* Panel update */
+if(hov&&hov!==activeNode){activeNode=hov;revealedSet[hov.l1]=true;showNode(hov);}
+}
+
+function showNode(n){
+  var env=n.ring==='micro'?'Micro environment':'Macro environment';
+  document.getElementById('pl').textContent=env;
+  document.getElementById('pn').textContent=n.name;
+  document.getElementById('pd').textContent=n.desc;
+  document.getElementById('pins').textContent=n.insight;
+  document.getElementById('panc').textContent=n.anchor;
+  var pi=document.getElementById('pi');pi.classList.remove('show');void pi.offsetWidth;pi.classList.add('show');
+  var c=Object.keys(revealedSet).length,h=document.getElementById('hint');
+  if(c>=10)h.textContent='These are considerations to carry as you go.';
+  else if(c>=5)h.textContent=c+' of 10 explored.';
+  else if(c>=1)h.textContent=c+' explored. Keep moving.';
+  h.style.color='rgba(20,20,19,0.5)';
+}
+
+window.addEventListener('load',function(){requestAnimationFrame(function(){requestAnimationFrame(function(){resize();draw();});});});
+window.addEventListener('resize',resize);
+if(window.ResizeObserver){new ResizeObserver(function(){resize();}).observe(field);}
 </script>
 </body>
 </html>
