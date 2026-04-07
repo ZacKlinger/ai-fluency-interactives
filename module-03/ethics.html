@@ -95,6 +95,20 @@ canvas{display:block;width:100%;height:100%}
   background:var(--surface);transition:color 0.5s,opacity 0.5s;
 }
 
+/* Scroll indicator */
+.scroll-indicator{
+  position:absolute;bottom:1.5rem;left:50%;transform:translateX(-50%);
+  display:flex;flex-direction:column;align-items:center;gap:5px;
+  font-size:10px;font-weight:500;letter-spacing:0.14em;text-transform:uppercase;
+  color:var(--muted);transition:opacity 0.5s;pointer-events:none;
+  white-space:nowrap;
+}
+.scroll-indicator svg{animation:scrollbounce 1.8s ease-in-out infinite}
+@keyframes scrollbounce{
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(5px)}
+}
+
 @media(max-width:540px){
   .panel-inner{grid-template-columns:1fr}
   .pleft{border-right:none;border-bottom:0.5px solid var(--border);padding-right:0;padding-bottom:1rem;min-height:0}
@@ -129,6 +143,12 @@ canvas{display:block;width:100%;height:100%}
         </div>
       </div>
       <div class="hint-bar" id="hint">Scroll to reveal the wider picture.</div>
+    </div>
+    <div class="scroll-indicator" id="scrollInd">
+      Scroll
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M7 2v10M3 8l4 4 4-4" stroke="rgba(20,20,19,0.42)" stroke-width="0.75" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
     </div>
   </div>
 </div>
@@ -479,11 +499,9 @@ function draw() {
       ctx.save();
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
-      var lh = 14, yS = n.y - lh / 2;
       ctx.font = (isH ? '500 12px' : '400 11px') + ' "DM Sans",Arial,sans-serif';
       ctx.fillStyle = isH ? 'rgba(20,20,19,' + (0.88 * vf) + ')' : 'rgba(20,20,19,' + (0.38 * vf) + ')';
-      ctx.fillText(n.l1, n.x, yS);
-      ctx.fillText(n.l2, n.x, yS + lh);
+      ctx.fillText(n.name, n.x, n.y);
       if (isH) {
         ctx.font = '600 8.5px "DM Sans",Arial,sans-serif';
         ctx.fillStyle = 'rgba(217,119,87,' + (0.75 * vf) + ')';
@@ -555,7 +573,7 @@ function drawTrackedText(c, text, cx, cy, tracking) {
 function showNode(n) {
   var env = n.ring === 'micro' ? 'In your classroom' : 'Beyond your classroom';
   document.getElementById('pl').textContent = env;
-  document.getElementById('pn').textContent = n.name;
+  document.getElementById('pn').textContent = n.l1 + ' ' + n.l2;
   document.getElementById('pd').textContent = n.desc;
   document.getElementById('pins').textContent = n.insight;
   document.getElementById('panc').textContent = n.anchor;
@@ -577,6 +595,10 @@ window.addEventListener('load', function() {
   });
 });
 window.addEventListener('resize', resize);
+window.addEventListener('scroll', function() {
+  var ind = document.getElementById('scrollInd');
+  if (ind) ind.style.opacity = window.scrollY > 80 ? '0' : '1';
+}, { passive: true });
 if (window.ResizeObserver) {
   new ResizeObserver(function() { resize(); }).observe(field);
 }
