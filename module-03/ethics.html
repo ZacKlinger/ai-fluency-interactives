@@ -9,43 +9,294 @@
 <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,300..700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-:root{--bg:#faf9f5;--surface:#f0eee6;--dark:#141413;--muted:rgba(20,20,19,0.42);--border:rgba(20,20,19,0.1);--coral:#d97757;--blue:#6a9bcc;--green:#3d6b4f;--gray:#888780;--sans:'DM Sans',Arial,sans-serif;--serif:'Source Serif 4',Georgia,serif}
-html,body{min-height:100vh;background:var(--bg);font-family:var(--sans);color:var(--dark)}
-.track{position:relative;height:300vh}
-.stage{position:sticky;top:0;height:100vh;display:flex;align-items:center;justify-content:center;padding:2rem 1rem;width:100%;max-width:820px;margin:0 auto}
-.status-badge{position:absolute;top:0;right:0;z-index:10;font-size:9.5px;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;background:var(--surface);border:0.5px solid var(--border);color:var(--muted);padding:4px 12px;border-radius:0 6px 0 4px}
-.card{background:var(--bg);border:0.5px solid var(--border);border-radius:6px;overflow:hidden;color:var(--dark);width:100%}
-.top-bar{padding:1.75rem 2rem 0;padding-right:8rem}
-.eyebrow{font-size:10px;font-weight:500;letter-spacing:0.16em;text-transform:uppercase;color:var(--muted)}
-.title-area{padding:0.75rem 2rem 0}
-.headline{font-family:var(--serif);font-variation-settings:'opsz' 24;font-size:clamp(20px,3.2vw,28px);font-weight:600;color:var(--dark);line-height:1.2;margin-bottom:0.25rem;letter-spacing:-0.025em}
-.subhead{font-size:12px;font-weight:400;color:var(--muted);line-height:1.5}
-.field-wrap{position:relative;width:100%;height:420px;margin-top:0.5rem;cursor:none;background:var(--surface);border-top:0.5px solid var(--border);border-bottom:0.5px solid var(--border)}
-canvas{display:block;width:100%;height:100%}
-.panel{padding:1.25rem 2rem 1.75rem;background:var(--bg);min-height:230px}
-.panel-inner{display:grid;grid-template-columns:1fr 1.8fr;gap:2rem;align-items:start;opacity:0;transition:opacity 0.35s}
-.panel-inner.show{opacity:1}
-.pleft{border-right:0.5px solid var(--border);padding-right:2rem;min-height:175px}
-.plabel{font-size:10px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:var(--coral);margin-bottom:0.4rem;display:block}
-.pname{font-family:var(--sans);font-size:17px;font-weight:600;color:var(--dark);margin-bottom:0.3rem;line-height:1.3;letter-spacing:-0.01em}
-.pdesc{font-size:13px;font-weight:400;color:var(--muted);line-height:1.6;margin-bottom:0.75rem}
-.pinsight{font-family:var(--serif);font-size:16px;font-weight:400;color:var(--dark);line-height:1.75;margin-bottom:0.65rem}
-.panchor{font-family:var(--sans);font-size:12px;font-weight:500;color:var(--coral)}
-.hint-bar{text-align:center;font-size:11px;font-weight:400;color:var(--muted);padding:0.5rem 0 1.25rem;border-top:0.5px solid var(--border);background:var(--surface);transition:color 0.5s}
-@media(max-width:540px){.panel-inner{grid-template-columns:1fr}.pleft{border-right:none;border-bottom:0.5px solid var(--border);padding-right:0;padding-bottom:1rem;min-height:0}.field-wrap{height:340px}}
+:root{
+  --bg:#faf9f5;
+  --surface:#f0eee6;
+  --dark:#141413;
+  --muted:rgba(20,20,19,0.42);
+  --border:rgba(20,20,19,0.1);
+  --coral:#d97757;
+  --blue:#6a9bcc;
+  --green:#3d6b4f;
+  --sans:'DM Sans',Arial,sans-serif;
+  --serif:'Source Serif 4',Georgia,serif;
+}
+html,body{
+  min-height:100vh;
+  background:var(--bg);
+  font-family:var(--sans);
+  color:var(--dark);
+}
+
+/*  Scroll track: 2 viewports = 200vh  */
+.track{
+  position:relative;
+  height:200vh;
+}
+.stage{
+  position:sticky;
+  top:0;
+  height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:clamp(12px,2vw,28px) clamp(12px,2vw,28px);
+  width:100%;
+}
+.status-badge{
+  position:absolute;
+  top:0;
+  right:0;
+  z-index:10;
+  font-size:9.5px;
+  font-weight:500;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  background:var(--surface);
+  border:0.5px solid var(--border);
+  color:var(--muted);
+  padding:4px 12px;
+  border-radius:0 6px 0 4px;
+}
+.card{
+  background:var(--bg);
+  border:0.5px solid var(--border);
+  border-radius:6px;
+  overflow:hidden;
+  color:var(--dark);
+  width:100%;
+  max-width:820px;
+  display:flex;
+  flex-direction:column;
+}
+.top-bar{
+  padding:1.75rem 2rem 0;
+  padding-right:8rem;
+  flex-shrink:0;
+}
+.eyebrow{
+  font-size:10px;
+  font-weight:500;
+  letter-spacing:0.16em;
+  text-transform:uppercase;
+  color:var(--muted);
+}
+.title-area{
+  padding:0.75rem 2rem 0;
+  flex-shrink:0;
+}
+.headline{
+  font-family:var(--serif);
+  font-variation-settings:'opsz' 24;
+  font-size:clamp(20px,3.2vw,28px);
+  font-weight:600;
+  color:var(--dark);
+  line-height:1.2;
+  margin-bottom:0.25rem;
+  letter-spacing:-0.025em;
+}
+.subhead{
+  font-size:12px;
+  font-weight:400;
+  color:var(--muted);
+  line-height:1.5;
+}
+
+/*  Scroll label  */
+.scroll-label{
+  display:flex;
+  align-items:center;
+  gap:0.75rem;
+  padding:0.6rem 2rem;
+  border-bottom:0.5px solid var(--border);
+  flex-shrink:0;
+}
+.scroll-tabs{
+  display:flex;
+  gap:0;
+}
+.scroll-tab{
+  font-size:10px;
+  font-weight:500;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  padding:4px 14px;
+  border:0.5px solid var(--border);
+  color:var(--muted);
+  background:transparent;
+  transition:color 0.4s, background 0.4s, border-color 0.4s;
+  cursor:default;
+}
+.scroll-tab:first-child{border-radius:3px 0 0 3px;}
+.scroll-tab:last-child{border-radius:0 3px 3px 0;border-left:none;}
+.scroll-tab.active{
+  color:var(--dark);
+  background:var(--surface);
+  border-color:rgba(20,20,19,0.2);
+}
+
+/*  Canvas  */
+.field-wrap{
+  position:relative;
+  flex:1;
+  min-height:0;
+  cursor:none;
+  background:var(--surface);
+  border-top:0.5px solid var(--border);
+  border-bottom:0.5px solid var(--border);
+  overflow:hidden;
+}
+canvas{
+  display:block;
+  width:100%;
+  height:100%;
+}
+
+/*  Panel  */
+.panel{
+  padding:1.25rem 2rem 1.75rem;
+  background:var(--bg);
+  flex-shrink:0;
+  min-height:160px;
+}
+.panel-inner{
+  display:grid;
+  grid-template-columns:1fr 1.8fr;
+  gap:2rem;
+  align-items:start;
+  opacity:0;
+  transform:translateY(4px);
+  transition:opacity 0.35s, transform 0.35s;
+}
+.panel-inner.show{
+  opacity:1;
+  transform:translateY(0);
+}
+.pleft{
+  border-right:0.5px solid var(--border);
+  padding-right:2rem;
+  min-height:120px;
+}
+.plabel{
+  font-size:10px;
+  font-weight:600;
+  letter-spacing:0.14em;
+  text-transform:uppercase;
+  color:var(--coral);
+  margin-bottom:0.4rem;
+  display:block;
+}
+.pname{
+  font-family:var(--sans);
+  font-size:17px;
+  font-weight:600;
+  color:var(--dark);
+  margin-bottom:0.3rem;
+  line-height:1.3;
+  letter-spacing:-0.01em;
+}
+.pdesc{
+  font-size:13px;
+  font-weight:400;
+  color:var(--muted);
+  line-height:1.6;
+  margin-bottom:0.75rem;
+}
+.pinsight{
+  font-family:var(--serif);
+  font-size:15px;
+  font-weight:400;
+  color:var(--dark);
+  line-height:1.75;
+  margin-bottom:0.65rem;
+}
+.panchor{
+  font-family:var(--sans);
+  font-size:12px;
+  font-weight:500;
+  color:var(--coral);
+}
+.hint-bar{
+  text-align:center;
+  font-size:11px;
+  font-weight:400;
+  color:var(--muted);
+  padding:0.5rem 0 1rem;
+  border-top:0.5px solid var(--border);
+  background:var(--surface);
+  flex-shrink:0;
+  transition:color 0.5s;
+}
+
+/*  Scroll nudge  */
+.scroll-nudge{
+  position:absolute;
+  bottom:18px;
+  left:50%;
+  transform:translateX(-50%);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:4px;
+  opacity:1;
+  transition:opacity 0.5s;
+  pointer-events:none;
+}
+.scroll-nudge.hidden{opacity:0;}
+.nudge-line{
+  width:0.5px;
+  height:28px;
+  background:var(--muted);
+  animation:nudgePulse 2s ease-in-out infinite;
+}
+.nudge-text{
+  font-size:9px;
+  letter-spacing:0.14em;
+  text-transform:uppercase;
+  color:var(--muted);
+  font-weight:500;
+}
+@keyframes nudgePulse{
+  0%,100%{transform:scaleY(1);opacity:0.4;}
+  50%{transform:scaleY(1.15);opacity:0.9;}
+}
+
+@media(max-width:580px){
+  .panel-inner{grid-template-columns:1fr;}
+  .pleft{border-right:none;border-bottom:0.5px solid var(--border);padding-right:0;padding-bottom:1rem;min-height:0;}
+  .scroll-tab{padding:4px 10px;}
+}
 </style>
 </head>
 <body>
+
 <div class="track" id="track">
   <div class="stage">
     <div class="status-badge">Draft &middot; Module 3</div>
-    <div class="card">
-      <div class="top-bar"><span class="eyebrow">AI Fluency for K&ndash;12 Educators &nbsp;&middot;&nbsp; Module 3</span></div>
+    <div class="card" id="card">
+      <div class="top-bar">
+        <span class="eyebrow">AI Fluency for K&ndash;12 Educators &nbsp;&middot;&nbsp; Module 3</span>
+      </div>
       <div class="title-area">
         <h1 class="headline">What AI carries with it.</h1>
-        <p class="subhead">Move through the field. Hover to sit with each one.</p>
+        <p class="subhead">Scroll to move between scales. Hover to sit with each one.</p>
       </div>
-      <div class="field-wrap" id="field"><canvas id="c"></canvas></div>
+
+      <div class="scroll-label">
+        <div class="scroll-tabs">
+          <div class="scroll-tab active" id="tab-micro">Micro</div>
+          <div class="scroll-tab" id="tab-macro">Macro</div>
+        </div>
+      </div>
+
+      <div class="field-wrap" id="field">
+        <canvas id="c"></canvas>
+        <div class="scroll-nudge" id="nudge">
+          <div class="nudge-line"></div>
+          <span class="nudge-text">scroll</span>
+        </div>
+      </div>
+
       <div class="panel">
         <div class="panel-inner" id="pi">
           <div class="pleft">
@@ -63,138 +314,403 @@ canvas{display:block;width:100%;height:100%}
     </div>
   </div>
 </div>
+
 <script>
-var canvas=document.getElementById('c'),ctx=canvas.getContext('2d'),field=document.getElementById('field');
-var W=0,H=0,dpr=1,mx=-999,my=-999,trail=[],activeNode=null,revealedSet={},scrollP=0;
+var canvas = document.getElementById('c');
+var ctx = canvas.getContext('2d');
+var field = document.getElementById('field');
+var W = 0, H = 0, dpr = 1;
+var mx = -999, my = -999;
+var trail = [];
+var activeNode = null;
+var revealedSet = {};
+var scrollP = 0;
+var raf = null;
 
-var nodes=[
-  /* ── Inner ring: Micro environment ── */
-  {l1:"What students",l2:"leave behind",fx:0.32,fy:0.26,name:"Student privacy",desc:"Students leave traces in AI tools -- questions asked, mistakes made, thinking still in formation.",ring:"micro",d4:"Micro",col:"rgba(106,155,204,",insight:"A thirteen-year-old exploring a difficult topic deserves the same confidentiality they would expect in a conversation with you.",anchor:"The traces persist."},
-  {l1:"Where student",l2:"writing goes",fx:0.68,fy:0.24,name:"Children's data & model training",desc:"Some models learn from student interactions. Work typed into a tool may become training data without meaningful consent.",ring:"micro",d4:"Micro",col:"rgba(196,149,106,",insight:"A parent signing off on 'educational technology' may not understand what that consent actually covers.",anchor:"Consent forms rarely capture reality."},
-  {l1:"Who gets",l2:"left out",fx:0.50,fy:0.48,name:"Equity of access",desc:"Not every student goes home to a device, a stable connection, or a household that can navigate new tools.",ring:"micro",d4:"Micro",col:"rgba(106,171,122,",insight:"Access includes digital literacy, language, and comfort with tools trained primarily on English-language internet text.",anchor:"The gap deepens quietly."},
-  {l1:"Whose name",l2:"is on it",fx:0.25,fy:0.70,name:"Teacher accountability",desc:"When AI helps produce a lesson, a report, or a recommendation, the work still carries your name.",ring:"micro",d4:"Micro",col:"rgba(217,119,87,",insight:"A parent does not see 'co-authored with AI' at the bottom of a progress report. You are the professional in the room.",anchor:"Convenience does not transfer responsibility."},
-  {l1:"What the data",l2:"already carries",fx:0.75,fy:0.68,name:"Bias in training data",desc:"AI learns from text that carries every bias we hold -- about race, gender, ability, and who gets to be seen as capable.",ring:"micro",d4:"Micro",col:"rgba(164,120,142,",insight:"Training data encodes historical inequities as statistical likelihoods. Your judgment exists to interrupt that pattern.",anchor:"The model reflects. It does not know."},
+// Node data
+var nodes = [
+  // Inner ring: Micro (5 nodes)
+  {l1:"Student privacy",fx:0.50,fy:0.30,ring:"micro",col:[106,155,204],
+    name:"Student privacy",
+    desc:"Students leave traces in AI tools -- questions asked, mistakes made, thinking still in formation.",
+    insight:"A thirteen-year-old exploring a difficult topic deserves the same confidentiality they would expect in a conversation with you.",
+    anchor:"The traces persist."},
+  {l1:"Children's data",fx:0.72,fy:0.44,ring:"micro",col:[196,149,106],
+    name:"Children's data & model training",
+    desc:"Some models learn from student interactions. Work typed into a tool may become training data without meaningful consent.",
+    insight:"A parent signing off on 'educational technology' may not understand what that consent actually covers.",
+    anchor:"Consent forms rarely capture reality."},
+  {l1:"Equity of access",fx:0.64,fy:0.68,ring:"micro",col:[106,171,122],
+    name:"Equity of access",
+    desc:"Not every student goes home to a device, a stable connection, or a household that can navigate new tools.",
+    insight:"Access includes digital literacy, language, and comfort with tools trained primarily on English-language internet text.",
+    anchor:"The gap deepens quietly."},
+  {l1:"Teacher accountability",fx:0.36,fy:0.68,ring:"micro",col:[217,119,87],
+    name:"Teacher accountability",
+    desc:"When AI helps produce a lesson, a report, or a recommendation, the work still carries your name.",
+    insight:"A parent does not see 'co-authored with AI' at the bottom of a progress report. You are the professional in the room.",
+    anchor:"Convenience does not transfer responsibility."},
+  {l1:"Bias in training data",fx:0.28,fy:0.44,ring:"micro",col:[164,120,142],
+    name:"Bias in training data",
+    desc:"AI learns from text that carries every bias we hold -- about race, gender, ability, and who gets to be seen as capable.",
+    insight:"Training data encodes historical inequities as statistical likelihoods. Your judgment exists to interrupt that pattern.",
+    anchor:"The model reflects. It does not know."},
 
-  /* ── Outer ring: Macro environment ── */
-  {l1:"When confidence",l2:"has no source",fx:0.13,fy:0.18,name:"AI & truth",desc:"AI can sound authoritative, specific, and entirely wrong. Confidence has no relationship to accuracy.",ring:"macro",d4:"Macro",col:"rgba(194,166,96,",insight:"Hallucination invents facts with complete confidence. Sycophancy tells you what you want to hear. One fabricates; the other flatters.",anchor:"Neither serves your students."},
-  {l1:"The cost you",l2:"do not see",fx:0.87,fy:0.16,name:"Energy consumption",desc:"Every query consumes electricity, water, and materials. The cost is invisible at the point of use.",ring:"macro",d4:"Macro",col:"rgba(90,161,144,",insight:"This is not a reason to stop. It is a reason to use AI with the same intention you bring to any resource.",anchor:"Thoughtful use over reflexive use."},
-  {l1:"Who decides what",l2:"AI can do",fx:0.09,fy:0.50,name:"Power concentration",desc:"The companies building AI are few and largely unaccountable to the communities their tools reshape.",ring:"macro",d4:"Macro",col:"rgba(144,112,184,",insight:"Decisions about safety, values, and access ripple into your classroom without your input.",anchor:"Awareness is not helplessness."},
-  {l1:"Rules that have",l2:"not caught up",fx:0.91,fy:0.52,name:"Pace outrunning policy",desc:"AI capabilities evolve faster than the policies meant to govern them.",ring:"macro",d4:"Macro",col:"rgba(166,134,102,",insight:"Technology advances in months. Policy moves in years. In the meantime, your professional judgment is the policy.",anchor:"You are shaping the norms."},
-  {l1:"What changes in",l2:"five years",fx:0.50,fy:0.84,name:"Labor displacement",desc:"AI is changing what work looks like across industries, including education.",ring:"macro",d4:"Macro",col:"rgba(128,160,166,",insight:"Your ability to see a student, hold complexity, and make judgment calls -- these are not automatable. But they must be named and valued.",anchor:"Name what is human."}
+  // Outer ring: Macro (5 nodes)
+  {l1:"AI & truth",fx:0.50,fy:0.12,ring:"macro",col:[194,166,96],
+    name:"AI & truth",
+    desc:"AI can sound authoritative, specific, and entirely wrong. Confidence has no relationship to accuracy.",
+    insight:"Hallucination invents facts with complete confidence. Sycophancy tells you what you want to hear. One fabricates; the other flatters.",
+    anchor:"Neither serves your students."},
+  {l1:"Energy consumption",fx:0.85,fy:0.32,ring:"macro",col:[90,161,144],
+    name:"Energy consumption",
+    desc:"Every query consumes electricity, water, and materials. The cost is invisible at the point of use.",
+    insight:"This is not a reason to stop. It is a reason to use AI with the same intention you bring to any resource.",
+    anchor:"Thoughtful use over reflexive use."},
+  {l1:"Power concentration",fx:0.88,fy:0.68,ring:"macro",col:[144,112,184],
+    name:"Power concentration",
+    desc:"The companies building AI are few and largely unaccountable to the communities their tools reshape.",
+    insight:"Decisions about safety, values, and access ripple into your classroom without your input.",
+    anchor:"Awareness is not helplessness."},
+  {l1:"Pace outrunning policy",fx:0.15,fy:0.68,ring:"macro",col:[166,134,102],
+    name:"Pace outrunning policy",
+    desc:"AI capabilities evolve faster than the policies meant to govern them.",
+    insight:"Technology advances in months. Policy moves in years. In the meantime, your professional judgment is the policy.",
+    anchor:"You are shaping the norms."},
+  {l1:"Labor displacement",fx:0.12,fy:0.32,ring:"macro",col:[128,160,166],
+    name:"Labor displacement",
+    desc:"AI is changing what work looks like across industries, including education.",
+    insight:"Your ability to see a student, hold complexity, and make judgment calls -- these are not automatable. But they must be named and valued.",
+    anchor:"Name what is human."},
 ];
 
-function resize(){dpr=window.devicePixelRatio||1;var rect=field.getBoundingClientRect();W=rect.width;H=rect.height;if(W===0)W=field.offsetWidth;if(H===0)H=field.offsetHeight;canvas.width=Math.round(W*dpr);canvas.height=Math.round(H*dpr);canvas.style.width=W+'px';canvas.style.height=H+'px';ctx.setTransform(dpr,0,0,dpr,0,0);nodes.forEach(function(n){n.x=n.fx*W;n.y=n.fy*H;if(!n.r)n.r=26;if(n.pulse===undefined)n.pulse=Math.random()*Math.PI*2;});}
-
-field.addEventListener('mousemove',function(e){var r=field.getBoundingClientRect();mx=e.clientX-r.left;my=e.clientY-r.top;trail.push({x:mx,y:my,a:1,s:Math.random()*1.5+1});if(trail.length>48)trail.shift();});
-field.addEventListener('mouseleave',function(){mx=-999;my=-999;});
-
-function dist(x1,y1,x2,y2){return Math.sqrt((x2-x1)*(x2-x1)+(y2-y1)*(y2-y1));}
-function clamp(v,lo,hi){return Math.max(lo,Math.min(hi,v));}
-function remap(v,a,b){return clamp((v-a)/(b-a),0,1);}
-
-function getScrollP(){var trackEl=document.getElementById('track');var maxS=trackEl.offsetHeight-window.innerHeight;return maxS>0?window.scrollY/maxS:0;}
-
-function getHov(){
-  var b=null,bd=9999;
-  nodes.forEach(function(n){
-    if(n.vis<0.3)return;
-    var d=dist(mx,my,n.x,n.y);
-    if(d<bd){bd=d;b=n;}
-  });
-  return b&&bd<(b.r+36)?b:null;
-}
-
-function draw(){requestAnimationFrame(draw);if(W===0||H===0){resize();return;}
-scrollP=getScrollP();
-var innerVis=remap(scrollP,0.05,0.20);
-var outerVis=remap(scrollP,0.45,0.65);
-var innerDim=1-remap(scrollP,0.50,0.70)*0.5;
-var quoteA=(1-remap(scrollP,0.05,0.18));
-
-ctx.clearRect(0,0,W,H);
-
-/* Opening quote */
-if(quoteA>0.01){
-  var fs=Math.round(Math.max(14,Math.min(20,W*0.025)));
-  ctx.save();ctx.textAlign='center';ctx.textBaseline='middle';
-  ctx.font='400 '+fs+'px "Source Serif 4",Georgia,serif';
-  ctx.fillStyle='rgba(20,20,19,'+(quoteA*0.32)+')';
-  ctx.fillText('Using AI well means knowing',W/2,H/2-fs*0.6);
-  ctx.fillText('what it carries with it.',W/2,H/2+fs*0.6);
-  ctx.restore();
-}
-
-/* Trail */
-for(var i=0;i<trail.length;i++){var tr=trail[i];tr.a*=0.88;if(tr.a<0.008)continue;ctx.beginPath();ctx.arc(tr.x,tr.y,tr.s*(i/trail.length)+0.5,0,Math.PI*2);ctx.fillStyle='rgba(217,119,87,'+tr.a*0.3+')';ctx.fill();}
-
-/* Nodes */
-var hov=getHov();
-nodes.forEach(function(n){
-  var isMicro=n.ring==='micro';
-  n.vis=isMicro?innerVis*innerDim:outerVis;
-  if(n.vis<0.01)return;
-
-  var isH=hov===n,wasR=revealedSet[n.l1];
-  var tgt=isH?44:(wasR?32:24);
-  n.r=n.r+(tgt-n.r)*0.1;
-  n.pulse+=0.02;
-  var pls=isH?0:Math.sin(n.pulse)*2;
-  var vf=n.vis;
-
-  if(isH||wasR){
-    var grd=ctx.createRadialGradient(n.x,n.y,n.r*0.4,n.x,n.y,n.r+20);
-    grd.addColorStop(0,n.col+(isH?0.2*vf:0.08*vf)+')');
-    grd.addColorStop(1,n.col+'0)');
-    ctx.beginPath();ctx.arc(n.x,n.y,n.r+20+pls,0,Math.PI*2);ctx.fillStyle=grd;ctx.fill();
-  }
-
-  ctx.beginPath();ctx.arc(n.x,n.y,n.r+pls,0,Math.PI*2);
-  ctx.fillStyle=n.col+(isH?0.85*vf:(wasR?0.5*vf:0.15*vf))+')';ctx.fill();
-  ctx.strokeStyle=isH?'rgba(20,20,19,'+(0.25*vf)+')':'rgba(20,20,19,'+(0.07*vf)+')';ctx.lineWidth=0.5;ctx.stroke();
-
-  if(isH||wasR){
-    ctx.save();ctx.textAlign='center';ctx.textBaseline='middle';
-    var lh=16,yS=n.y-lh/2;
-    [n.l1,n.l2].forEach(function(ln,li){
-      ctx.font=(isH?'500 13px':'400 12px')+' "DM Sans",Arial,sans-serif';
-      ctx.fillStyle=isH?'rgba(20,20,19,'+(0.9*vf)+')':'rgba(20,20,19,'+(0.45*vf)+')';
-      ctx.fillText(ln,n.x,yS+li*lh);
-    });
-    if(isH){ctx.font='600 9px "DM Sans",Arial,sans-serif';ctx.fillStyle='rgba(217,119,87,'+(0.8*vf)+')';ctx.fillText(n.d4.toUpperCase(),n.x,n.y+n.r+15);}
-    ctx.restore();
-  } else {
-    ctx.beginPath();ctx.arc(n.x,n.y,3,0,Math.PI*2);ctx.fillStyle='rgba(20,20,19,'+(0.18*vf)+')';ctx.fill();
-  }
+// Init node runtime state
+nodes.forEach(function(n) {
+  n.r = 24;
+  n.rTarget = 24;
+  n.pulse = Math.random() * Math.PI * 2;
+  n.pulseSpeed = 0.018 + Math.random() * 0.008;
+  // parallax offset per node (unique drift direction)
+  n.pxDir = (Math.random() - 0.5) * 2;
+  n.pyDir = (Math.random() - 0.5) * 2;
+  n.vis = 0;
+  n.visTarget = 0;
+  n.x = 0;
+  n.y = 0;
 });
 
-/* Dashed line to hovered node */
-if(hov){ctx.beginPath();ctx.moveTo(mx,my);var ex=mx+(hov.x-mx)*0.3,ey=my+(hov.y-my)*0.3;ctx.quadraticCurveTo(ex,ey,hov.x,hov.y);ctx.strokeStyle='rgba(217,119,87,0.14)';ctx.lineWidth=1;ctx.setLineDash([3,5]);ctx.stroke();ctx.setLineDash([]);}
-
-/* Custom cursor */
-if(mx>0&&mx<W&&my>0&&my<H){ctx.beginPath();ctx.arc(mx,my,4,0,Math.PI*2);ctx.fillStyle='rgba(20,20,19,0.55)';ctx.fill();ctx.beginPath();ctx.arc(mx,my,9,0,Math.PI*2);ctx.strokeStyle='rgba(20,20,19,0.12)';ctx.lineWidth=0.5;ctx.stroke();}
-
-/* Panel update */
-if(hov&&hov!==activeNode){activeNode=hov;revealedSet[hov.l1]=true;showNode(hov);}
+function resize() {
+  dpr = window.devicePixelRatio || 1;
+  var rect = field.getBoundingClientRect();
+  W = rect.width;
+  H = rect.height;
+  if (W === 0) W = field.offsetWidth;
+  if (H === 0) H = field.offsetHeight;
+  canvas.width = Math.round(W * dpr);
+  canvas.height = Math.round(H * dpr);
+  canvas.style.width = W + 'px';
+  canvas.style.height = H + 'px';
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 }
 
-function showNode(n){
-  var env=n.ring==='micro'?'Micro environment':'Macro environment';
-  document.getElementById('pl').textContent=env;
-  document.getElementById('pn').textContent=n.name;
-  document.getElementById('pd').textContent=n.desc;
-  document.getElementById('pins').textContent=n.insight;
-  document.getElementById('panc').textContent=n.anchor;
-  var pi=document.getElementById('pi');pi.classList.remove('show');void pi.offsetWidth;pi.classList.add('show');
-  var c=Object.keys(revealedSet).length,h=document.getElementById('hint');
-  if(c>=10)h.textContent='These are considerations to carry as you go.';
-  else if(c>=5)h.textContent=c+' of 10 explored.';
-  else if(c>=1)h.textContent=c+' explored. Keep moving.';
-  h.style.color='rgba(20,20,19,0.5)';
+field.addEventListener('mousemove', function(e) {
+  var r = field.getBoundingClientRect();
+  mx = e.clientX - r.left;
+  my = e.clientY - r.top;
+  trail.push({x:mx, y:my, a:1, s:Math.random() * 1.2 + 0.8});
+  if (trail.length > 40) trail.shift();
+});
+field.addEventListener('mouseleave', function() {
+  mx = -999;
+  my = -999;
+});
+
+function dist(x1,y1,x2,y2) {
+  return Math.sqrt((x2-x1)*(x2-x1)+(y2-y1)*(y2-y1));
+}
+function clamp(v,lo,hi) {
+  return Math.max(lo,Math.min(hi,v));
+}
+function remap(v,a,b) {
+  return clamp((v-a)/(b-a),0,1);
+}
+function ease(t) {
+  return t < 0.5 ? 2*t*t : -1+(4-2*t)*t;
 }
 
-window.addEventListener('load',function(){requestAnimationFrame(function(){requestAnimationFrame(function(){resize();draw();});});});
-window.addEventListener('resize',resize);
-if(window.ResizeObserver){new ResizeObserver(function(){resize();}).observe(field);}
+function getScrollP() {
+  var trackEl = document.getElementById('track');
+  var maxS = trackEl.offsetHeight - window.innerHeight;
+  return maxS > 0 ? window.scrollY / maxS : 0;
+}
+
+function getHov() {
+  var b = null, bd = 9999;
+  nodes.forEach(function(n) {
+    if (n.vis < 0.2) return;
+    var d = dist(mx, my, n.x, n.y);
+    if (d < bd) { bd = d; b = n; }
+  });
+  return b && bd < (b.r + 40) ? b : null;
+}
+
+function rgba(col, a) {
+  return 'rgba(' + col[0] + ',' + col[1] + ',' + col[2] + ',' + a + ')';
+}
+
+// Compute base positions with scroll-driven parallax
+function nodeBaseX(n) {
+  // parallax: micro nodes drift gently left/right, macro drift more
+  var mag = n.ring === 'micro' ? 18 : 28;
+  return n.fx * W + n.pxDir * mag * scrollP;
+}
+function nodeBaseY(n) {
+  var mag = n.ring === 'micro' ? 14 : 22;
+  return n.fy * H + n.pyDir * mag * scrollP;
+}
+
+// Inner ring radius for legibility check
+// We want inner nodes to stay in roughly 38% of canvas
+function innerMaxR() {
+  return Math.min(W, H) * 0.38;
+}
+
+function draw() {
+  raf = requestAnimationFrame(draw);
+  if (W === 0 || H === 0) { resize(); return; }
+
+  scrollP = getScrollP();
+
+  // Visibility targets based on scroll
+  // scrollP 0..~0.45 = micro view, ~0.45..1.0 = macro view
+  // Micro fades in immediately, fades partially at macro
+  // Macro fades in at 0.45
+  var microVis = ease(clamp(scrollP * 4, 0, 1));        // fully in by scrollP=0.25
+  var macroVis = ease(remap(scrollP, 0.40, 0.75));       // fades in
+  var microDim  = 1 - remap(scrollP, 0.50, 0.80) * 0.55; // micro dims when macro arrives
+
+  // Update tab UI
+  var tabMicro = document.getElementById('tab-micro');
+  var tabMacro = document.getElementById('tab-macro');
+  if (scrollP < 0.45) {
+    tabMicro.className = 'scroll-tab active';
+    tabMacro.className = 'scroll-tab';
+  } else {
+    tabMicro.className = 'scroll-tab';
+    tabMacro.className = 'scroll-tab active';
+  }
+
+  // Nudge
+  var nudge = document.getElementById('nudge');
+  if (scrollP > 0.04) {
+    nudge.className = 'scroll-nudge hidden';
+  } else {
+    nudge.className = 'scroll-nudge';
+  }
+
+  nodes.forEach(function(n) {
+    var rawVis = n.ring === 'micro' ? microVis * microDim : macroVis;
+    n.visTarget = rawVis;
+    n.vis += (n.visTarget - n.vis) * 0.06;
+  });
+
+  ctx.clearRect(0, 0, W, H);
+
+  // Draw faint ring guides
+  var cx = W * 0.5, cy = H * 0.5;
+  var iR = innerMaxR();
+  var oR = Math.min(W, H) * 0.47;
+
+  if (microVis * microDim > 0.05) {
+    ctx.beginPath();
+    ctx.arc(cx, cy, iR, 0, Math.PI * 2);
+    ctx.strokeStyle = 'rgba(20,20,19,' + (0.04 * microVis * microDim) + ')';
+    ctx.lineWidth = 0.5;
+    ctx.setLineDash([3, 8]);
+    ctx.stroke();
+    ctx.setLineDash([]);
+  }
+  if (macroVis > 0.05) {
+    ctx.beginPath();
+    ctx.arc(cx, cy, oR, 0, Math.PI * 2);
+    ctx.strokeStyle = 'rgba(20,20,19,' + (0.04 * macroVis) + ')';
+    ctx.lineWidth = 0.5;
+    ctx.setLineDash([3, 12]);
+    ctx.stroke();
+    ctx.setLineDash([]);
+  }
+
+  // Update node positions with parallax
+  nodes.forEach(function(n) {
+    var bx = nodeBaseX(n);
+    var by = nodeBaseY(n);
+    if (!n.x) { n.x = bx; n.y = by; }
+    // smooth toward base position
+    n.x += (bx - n.x) * 0.04;
+    n.y += (by - n.y) * 0.04;
+  });
+
+  // Trail
+  for (var i = 0; i < trail.length; i++) {
+    var tr = trail[i];
+    tr.a *= 0.86;
+    if (tr.a < 0.008) continue;
+    ctx.beginPath();
+    ctx.arc(tr.x, tr.y, tr.s * (i / trail.length) + 0.5, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(217,119,87,' + tr.a * 0.28 + ')';
+    ctx.fill();
+  }
+
+  var hov = getHov();
+
+  // Draw connections: inner nodes to center when visible
+  if (microVis * microDim > 0.1) {
+    nodes.filter(function(n){return n.ring==='micro';}).forEach(function(n) {
+      if (n.vis < 0.05) return;
+      ctx.beginPath();
+      ctx.moveTo(cx, cy);
+      ctx.lineTo(n.x, n.y);
+      ctx.strokeStyle = rgba(n.col, 0.06 * n.vis);
+      ctx.lineWidth = 0.5;
+      ctx.stroke();
+    });
+  }
+
+  nodes.forEach(function(n) {
+    if (n.vis < 0.01) return;
+    var isH = hov === n;
+    var wasR = !!revealedSet[n.l1];
+    var vf = n.vis;
+
+    n.pulse += n.pulseSpeed;
+    var pls = isH ? 0 : Math.sin(n.pulse) * 1.5;
+
+    // target radius
+    n.rTarget = isH ? 38 : (wasR ? 28 : 22);
+    n.r += (n.rTarget - n.r) * 0.1;
+
+    // glow
+    if (isH || wasR) {
+      var grd = ctx.createRadialGradient(n.x, n.y, n.r * 0.3, n.x, n.y, n.r + 22);
+      grd.addColorStop(0, rgba(n.col, (isH ? 0.18 : 0.07) * vf));
+      grd.addColorStop(1, rgba(n.col, 0));
+      ctx.beginPath();
+      ctx.arc(n.x, n.y, n.r + 22 + pls, 0, Math.PI * 2);
+      ctx.fillStyle = grd;
+      ctx.fill();
+    }
+
+    // circle fill
+    ctx.beginPath();
+    ctx.arc(n.x, n.y, n.r + pls, 0, Math.PI * 2);
+    ctx.fillStyle = rgba(n.col, (isH ? 0.82 : (wasR ? 0.46 : 0.14)) * vf);
+    ctx.fill();
+    ctx.strokeStyle = rgba([20,20,19], (isH ? 0.22 : 0.06) * vf);
+    ctx.lineWidth = 0.5;
+    ctx.stroke();
+
+    // label text  only on hover or revealed
+    if (isH || wasR) {
+      ctx.save();
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      var fs = isH ? 12 : 11;
+      ctx.font = (isH ? '500 ' : '400 ') + fs + 'px "DM Sans",Arial,sans-serif';
+      ctx.fillStyle = rgba([20,20,19], (isH ? 0.88 : 0.42) * vf);
+      // wrap label to two lines at most
+      var words = n.l1.split(' ');
+      if (words.length <= 2) {
+        ctx.fillText(n.l1, n.x, n.y);
+      } else {
+        var mid = Math.ceil(words.length / 2);
+        var line1 = words.slice(0, mid).join(' ');
+        var line2 = words.slice(mid).join(' ');
+        ctx.fillText(line1, n.x, n.y - 7);
+        ctx.fillText(line2, n.x, n.y + 7);
+      }
+      ctx.restore();
+    } else {
+      // resting: tiny center dot
+      ctx.beginPath();
+      ctx.arc(n.x, n.y, 2.5, 0, Math.PI * 2);
+      ctx.fillStyle = rgba([20,20,19], 0.16 * vf);
+      ctx.fill();
+    }
+  });
+
+  // Dashed line to hovered node
+  if (hov && hov.vis > 0.1) {
+    ctx.beginPath();
+    ctx.moveTo(mx, my);
+    var ex = mx + (hov.x - mx) * 0.32;
+    var ey = my + (hov.y - my) * 0.32;
+    ctx.quadraticCurveTo(ex, ey, hov.x, hov.y);
+    ctx.strokeStyle = 'rgba(217,119,87,0.16)';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([3, 5]);
+    ctx.stroke();
+    ctx.setLineDash([]);
+  }
+
+  // Custom cursor
+  if (mx > 0 && mx < W && my > 0 && my < H) {
+    ctx.beginPath();
+    ctx.arc(mx, my, 4, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(20,20,19,0.5)';
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(mx, my, 9, 0, Math.PI * 2);
+    ctx.strokeStyle = 'rgba(20,20,19,0.1)';
+    ctx.lineWidth = 0.5;
+    ctx.stroke();
+  }
+
+  // Panel update on hover change
+  if (hov && hov !== activeNode) {
+    activeNode = hov;
+    revealedSet[hov.l1] = true;
+    showNode(hov);
+  }
+}
+
+function showNode(n) {
+  var env = n.ring === 'micro' ? 'In your classroom' : 'Beyond your walls';
+  document.getElementById('pl').textContent = env;
+  document.getElementById('pn').textContent = n.name;
+  document.getElementById('pd').textContent = n.desc;
+  document.getElementById('pins').textContent = n.insight;
+  document.getElementById('panc').textContent = n.anchor;
+
+  var pi = document.getElementById('pi');
+  pi.classList.remove('show');
+  void pi.offsetWidth;
+  pi.classList.add('show');
+
+  var c = Object.keys(revealedSet).length;
+  var h = document.getElementById('hint');
+  if (c >= 10) {
+    h.textContent = 'These are considerations to carry as you go.';
+  } else if (c >= 5) {
+    h.textContent = c + ' of 10 explored.';
+  } else if (c >= 1) {
+    h.textContent = c + ' explored. Keep moving.';
+  }
+  h.style.color = 'rgba(20,20,19,0.5)';
+}
+
+window.addEventListener('load', function() {
+  requestAnimationFrame(function() {
+    requestAnimationFrame(function() {
+      resize();
+      draw();
+    });
+  });
+});
+
+window.addEventListener('resize', resize);
+if (window.ResizeObserver) {
+  new ResizeObserver(function() { resize(); }).observe(field);
+}
 </script>
 </body>
 </html>
