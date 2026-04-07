@@ -95,20 +95,6 @@ canvas{display:block;width:100%;height:100%}
   background:var(--surface);transition:color 0.5s,opacity 0.5s;
 }
 
-/* Scroll indicator */
-.scroll-indicator{
-  position:absolute;bottom:1.5rem;left:50%;transform:translateX(-50%);
-  display:flex;flex-direction:column;align-items:center;gap:5px;
-  font-size:10px;font-weight:500;letter-spacing:0.14em;text-transform:uppercase;
-  color:var(--muted);transition:opacity 0.5s;pointer-events:none;
-  white-space:nowrap;
-}
-.scroll-indicator svg{animation:scrollbounce 1.8s ease-in-out infinite}
-@keyframes scrollbounce{
-  0%,100%{transform:translateY(0)}
-  50%{transform:translateY(5px)}
-}
-
 @media(max-width:540px){
   .panel-inner{grid-template-columns:1fr}
   .pleft{border-right:none;border-bottom:0.5px solid var(--border);padding-right:0;padding-bottom:1rem;min-height:0}
@@ -143,12 +129,6 @@ canvas{display:block;width:100%;height:100%}
         </div>
       </div>
       <div class="hint-bar" id="hint">Scroll to reveal the wider picture.</div>
-    </div>
-    <div class="scroll-indicator" id="scrollInd">
-      Scroll
-      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M7 2v10M3 8l4 4 4-4" stroke="rgba(20,20,19,0.42)" stroke-width="0.75" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
     </div>
   </div>
 </div>
@@ -595,10 +575,6 @@ window.addEventListener('load', function() {
   });
 });
 window.addEventListener('resize', resize);
-window.addEventListener('scroll', function() {
-  var ind = document.getElementById('scrollInd');
-  if (ind) ind.style.opacity = window.scrollY > 80 ? '0' : '1';
-}, { passive: true });
 if (window.ResizeObserver) {
   new ResizeObserver(function() { resize(); }).observe(field);
 }
