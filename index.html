@@ -37,7 +37,6 @@ header{
 .collab-line{font-size:11px;font-weight:400;color:var(--muted);margin-bottom:5px}
 .badges{display:flex;gap:5px;justify-content:flex-end}
 .badge{font-size:9px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;padding:3px 10px;border:0.5px solid var(--border);border-radius:2px;color:var(--muted)}
-
 /* Meta bar */
 .meta{
   padding:0.85rem 3rem;
@@ -55,7 +54,6 @@ header{
 .pip-final{background:var(--coral)}
 .pip-review{background:var(--blue)}
 .pip-draft{background:rgba(20,20,19,0.2)}
-
 /* Main grid */
 main{padding:2.5rem 3rem}
 .section-label{
@@ -64,7 +62,6 @@ main{padding:2.5rem 3rem}
   display:flex;align-items:center;gap:10px;
 }
 .section-label::after{content:'';flex:1;height:0.5px;background:var(--border)}
-
 .grid{
   display:grid;
   grid-template-columns:repeat(auto-fill,minmax(300px,1fr));
@@ -74,7 +71,6 @@ main{padding:2.5rem 3rem}
   overflow:hidden;
   margin-bottom:3rem;
 }
-
 /* Module card */
 .mc{
   background:var(--bg);
@@ -89,7 +85,6 @@ main{padding:2.5rem 3rem}
 .mc:hover{background:var(--surface)}
 .mc.live{cursor:pointer}
 .mc.live:hover .arrow{opacity:1;transform:translateX(2px)}
-
 .card-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:1rem}
 .num{
   font-family:var(--serif);
@@ -101,20 +96,17 @@ main{padding:2.5rem 3rem}
 .s-final{background:var(--coral);box-shadow:0 0 8px rgba(217,119,87,0.35)}
 .s-review{background:var(--blue);box-shadow:0 0 8px rgba(106,155,204,0.35)}
 .s-empty{background:rgba(20,20,19,0.12)}
-
 .mc-title{
   font-family:var(--sans);font-size:15px;font-weight:600;
   color:var(--dark);line-height:1.35;margin-bottom:0.4rem;
   letter-spacing:-0.01em;flex:0 0 auto;
 }
 .mc.empty .mc-title{color:rgba(20,20,19,0.28)}
-
 .mc-desc{
   font-size:12px;font-weight:400;color:var(--muted);
   line-height:1.65;margin-bottom:auto;flex:1;
 }
 .mc.empty .mc-desc{color:rgba(20,20,19,0.2)}
-
 .card-foot{
   display:flex;align-items:center;justify-content:space-between;
   padding-top:1rem;margin-top:1rem;
@@ -122,14 +114,12 @@ main{padding:2.5rem 3rem}
 }
 .ilabel{font-size:10px;font-weight:500;letter-spacing:0.06em;text-transform:uppercase;color:var(--muted)}
 .mc.live .ilabel{color:rgba(217,119,87,0.7)}
-
 .arrow{
   font-size:12px;font-weight:600;color:var(--coral);
   text-decoration:none;letter-spacing:0.03em;
   display:flex;align-items:center;gap:4px;
   opacity:0;transition:opacity 0.2s,transform 0.2s;
 }
-
 /* Footer */
 footer{
   padding:1.5rem 3rem;
@@ -139,7 +129,6 @@ footer{
 }
 .foot-note{font-size:11px;font-weight:400;color:var(--muted);letter-spacing:0.03em}
 .orn{font-family:var(--serif);font-size:14px;color:rgba(217,119,87,0.25)}
-
 @media(max-width:680px){
   header{padding:1.75rem 1.5rem 1.5rem;flex-direction:column;align-items:flex-start}
   .collab{text-align:left}.badges{justify-content:flex-start}
@@ -150,7 +139,6 @@ footer{
 </style>
 </head>
 <body>
-
 <header>
   <div>
     <div class="wordmark"><span class="dot"></span>Course Interactives &nbsp;&middot;&nbsp; Pre-LMS Review</div>
@@ -161,7 +149,6 @@ footer{
     <div class="badges"><span class="badge">Anthropic</span><span class="badge">TFA Reinvention Lab</span></div>
   </div>
 </header>
-
 <div class="meta">
   <div class="meta-stats">
     <span class="stat"><strong>8</strong> Modules</span>
@@ -176,86 +163,86 @@ footer{
     <div class="leg"><span class="pip pip-draft"></span>Draft</div>
   </div>
 </div>
-
 <main>
-  <p class="section-label">All modules</p>
-  <div class="grid">
-
-    <div class="mc live" onclick="window.open('module-01/placement.html','_blank')">
-      <div class="card-top"><span class="num">01</span><span class="status s-review"></span></div>
-      <p class="mc-title">Intro to AI Fluency for K&ndash;12 Educators</p>
-      <p class="mc-desc">An open-ended constellation of teaching strengths. Hover to discover how what you already do maps to the 4D Framework &mdash; before it&rsquo;s ever been named.</p>
-      <div class="card-foot">
-        <span class="ilabel">Constellation sandbox &mdash; in review</span>
-        <a class="arrow" href="module-01/placement.html" target="_blank" onclick="event.stopPropagation()">Open &rarr;</a>
-      </div>
-    </div>
-
-    <div class="mc live" onclick="window.open('module-02/timeline.html','_blank')">
-      <div class="card-top"><span class="num">02</span><span class="status s-review"></span></div>
-      <p class="mc-title">AI Capabilities &amp; Limits</p>
-      <p class="mc-desc">A teacher asked AI for IEP advice. Click the sentences you&rsquo;d verify before acting on them. Your instincts are better than you think.</p>
-      <div class="card-foot">
-        <span class="ilabel">Hallucination reader &mdash; in review</span>
-        <a class="arrow" href="module-02/timeline.html" target="_blank" onclick="event.stopPropagation()">Open &rarr;</a>
-      </div>
-    </div>
-
-    <div class="mc live" onclick="window.open('module-03/ethics.html','_blank')">
-      <div class="card-top"><span class="num">03</span><span class="status s-review"></span></div>
-      <p class="mc-title">Pedagogy, AI &amp; You</p>
-      <p class="mc-desc">A contemplative constellation of ethical considerations &mdash; from your classroom to the wider world. Scroll through, hover to reflect. No wrong answers.</p>
-      <div class="card-foot">
-        <span class="ilabel">Ethical web &mdash; in review</span>
-        <a class="arrow" href="module-03/ethics.html" target="_blank" onclick="event.stopPropagation()">Open &rarr;</a>
-      </div>
-    </div>
-
-    <div class="mc live" onclick="window.open('module-04/framework.html','_blank')">
-      <div class="card-top"><span class="num">04</span><span class="status s-review"></span></div>
-      <p class="mc-title">The 4D Framework</p>
-      <p class="mc-desc">Scroll into the inner loop, then out to the full picture. Two loops, four competencies &mdash; the foundational model for all AI Fluency.</p>
-      <div class="card-foot"><span class="ilabel">Scroll + click &mdash; in review</span><a class="arrow" href="module-04/framework.html" target="_blank" onclick="event.stopPropagation()">Open &rarr;</a></div>
-    </div>
-
-    <div class="mc live" onclick="window.open('module-05/delegation.html','_blank')">
-      <div class="card-top"><span class="num">05</span><span class="status s-review"></span></div>
-      <p class="mc-title">Ethical Focus: Delegation &amp; Diligence</p>
-      <p class="mc-desc">Eighteen real teaching tasks. Decide what stays with you, what you build with AI, and what you hand off &mdash; and see your delegation profile.</p>
-      <div class="card-foot"><span class="ilabel">Card sort &mdash; in review</span><a class="arrow" href="module-05/delegation.html" target="_blank" onclick="event.stopPropagation()">Open &rarr;</a></div>
-    </div>
-
-    <div class="mc live" onclick="window.open('module-06/telephone.html','_blank')">
-      <div class="card-top"><span class="num">06</span><span class="status s-review"></span></div>
-      <p class="mc-title">Quality Focus: Description &amp; Discernment</p>
-      <p class="mc-desc">Context is everything. Watch 4000 particles conduct themselves into a lightbulb as you describe your work &mdash; and illuminate it with what only you know.</p>
-      <div class="card-foot"><span class="ilabel">Particle symphony &mdash; in review</span><a class="arrow" href="module-06/telephone.html" target="_blank" onclick="event.stopPropagation()">Open &rarr;</a></div>
-    </div>
-
-    <div class="mc live">
-      <div class="card-top"><span class="num">07</span><span class="status s-review"></span></div>
-      <p class="mc-title">Tying It All Together</p>
-      <p class="mc-desc">Apply all four Ds in a single real workflow. Navigate between the loops dynamically and own the full process.</p>
-      <div class="card-foot">
-        <span class="ilabel">4D workflow &mdash; in review</span>
-        <a class="arrow" href="module-07/orbit.html" target="_blank" onclick="event.stopPropagation()">Open &rarr;</a>
-      </div>
-    </div>
-
-    <div class="mc empty">
-      <div class="card-top"><span class="num">08</span><span class="status s-empty"></span></div>
-      <p class="mc-title">Closure &amp; Enrichment</p>
-      <p class="mc-desc">Putting AI fluency to work starting today. Certificate of completion and Anthropic Academy resources that extend what you&rsquo;ve built here.</p>
-      <div class="card-foot"><span class="ilabel">Interactive pending</span></div>
-    </div>
-
+<p class="section-label">All modules</p>
+<div class="grid">
+<div class="mc live" onclick="window.open('module-01/placement.html','_blank')">
+  <div class="card-top"><span class="num">01</span><span class="status s-review"></span></div>
+  <p class="mc-title">Intro to AI Fluency for K&ndash;12 Educators</p>
+  <p class="mc-desc">An open-ended constellation of teaching strengths. Hover to discover how what you already do maps to the 4D Framework &mdash; before it&rsquo;s ever been named.</p>
+  <div class="card-foot">
+    <span class="ilabel">Constellation sandbox &mdash; in review</span>
+    <a class="arrow" href="module-01/placement.html" target="_blank" onclick="event.stopPropagation()">Open &rarr;</a>
   </div>
+</div>
+<div class="mc live" onclick="window.open('module-02/timeline.html','_blank')">
+  <div class="card-top"><span class="num">02</span><span class="status s-review"></span></div>
+  <p class="mc-title">AI Capabilities &amp; Limits</p>
+  <p class="mc-desc">A teacher asked AI for IEP advice. Click the sentences you&rsquo;d verify before acting on them. Your instincts are better than you think.</p>
+  <div class="card-foot">
+    <span class="ilabel">Hallucination reader &mdash; in review</span>
+    <a class="arrow" href="module-02/timeline.html" target="_blank" onclick="event.stopPropagation()">Open &rarr;</a>
+  </div>
+</div>
+<div class="mc live" onclick="window.open('module-03/ethics.html','_blank')">
+  <div class="card-top"><span class="num">03</span><span class="status s-review"></span></div>
+  <p class="mc-title">Pedagogy, AI &amp; You</p>
+  <p class="mc-desc">A contemplative constellation of ethical considerations &mdash; from your classroom to the wider world. Scroll through, hover to reflect. No wrong answers.</p>
+  <div class="card-foot">
+    <span class="ilabel">Ethical web &mdash; in review</span>
+    <a class="arrow" href="module-03/ethics.html" target="_blank" onclick="event.stopPropagation()">Open &rarr;</a>
+  </div>
+</div>
+<div class="mc live" onclick="window.open('module-04/framework.html','_blank')">
+  <div class="card-top"><span class="num">04</span><span class="status s-review"></span></div>
+  <p class="mc-title">The 4D Framework</p>
+  <p class="mc-desc">Scroll into the inner loop, then out to the full picture. Two loops, four competencies &mdash; the foundational model for all AI Fluency.</p>
+  <div class="card-foot"><span class="ilabel">Scroll + click &mdash; in review</span><a class="arrow" href="module-04/framework.html" target="_blank" onclick="event.stopPropagation()">Open &rarr;</a></div>
+</div>
+<div class="mc live" onclick="window.open('module-05/delegation.html','_blank')">
+  <div class="card-top"><span class="num">05</span><span class="status s-review"></span></div>
+  <p class="mc-title">Ethical Focus: Delegation &amp; Diligence</p>
+  <p class="mc-desc">Eighteen real teaching tasks. Decide what stays with you, what you build with AI, and what you hand off &mdash; and see your delegation profile.</p>
+  <div class="card-foot"><span class="ilabel">Card sort &mdash; in review</span><a class="arrow" href="module-05/delegation.html" target="_blank" onclick="event.stopPropagation()">Open &rarr;</a></div>
+</div>
+<div class="mc live" onclick="window.open('module-06/telephone.html','_blank')">
+  <div class="card-top"><span class="num">06</span><span class="status s-review"></span></div>
+  <p class="mc-title">Quality Focus: Description &amp; Discernment</p>
+  <p class="mc-desc">Context is everything. Watch 4000 particles conduct themselves into a lightbulb as you describe your work &mdash; and illuminate it with what only you know.</p>
+  <div class="card-foot"><span class="ilabel">Particle symphony &mdash; in review</span><a class="arrow" href="module-06/telephone.html" target="_blank" onclick="event.stopPropagation()">Open &rarr;</a></div>
+</div>
+<div class="mc live">
+  <div class="card-top"><span class="num">07</span><span class="status s-review"></span></div>
+  <p class="mc-title">Tying It All Together</p>
+  <p class="mc-desc">Apply all four Ds in a single real workflow. Navigate between the loops dynamically and own the full process.</p>
+  <div class="card-foot">
+    <span class="ilabel">4D workflow &mdash; in review</span>
+    <a class="arrow" href="module-07/orbit.html" target="_blank" onclick="event.stopPropagation()">Open &rarr;</a>
+  </div>
+</div>
+<div class="mc empty">
+  <div class="card-top"><span class="num">08</span><span class="status s-empty"></span></div>
+  <p class="mc-title">Closure &amp; Enrichment</p>
+  <p class="mc-desc">Putting AI fluency to work starting today. Certificate of completion and Anthropic Academy resources that extend what you&rsquo;ve built here.</p>
+  <div class="card-foot"><span class="ilabel">Interactive pending</span></div>
+</div>
+</div>
+<p class="section-label">Bonus graphics</p>
+<div class="grid" style="margin-bottom:0">
+<div class="mc live" onclick="window.open('module-07/designing.html','_blank')">
+  <div class="card-top"><span class="num" style="font-size:22px;color:rgba(20,20,19,0.12)">&#9670;</span><span class="status s-review"></span></div>
+  <p class="mc-title">Designing with AI &mdash; Teacher Tools</p>
+  <p class="mc-desc">Real tools built by real teachers through TFA&rsquo;s AI hackathon. Three projects, three problems worth solving &mdash; hover to see the story behind each one.</p>
+  <div class="card-foot">
+    <span class="ilabel">Reference graphic &mdash; in review</span>
+    <a class="arrow" href="module-07/designing.html" target="_blank" onclick="event.stopPropagation()">Open &rarr;</a>
+  </div>
+</div>
+</div>
 </main>
-
 <footer>
   <span class="foot-note">Pre-LMS review &nbsp;&middot;&nbsp; Not for distribution &nbsp;&middot;&nbsp; Anthropic &times; TFA Reinvention Lab</span>
   <span class="orn">&#10087;</span>
 </footer>
-
 </body>
 </html>
