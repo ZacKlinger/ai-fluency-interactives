@@ -1,0 +1,942 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Your Fluency, Mapped - Module 8 - AI Fluency for K-12 Educators</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,300..700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#faf9f5;--surface:#f0eee6;--dark:#141413;--muted:rgba(20,20,19,0.42);--border:rgba(20,20,19,0.1);--coral:#d97757;--sans:'DM Sans',Arial,sans-serif;--serif:'Source Serif 4',Georgia,serif}
+html,body{min-height:100vh;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:2rem 1rem;font-family:var(--sans);color:var(--dark)}
+.stage{width:100%;max-width:820px;position:relative}
+.status-badge{position:absolute;top:0;right:0;z-index:10;font-size:9.5px;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;background:var(--surface);border:0.5px solid var(--border);color:var(--muted);padding:4px 12px;border-radius:0 6px 0 4px}
+.card{background:var(--bg);border:0.5px solid var(--border);border-radius:6px;overflow:hidden}
+.top-bar{padding:1.75rem 2rem 0;padding-right:8rem}
+.eyebrow{font-size:10px;font-weight:500;letter-spacing:0.16em;text-transform:uppercase;color:var(--muted)}
+.title-area{padding:0.75rem 2rem 0.25rem}
+.headline{font-family:var(--serif);font-variation-settings:'opsz' 24;font-size:clamp(20px,3.2vw,28px);font-weight:600;color:var(--dark);line-height:1.2;margin-bottom:0.25rem;letter-spacing:-0.025em}
+.subhead{font-size:13px;color:var(--muted);line-height:1.5}
+.field-wrap{position:relative;background:#07060f;border-top:0.5px solid var(--border);border-bottom:0.5px solid var(--border);aspect-ratio:50/41}
+canvas{display:block;width:100%;height:100%;cursor:pointer}
+.controls{padding:1.25rem 2rem 0.25rem;background:var(--bg)}
+.controls-label{font-size:10px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);margin-bottom:0.85rem;display:block}
+.btn-row{display:flex;gap:0.5rem;flex-wrap:wrap}
+.ctx-btn{font-family:var(--sans);font-size:12px;font-weight:500;padding:0.45rem 1rem;border-radius:3px;cursor:pointer;border:0.5px solid var(--border);background:var(--bg);color:var(--muted);transition:background 0.2s,border-color 0.2s,color 0.2s,box-shadow 0.2s,opacity 0.3s;letter-spacing:0.02em;user-select:none}
+.ctx-btn:hover{border-color:rgba(217,119,87,0.4);color:var(--dark)}
+.ctx-btn.active{background:var(--coral);border-color:var(--coral);color:#fff;box-shadow:0 2px 8px rgba(217,119,87,0.25)}
+.ctx-btn.fifth{border-style:dashed;border-color:rgba(217,119,87,0.3);color:rgba(217,119,87,0.45);background:transparent;opacity:0.5;pointer-events:none;cursor:default}
+.ctx-btn.fifth.ready{opacity:1;pointer-events:auto;border-color:rgba(217,119,87,0.55);color:rgba(217,119,87,0.9)}
+.ctx-btn.fifth.active{border-style:solid;background:var(--coral);color:#fff;opacity:1;box-shadow:0 2px 14px rgba(217,119,87,0.45)}
+.panel{padding:1.25rem 2rem 1.75rem;background:var(--bg);height:218px;display:flex;flex-direction:column;justify-content:center;overflow:hidden}
+.panel-inner{max-width:680px;margin:0 auto;width:100%;opacity:0;transition:opacity 0.35s}
+.panel-inner.show{opacity:1}
+.plabel{font-size:10px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:var(--coral);margin-bottom:0.55rem;display:block}
+.pinsight{font-family:var(--serif);font-size:16px;font-weight:400;color:var(--dark);line-height:1.7}
+.default-hint{font-family:var(--serif);font-size:13px;color:var(--muted);opacity:0.6;text-align:center;transition:opacity 0.35s}
+.foot{text-align:center;font-size:11px;font-weight:400;color:var(--muted);padding:0.6rem 0 1rem;border-top:0.5px solid var(--border);background:var(--surface);transition:color 0.4s;letter-spacing:0.02em}
+@media(max-width:540px){.panel{height:auto;min-height:220px}}
+</style>
+</head>
+<body>
+<div class="stage">
+  <div class="status-badge">Interactive</div>
+  <div class="card">
+    <div class="top-bar"><span class="eyebrow">AI Fluency for K&ndash;12 Educators &nbsp;&middot;&nbsp; Module 8</span></div>
+    <div class="title-area">
+      <h1 class="headline">Your fluency, mapped.</h1>
+      <p class="subhead">Eight modules. Five foundations. One framework that is already yours.</p>
+    </div>
+    <div class="field-wrap" id="wrap"><canvas id="c"></canvas></div>
+    <div class="controls">
+      <span class="controls-label">Your framework &mdash; one dimension at a time</span>
+      <div class="btn-row">
+        <button class="ctx-btn" data-i="0">Delegation</button>
+        <button class="ctx-btn" data-i="1">Description</button>
+        <button class="ctx-btn" data-i="2">Discernment</button>
+        <button class="ctx-btn" data-i="3">Diligence</button>
+        <button class="ctx-btn fifth" id="fifthbtn" data-i="4">Domain Expertise</button>
+      </div>
+    </div>
+    <div class="panel" id="panel">
+      <div class="default-hint" id="defaultHint">Click a dimension, or the sky, to begin.</div>
+      <div class="panel-inner" id="panelInner">
+        <span class="plabel" id="pLabel"></span>
+        <p class="pinsight" id="pDesc"></p>
+      </div>
+    </div>
+    <div class="foot" id="foot">Each click lights your sky. The fifth completes the hand.</div>
+  </div>
+</div>
+<script>
+(function(){
+var CV=document.getElementById('c'),CTX=CV.getContext('2d'),wrap=document.getElementById('wrap');
+var pLabel=document.getElementById('pLabel'),pDesc=document.getElementById('pDesc');
+var defaultHint=document.getElementById('defaultHint'),panelInner=document.getElementById('panelInner');
+var footEl=document.getElementById('foot'),fifthBtn=document.getElementById('fifthbtn');
+var W=0,H=0,dpr=1,tick=0;
+
+// Group index -> (finger, dimension)
+// 0 index finger  -> DELEGATION
+// 1 middle finger -> DESCRIPTION
+// 2 ring finger   -> DISCERNMENT
+// 3 pinky finger  -> DILIGENCE
+// 4 thumb         -> DOMAIN EXPERTISE
+var NODE_DATA=[
+  {label:'DELEGATION',      desc:"You have decided, a thousand times this year, what belongs to you and what belongs to someone else. You carry that instinct into every AI workflow now. The parts that need your voice stay with you. The rest, you can let go."},
+  {label:'DESCRIPTION',     desc:"Every lesson plan you have ever written was already a prompt. Every time you told a student what good work looks like, you were practicing the exact skill this course names. You came in fluent. We only gave it a word."},
+  {label:'DISCERNMENT',     desc:"You read a room mid-lesson. You know the difference between a question that lands and one that dies on the carpet. That is the same muscle you bring to an AI draft. It is a posture, not a new skill, and you already had the skill."},
+  {label:'DILIGENCE',       desc:"Nothing has ever reached a student without passing through you first. That was true before this course, and it is true now. AI does not carry that weight. The care that closes the loop is yours, and it always has been."},
+  {label:'DOMAIN EXPERTISE', desc:"This is the one thing no model can give you. Your subject, your students, the specific child having a hard week. The framework only works because of what you already bring into the room. You are the reason it works at all."}
+];
+
+var FINAL_LABEL='YOUR FRAMEWORK';
+var FINAL_DESC="When Ms. Okafor drafted her circulatory-system reading with AI, there was no framework on the wall. It was her, using what she already knew about her students. You built an AI constitution, ran a full 4D workflow, and tomorrow you can do the same. Not because you learned something new. Because we named what you already had.";
+
+var footMsgs=[
+  'Each click lights your sky. The fifth completes the hand.',
+  'One dimension.',
+  'Two dimensions.',
+  'The hand is taking shape.',
+  'Almost.',
+  'Your fluency.'
+];
+
+// ===========================================================================
+// HAND GEOMETRY -- hand-tuned across many iterations. The raw SVG path
+// below is rendered as a faint ghost guide; the explicit STARS_RAW array
+// is the source of truth for star positions, constellation walk, and
+// glow-node anchors. viewBox -> canvas normalization:
+//     normX = 0.202  + userX * 0.001492
+//     normY = 0.0745 + userY * 0.00182
+// groups: 0 index(DELEGATION) 1 middle(DESCRIPTION) 2 ring(DISCERNMENT)
+//         3 pinky(DILIGENCE)  4 palm+thumb+wrist(DOMAIN EXPERTISE)
+// ===========================================================================
+var RAW_HAND_PATH="M 241.0,465.0 C 244.3,468.9 240.7,458.7 258.3,425.8 C 275.9,392.9 262.3,416.7 285.1,382.8 C 307.9,348.9 295.4,376.0 315.3,341.1 C 335.2,306.2 317.8,331.6 334.8,295.6 C 351.8,259.6 341.6,287.0 357.7,251.2 C 373.8,215.4 387.4,224.8 375.0,206.1 C 362.6,187.4 359.1,188.8 326.6,204.4 C 294.1,220.0 318.9,215.3 293.7,245.1 C 268.5,274.9 274.5,285.9 263.5,278.9 C 252.5,271.9 262.6,268.2 266.2,227.6 C 269.8,187.0 268.1,217.4 272.5,177.4 C 276.9,137.4 275.9,168.0 277.3,127.7 C 278.7,87.4 291.1,105.5 276.0,76.7 C 260.9,47.9 259.3,45.0 239.6,55.8 C 219.9,66.6 235.1,64.7 226.8,103.7 C 218.5,142.7 227.7,132.3 218.9,153.4 C 210.1,174.5 211.6,175.8 204.7,156.5 C 197.8,137.2 202.8,146.2 201.6,105.1 C 200.4,64.0 212.3,89.7 201.6,53.7 C 190.9,17.7 195.6,14.4 174.8,15.0 C 154.0,15.6 160.2,18.4 149.5,55.3 C 138.8,92.2 152.4,100.4 148.0,107.3 C 143.6,114.2 154.1,99.7 138.5,72.6 C 122.9,45.5 128.6,36.1 109.0,39.6 C 89.4,43.1 97.4,44.1 89.6,81.4 C 81.8,118.7 89.0,91.9 89.6,132.8 C 90.2,173.7 98.8,178.9 91.2,183.7 C 83.6,188.5 87.0,177.9 70.7,144.9 C 54.4,111.9 68.8,103.7 50.5,101.2 C 32.2,98.7 32.0,103.8 25.0,138.6 C 18.0,173.4 24.7,149.2 32.9,188.3 C 41.1,227.4 41.1,196.7 45.5,236.3 C 49.9,275.9 42.4,246.6 43.9,287.2 C 45.4,327.8 40.5,299.0 49.3,337.8 C 58.1,376.6 51.1,347.6 66.0,384.3 C 80.9,421.0 72.6,402.1 86.5,429.5 C 100.4,456.9 87.3,455.2 100.7,452.7 C 114.1,450.2 128.7,446.5 119.9,423.2 C 111.1,399.9 103.3,424.1 78.6,394.5 C 53.9,364.9 68.8,387.5 58.1,349.3 C 47.4,311.1 53.7,339.9 51.8,299.0 C 49.9,258.1 34.9,277.3 53.4,247.1 C 71.9,216.9 79.8,252.1 98.1,223.4 C 116.4,194.7 100.0,215.2 99.1,175.4 C 98.2,135.6 98.4,165.1 95.9,124.0 C 93.4,82.9 80.7,103.6 92.8,72.6 C 104.9,41.6 110.4,37.4 126.1,46.6 C 141.8,55.8 128.3,72.4 132.0,95.6 C 135.7,118.8 135.9,82.9 135.4,104.7 C 134.9,126.5 127.6,114.4 130.7,150.2 C 133.8,186.0 145.6,171.3 143.2,194.1 C 140.8,216.9 120.9,213.7 124.7,207.2 C 128.5,200.7 140.9,210.4 152.7,177.8 C 164.5,145.2 153.7,167.2 154.3,125.8 C 154.9,84.4 150.3,114.6 154.3,74.4 C 158.3,34.2 147.9,35.7 164.3,25.4 C 180.7,15.1 182.9,18.3 195.3,48.6 C 207.7,78.9 193.4,59.8 195.3,101.1 C 197.2,142.4 202.5,119.7 200.0,151.9 C 197.5,184.1 196.6,163.8 189.0,181.7 C 181.4,199.6 174.3,189.1 181.0,196.7 C 187.7,204.3 188.8,215.4 205.8,200.7 C 222.8,186.0 212.0,195.6 223.6,159.9 C 235.2,124.2 227.6,150.9 234.7,111.4 C 241.8,71.9 226.8,71.7 241.3,61.2 C 255.8,50.7 266.5,68.1 270.9,85.1 C 275.3,102.1 251.8,85.7 252.4,103.7 C 253.0,121.7 273.1,104.4 272.5,130.1 C 271.9,155.8 253.4,150.1 250.9,167.9 C 248.4,185.7 265.2,162.2 266.3,174.6 C 267.4,187.0 261.1,184.1 253.6,199.0 C 246.1,213.9 246.5,204.6 247.5,211.8 C 248.5,219.0 253.5,196.4 256.1,217.1 C 258.7,237.8 275.3,244.9 253.9,263.5 C 232.5,282.1 242.7,255.3 202.6,263.5 C 162.5,271.7 181.1,269.8 153.6,284.0 C 126.1,298.2 124.2,301.6 133.8,298.9 C 143.4,296.2 157.5,274.3 177.7,277.3 C 197.9,280.3 180.3,296.5 184.2,306.3 C 188.1,316.1 170.2,317.2 187.4,301.7 C 204.6,286.2 203.9,274.8 227.1,267.6 C 250.3,260.4 240.2,267.7 245.5,283.8 C 250.8,299.9 235.5,302.5 240.3,307.8 C 245.1,313.1 242.6,306.6 257.5,297.0 C 272.4,287.4 254.6,296.6 277.6,283.7 C 300.6,270.8 305.6,276.7 315.0,264.8 C 324.4,252.9 296.6,275.2 301.0,254.0 C 305.4,232.8 298.4,229.1 326.1,211.7 C 353.8,194.3 363.3,195.1 370.3,210.5 C 377.3,225.9 357.7,221.7 343.5,250.3 C 329.3,278.9 347.5,251.5 334.9,281.9 C 322.3,312.3 331.1,304.6 311.9,326.2 C 292.7,347.8 295.2,322.2 286.9,336.0 C 278.6,349.8 302.4,334.8 291.2,360.7 C 280.0,386.6 292.1,376.3 259.0,400.8 C 225.9,425.3 235.9,409.5 208.4,421.9 C 180.9,434.3 194.2,431.1 190.2,431.7 C 186.2,432.3 174.4,429.7 198.3,423.4 C 222.2,417.1 232.9,399.4 250.0,416.0 C 267.1,432.6 237.7,461.1 241.0,465.0 Z";
+
+// Hand-tuned star positions in 400x500 viewBox space. Each entry:
+// [x, y, isGlowNode]. The 5 isGlowNode==1 entries become the five
+// dimension anchors (thumb, index, middle, ring, pinky in path order).
+var STARS_RAW=[
+  [242.1,464.8,0],[253.4,450.6,0],[256.7,427.7,0],[271.9,405.1,0],
+  [283.6,382.6,0],[301.2,364.2,0],[315.9,342.4,0],[323.2,316.7,0],
+  [335.0,293.9,0],[349.5,274.6,0],[358.7,250.6,0],[367.6,229.5,0],
+  [376.1,204.9,1],[352.5,193.4,0],[325.2,205.1,0],[308.2,225.6,0],
+  [293.0,244.6,0],[283.3,266.5,0],[262.0,278.8,0],[265.1,254.6,0],
+  [265.9,228.9,0],[268.7,201.2,0],[273.8,178.6,0],[276.8,152.0,0],
+  [278.0,126.3,0],[276.1,99.4,0],[277.1,77.4,0],[266.5,55.2,1],
+  [239.4,56.1,0],[228.6,77.1,0],[227.5,103.6,0],[223.9,129.9,0],
+  [219.4,153.6,0],[211.7,176.2,0],[202.8,156.2,0],[203.6,129.8,0],
+  [203.0,104.0,0],[198.2,78.5,0],[200.8,54.3,0],[197.0,30.2,0],
+  [175.5,14.6,1],[156.1,29.6,0],[147.6,53.7,0],[148.9,80.8,0],
+  [156.5,176.0,0],[138.7,99.1,0],[138.3,72.1,0],[132.1,48.9,0],
+  [108.4,38.0,1],[88.1,58.1,0],[91.2,82.2,0],[88.7,109.6,0],
+  [90.7,133.7,0],[91.0,157.6,0],[89.6,185.3,0],[76.8,167.7,0],
+  [69.9,145.2,0],[64.7,121.7,0],[51.5,102.1,0],[27.7,113.9,1],
+  [25.3,139.2,0],[24.9,164.0,0],[31.1,188.3,0],[40.1,210.3,0],
+  [43.9,236.7,0],[44.2,263.2,0],[44.2,286.6,0],[45.9,311.0,0],
+  [51.1,337.7,0],[57.6,359.7,0],[65.9,384.3,0],[79.7,406.6,0],
+  [86.4,428.6,0],[87.4,455.3,0],[100.5,450.8,0],[98.8,429.2,0],
+  [118.5,423.4,0],[91.7,416.2,0],[77.7,395.1,0],[68.5,373.3,0],
+  [56.5,351.0,0],[52.3,322.8,0],[52.0,298.5,0],[53.1,274.0,0],
+  [45.5,248.9,0],[36.8,200.0,0],[25.8,151.4,0],[39.2,107.3,0],
+  [73.8,156.9,0],[99.4,199.3,0],[98.8,177.4,0],[99.1,150.7,0],
+  [97.5,125.6,0],[96.0,97.0,0],[93.9,73.2,0],[99.1,47.1,0],
+  [127.1,45.6,0],[135.5,69.1,0],[135.8,106.2,0],[135.7,129.7,0],
+  [131.8,152.1,0],[141.7,167.0,0],[151.5,179.0,0],[153.6,152.5,0],
+  [152.8,124.3,0],[154.4,99.7,0],[153.5,74.4,0],[156.6,50.5,0],
+  [163.4,27.1,0],[187.1,24.8,0],[195.8,47.0,0],[193.9,74.5,0],
+  [197.2,101.5,0],[200.1,127.4,0],[199.9,153.0,0],[198.1,176.6,0],
+  [219.4,185.9,0],[223.4,158.9,0],[227.3,136.4,0],[236.0,109.8,0],
+  [234.6,86.1,0],[239.9,62.5,0],[264.7,59.4,0],[272.6,83.8,0],
+  [270.7,130.5,0],[264.5,173.3,0],[261.3,242.4,0],[255.8,264.7,0],
+  [231.4,258.6,0],[203.7,262.0,0],[176.3,271.9,0],[155.0,283.9,0],
+  [127.2,293.9,0],[132.9,297.5,0],[151.8,286.4,0],[176.6,276.8,0],
+  [191.6,283.3,0],[183.7,307.0,0],[175.2,325.7,0],[189.1,301.6,0],
+  [202.6,281.3,0],[228.5,268.2,0],[256.1,267.5,0],[246.0,283.0,0],
+  [253.0,285.6,0],[241.1,309.2,0],[234.2,313.6,0],[255.9,297.9,0],
+  [278.2,298.9,0],[276.1,285.5,0],[293.6,263.1,0],[301.4,252.4,0],
+  [307.7,229.8,0],[326.4,212.0,0],[350.4,199.4,0],[371.4,211.7,0],
+  [355.3,231.8,0],[345.2,248.8,0],[338.8,259.0,0],[311.2,327.8,0],
+  [300.4,336.2,0],[292.9,360.5,0],[275.2,381.5,0],[259.2,402.5,0],
+  [236.5,414.9,0],[207.9,423.8,0],[183.7,421.0,0],[188.7,433.1,0],
+  [194.2,446.5,0],[198.7,424.1,0],[224.3,425.8,0],[251.3,415.2,0],
+  [243.9,439.7,0]
+];
+
+// Connections beyond this viewBox distance are skipped in the
+// sequential constellation walk, plus two forced bridge segments.
+var EDGE_THRESHOLD2=900; // 30^2 in viewBox units
+var FORCED_EDGES=[[158,159],[88,89]];
+
+// Path2D of the ghost outline guide drawn behind the stars.
+var HAND_PATH2D=(typeof Path2D!=='undefined')?new Path2D(RAW_HAND_PATH):null;
+
+function vbToNormX(vx){ return 0.202  + vx * 0.001492; }
+function vbToNormY(vy){ return 0.0745 + vy * 0.001820; }
+
+// Coarse group assignment by column for a sampled point (viewBox coords).
+// Only used to color intermediate outline points; the five fingertip glow
+// nodes are force-assigned below regardless of this classification.
+function classifyPoint(vx,vy){
+  if(vy>200) return 4;
+  if(vx>260) return 4;
+  if(vx<=135) return 3; // pinky
+  if(vx<=185) return 2; // ring
+  if(vx<=225) return 1; // middle
+  return 0;             // index (135..260)
+}
+
+function buildHandFromPath(){
+  // The five glow nodes encountered in path order map to the five
+  // dimensions: thumb, index, middle, ring, pinky.
+  var GLOW_TO_GROUP=[4,0,1,2,3];
+  var glowSeen=0;
+  var outline=[];
+  var labelIdx=[0,0,0,0,0];
+  for(var i=0;i<STARS_RAW.length;i++){
+    var s=STARS_RAW[i];
+    var vx=s[0], vy=s[1], isGlow=(s[2]===1);
+    var group;
+    if(isGlow){
+      group=GLOW_TO_GROUP[glowSeen];
+      labelIdx[group]=i;
+      glowSeen++;
+    } else {
+      group=classifyPoint(vx,vy);
+    }
+    // Entry: [normX, normY, group, isGlow, vbX, vbY]
+    outline.push([vbToNormX(vx), vbToNormY(vy), group, isGlow, vx, vy]);
+  }
+  return {outline:outline, labelIdx:labelIdx};
+}
+
+var _handData=buildHandFromPath();
+var OUTLINE_BASE=_handData.outline;
+var LABEL_IDX=_handData.labelIdx;
+var N=OUTLINE_BASE.length;
+
+// ===========================================================================
+// PALM CREASE LINES -- heart, head, and life lines. Three thin low-opacity
+// bezier strokes sharing the same 400x500 viewBox space as the outline path.
+// ===========================================================================
+var PALM_LINES=[
+  // heart line: M 108,235 C 140,215 200,205 258,212
+  [[108,235],[140,215],[200,205],[258,212]],
+  // head line:  M 118,270 C 155,258 205,252 250,258
+  [[118,270],[155,258],[205,252],[250,258]],
+  // life line:  M 190,195 C 175,240 160,295 152,370
+  [[190,195],[175,240],[160,295],[152,370]]
+];
+var palmLineAlpha=0;
+
+// ===========================================================================
+// WABI-SABI STRAY STARS -- scattered near the outline, not on it.
+// These do not touch the outline shape itself.
+// ===========================================================================
+var STRAY_COUNT=0;
+var strayStars=[];
+function seedStrays(){
+  strayStars=[];
+  var step=N/STRAY_COUNT;
+  for(var s=0;s<STRAY_COUNT;s++){
+    // Sample at regular intervals along the outline, with small t-jitter so
+    // the strays feel scattered rather than gridded.
+    var t=(s+(Math.random()-0.5)*0.6)*step;
+    var tf=Math.floor(t);
+    var i0=((tf%N)+N)%N;
+    var i1=(i0+1)%N;
+    var frac=t-tf;
+    var a=OUTLINE_BASE[i0], b=OUTLINE_BASE[i1];
+    var baseX=a[0]+(b[0]-a[0])*frac;
+    var baseY=a[1]+(b[1]-a[1])*frac;
+    // Push stray stars outward slightly (not directly on outline)
+    var ang=Math.random()*Math.PI*2;
+    var dist=0.010+Math.random()*0.024;
+    var ox=baseX+Math.cos(ang)*dist;
+    var oy=baseY+Math.sin(ang)*dist*0.85;
+    strayStars.push({
+      normX:ox,normY:oy,group:a[2],x:0,y:0,
+      glow:0,contrib:[0,0,0,0,0],
+      baseR:0.7+Math.random()*0.9,
+      pulsePhase:Math.random()*Math.PI*2,
+      lightDelay:0,activateTime:0
+    });
+  }
+}
+
+// ===========================================================================
+// RUNTIME STATE
+// ===========================================================================
+var activated=[false,false,false,false,false];
+var activatedCount=0;
+var lastActivated=-1;
+var allActive=false;
+var revealGlow=0,revealStart=0;
+var thumbPulseT=0,thumbPulsing=false;
+
+var hStars=[];
+var cLines=[];
+var bgStars=[];
+var driftParts=[];
+var twinkles=[];
+var shoots=[];
+var nebulaT=Math.random()*100;
+var hoveredGroup=-1;
+var breathPhase=Math.random()*Math.PI*2;
+
+function buildStars(){
+  hStars=[];
+  for(var i=0;i<N;i++){
+    var ob=OUTLINE_BASE[i];
+    var isGlow=ob[3];
+    hStars.push({
+      x:ob[0]*W, y:ob[1]*H,
+      normX:ob[0], normY:ob[1],
+      group:ob[2],
+      isGlow:isGlow,
+      glow:0, contrib:[0,0,0,0,0],
+      // Non-glow stars: r=1.2..2.4, varying per star.
+      baseR:isGlow?3:(1.2+Math.random()*1.2),
+      pulsePhase:Math.random()*Math.PI*2,
+      lightDelay:0, activateTime:0
+    });
+  }
+  for(var i=0;i<strayStars.length;i++){
+    strayStars[i].x=strayStars[i].normX*W;
+    strayStars[i].y=strayStars[i].normY*H;
+  }
+}
+
+function buildLines(){
+  cLines=[];
+  // Sequential walk i -> i+1 (and N-1 -> 0), skipping any pair whose
+  // viewBox distance exceeds 30px.
+  for(var i=0;i<N;i++){
+    var j=(i+1)%N;
+    var a=OUTLINE_BASE[i], b=OUTLINE_BASE[j];
+    var dx=a[4]-b[4], dy=a[5]-b[5];
+    if(dx*dx+dy*dy>EDGE_THRESHOLD2) continue;
+    cLines.push({a:i,b:j,progress:0,targetProgress:0,active:false,startTime:0,stagger:i*36});
+  }
+  // Forced bridge edges that exceed the distance threshold but are
+  // required for the constellation shape.
+  for(var k=0;k<FORCED_EDGES.length;k++){
+    var fe=FORCED_EDGES[k];
+    cLines.push({a:fe[0],b:fe[1],progress:0,targetProgress:0,active:false,startTime:0,stagger:fe[0]*36});
+  }
+}
+
+function initBg(){
+  bgStars=[];
+  for(var i=0;i<620;i++){
+    var a=0.08+Math.random()*0.55;
+    // Color variation: warm white / cool blue / amber / deep rose / pale violet
+    var hue=Math.random();
+    var r,g,b;
+    if(hue<0.62){r=245+Math.floor(Math.random()*10);g=242+Math.floor(Math.random()*12);b=225+Math.floor(Math.random()*25);}
+    else if(hue<0.80){r=200+Math.floor(Math.random()*25);g=218+Math.floor(Math.random()*22);b=250+Math.floor(Math.random()*5);}
+    else if(hue<0.92){r=250+Math.floor(Math.random()*5);g=210+Math.floor(Math.random()*22);b=170+Math.floor(Math.random()*30);}
+    else if(hue<0.97){r=230+Math.floor(Math.random()*20);g=200+Math.floor(Math.random()*15);b=220+Math.floor(Math.random()*25);}
+    else{r=250+Math.floor(Math.random()*5);g=180+Math.floor(Math.random()*30);b=165+Math.floor(Math.random()*25);}
+    bgStars.push({x:Math.random()*W,y:Math.random()*H,alpha:a,baseAlpha:a,sz:Math.random()*1.5+0.3,r:r,g:g,b:b,pulse:Math.random()*Math.PI*2,pulseSpeed:0.004+Math.random()*0.010});
+  }
+  driftParts=[];
+  for(var i=0;i<170;i++){
+    var ang=Math.random()*Math.PI*2;
+    var spd=0.04+Math.random()*0.11;
+    var big=Math.random()<0.16;
+    driftParts.push({
+      x:Math.random()*W,y:Math.random()*H,
+      vx:Math.cos(ang)*spd,vy:Math.sin(ang)*spd,
+      alpha:big?0.16+Math.random()*0.12:0.04+Math.random()*0.09,
+      sz:big?1.1+Math.random()*0.9:0.35+Math.random()*0.7
+    });
+  }
+  twinkles=[];
+  for(var i=0;i<6;i++) twinkles.push({idx:-1,t:0,next:0});
+  shoots=[{s:null,next:0},{s:null,next:0},{s:null,next:0}];
+}
+
+function resize(){
+  dpr=window.devicePixelRatio||1;
+  var r=wrap.getBoundingClientRect();
+  W=r.width;H=Math.round(W*0.82);
+  CV.width=Math.round(W*dpr);CV.height=Math.round(H*dpr);
+  CV.style.width=W+'px';CV.style.height=H+'px';
+  CTX.setTransform(dpr,0,0,dpr,0,0);
+  for(var i=0;i<hStars.length;i++){hStars[i].x=hStars[i].normX*W;hStars[i].y=hStars[i].normY*H;}
+  for(var i=0;i<strayStars.length;i++){strayStars[i].x=strayStars[i].normX*W;strayStars[i].y=strayStars[i].normY*H;}
+  if(bgStars.length>0) initBg();
+}
+
+// ===========================================================================
+// ACTIVATION - full light for group + random scatter across whole constellation
+// ===========================================================================
+function shuffleArr(a){for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}}
+
+function activateGroup(gi){
+  activated[gi]=true;
+  activatedCount=activated.filter(Boolean).length;
+  lastActivated=gi;
+  var now=performance.now();
+
+  // Full brightness for stars in this group
+  for(var i=0;i<N;i++){
+    if(hStars[i].group===gi){
+      hStars[i].contrib[gi]=0.85+Math.random()*0.15;
+      hStars[i].lightDelay=Math.random()*600;
+      hStars[i].activateTime=now;
+    }
+  }
+  for(var i=0;i<strayStars.length;i++){
+    if(strayStars[i].group===gi){
+      strayStars[i].contrib[gi]=0.55+Math.random()*0.30;
+      strayStars[i].lightDelay=Math.random()*800;
+      strayStars[i].activateTime=now;
+    }
+  }
+
+  // Random scatter: partial glow anywhere in the constellation
+  var others=[];
+  for(var i=0;i<N;i++){if(hStars[i].group!==gi)others.push({type:'h',idx:i});}
+  for(var i=0;i<strayStars.length;i++){if(strayStars[i].group!==gi)others.push({type:'s',idx:i});}
+  shuffleArr(others);
+  var scatter=10+Math.floor(Math.random()*8); // 10-17 random stars
+  for(var i=0;i<scatter&&i<others.length;i++){
+    var o=others[i];
+    var arr=o.type==='h'?hStars:strayStars;
+    var st=arr[o.idx];
+    st.contrib[gi]=0.22+Math.random()*0.32;
+    st.lightDelay=Math.random()*750;
+    st.activateTime=now;
+  }
+
+  if(activatedCount===5){
+    allActive=true;
+    revealStart=now;
+    revealGlow=1;
+    thumbPulsing=true;
+    thumbPulseT=0;
+    for(var i=0;i<N;i++){
+      hStars[i].contrib[4]=Math.max(hStars[i].contrib[4],0.92);
+      for(var g=0;g<5;g++){if(hStars[i].contrib[g]>0)hStars[i].contrib[g]=Math.max(hStars[i].contrib[g],0.88);}
+    }
+    for(var i=0;i<strayStars.length;i++){
+      strayStars[i].contrib[4]=Math.max(strayStars[i].contrib[4],0.6);
+    }
+    for(var i=0;i<cLines.length;i++){
+      cLines[i].active=true;
+      cLines[i].targetProgress=1;
+      cLines[i].startTime=now+cLines[i].stagger;
+    }
+  }
+  showInfo(gi);
+  updateFoot();
+  updateFifth();
+}
+
+function deactivateGroup(gi){
+  activated[gi]=false;
+  activatedCount=activated.filter(Boolean).length;
+  for(var i=0;i<N;i++) hStars[i].contrib[gi]=0;
+  for(var i=0;i<strayStars.length;i++) strayStars[i].contrib[gi]=0;
+
+  if(allActive){
+    allActive=false;revealGlow=0;
+    for(var i=0;i<cLines.length;i++){cLines[i].targetProgress=0;cLines[i].active=false;}
+    if(activated[4]&&gi!==4){
+      activated[4]=false;
+      activatedCount=activated.filter(Boolean).length;
+      for(var i=0;i<N;i++) hStars[i].contrib[4]=0;
+      for(var i=0;i<strayStars.length;i++) strayStars[i].contrib[4]=0;
+      var b=document.querySelector('.ctx-btn[data-i="4"]');if(b)b.classList.remove('active');
+    }
+  }
+
+  if(lastActivated===gi){
+    lastActivated=-1;
+    for(var g=4;g>=0;g--){if(activated[g]){lastActivated=g;break;}}
+  }
+  showLastOrDefault();
+  updateFoot();
+  updateFifth();
+}
+
+function updateFifth(){
+  var ok=activated[0]&&activated[1]&&activated[2]&&activated[3];
+  if(ok)fifthBtn.classList.add('ready');else fifthBtn.classList.remove('ready');
+}
+
+function updateFoot(){
+  var mi=allActive?5:activatedCount;
+  footEl.textContent=footMsgs[mi];
+  footEl.style.color=mi>=5?'rgba(20,20,19,0.72)':mi>=3?'rgba(20,20,19,0.55)':'rgba(20,20,19,0.42)';
+}
+
+// ===========================================================================
+// DRAWING
+// ===========================================================================
+function drawBg(){
+  // Base sky gradient - deep indigo crown, warmer floor
+  var baseGrad=CTX.createLinearGradient(0,0,0,H);
+  baseGrad.addColorStop(0,'#05040d');
+  baseGrad.addColorStop(0.55,'#0a0812');
+  baseGrad.addColorStop(1,'#100a10');
+  CTX.fillStyle=baseGrad;CTX.fillRect(0,0,W,H);
+
+  // Nebula 1 - violet, upper left, drifts slowly
+  var nbA=0.034+Math.sin(nebulaT*0.12)*0.010;
+  if(nbA>0.002){
+    var cx=W*(0.30+Math.sin(nebulaT*0.07)*0.08);
+    var cy=H*(0.38+Math.cos(nebulaT*0.055)*0.07);
+    var gr=CTX.createRadialGradient(cx,cy,0,cx,cy,W*0.78);
+    gr.addColorStop(0,'rgba(100,80,150,'+nbA+')');
+    gr.addColorStop(0.42,'rgba(60,55,115,'+nbA*0.55+')');
+    gr.addColorStop(1,'rgba(10,8,25,0)');
+    CTX.fillStyle=gr;CTX.fillRect(0,0,W,H);
+  }
+  // Nebula 2 - warm rose, lower right
+  var nb2A=0.028+Math.cos(nebulaT*0.09)*0.008;
+  if(nb2A>0.002){
+    var cx2=W*(0.74+Math.cos(nebulaT*0.06)*0.08);
+    var cy2=H*(0.66+Math.sin(nebulaT*0.08)*0.06);
+    var gr2=CTX.createRadialGradient(cx2,cy2,0,cx2,cy2,W*0.60);
+    gr2.addColorStop(0,'rgba(150,85,110,'+nb2A+')');
+    gr2.addColorStop(0.5,'rgba(90,45,75,'+nb2A*0.45+')');
+    gr2.addColorStop(1,'rgba(20,8,20,0)');
+    CTX.fillStyle=gr2;CTX.fillRect(0,0,W,H);
+  }
+  // Nebula 3 - cool teal, upper right (new depth layer)
+  var nb3A=0.020+Math.sin(nebulaT*0.11+1.7)*0.007;
+  if(nb3A>0.002){
+    var cx3=W*(0.64+Math.sin(nebulaT*0.05)*0.06);
+    var cy3=H*(0.18+Math.cos(nebulaT*0.07)*0.05);
+    var gr3=CTX.createRadialGradient(cx3,cy3,0,cx3,cy3,W*0.48);
+    gr3.addColorStop(0,'rgba(60,115,140,'+nb3A+')');
+    gr3.addColorStop(1,'rgba(10,30,45,0)');
+    CTX.fillStyle=gr3;CTX.fillRect(0,0,W,H);
+  }
+
+  // Milky Way - a soft diagonal band of dust and light
+  CTX.save();
+  CTX.translate(W*0.50,H*0.50);
+  CTX.rotate(-0.42);
+  var mwA=0.038+Math.sin(nebulaT*0.06)*0.010;
+  var mwGrad=CTX.createLinearGradient(0,-H*0.28,0,H*0.28);
+  mwGrad.addColorStop(0,'rgba(70,60,105,0)');
+  mwGrad.addColorStop(0.38,'rgba(95,82,135,'+mwA*0.75+')');
+  mwGrad.addColorStop(0.50,'rgba(130,110,160,'+mwA+')');
+  mwGrad.addColorStop(0.62,'rgba(95,82,135,'+mwA*0.75+')');
+  mwGrad.addColorStop(1,'rgba(70,60,105,0)');
+  CTX.fillStyle=mwGrad;
+  CTX.fillRect(-W,-H*0.28,W*2,H*0.56);
+  CTX.restore();
+
+  var breathAlpha=Math.sin(tick*0.8+breathPhase)*0.010+0.012;
+  if(breathAlpha>0.001){CTX.fillStyle='rgba(255,250,235,'+breathAlpha+')';CTX.fillRect(0,0,W,H);}
+
+  for(var i=0;i<bgStars.length;i++){
+    var s=bgStars[i];
+    s.pulse+=s.pulseSpeed;
+    var pulseMod=Math.sin(s.pulse)*0.18;
+    var a=s.alpha+pulseMod+(allActive?revealGlow*0.25:0);
+    if(a<0.01)continue;
+    CTX.fillStyle='rgba('+s.r+','+s.g+','+s.b+','+Math.min(1,a)+')';
+    CTX.beginPath();CTX.arc(s.x,s.y,s.sz,0,Math.PI*2);CTX.fill();
+  }
+  for(var i=0;i<driftParts.length;i++){
+    var p=driftParts[i];
+    p.x+=p.vx;p.y+=p.vy;
+    if(p.x<0)p.x=W;if(p.x>W)p.x=0;if(p.y<0)p.y=H;if(p.y>H)p.y=0;
+    var a=p.alpha+(allActive?revealGlow*0.08:0);
+    CTX.fillStyle='rgba(255,252,240,'+a+')';
+    CTX.beginPath();CTX.arc(p.x,p.y,p.sz,0,Math.PI*2);CTX.fill();
+  }
+
+  // Vignette - subtle darkening at the edges for depth
+  var vig=CTX.createRadialGradient(W*0.50,H*0.50,W*0.28,W*0.50,H*0.50,W*0.80);
+  vig.addColorStop(0,'rgba(0,0,0,0)');
+  vig.addColorStop(0.7,'rgba(0,0,0,0.18)');
+  vig.addColorStop(1,'rgba(0,0,0,0.42)');
+  CTX.fillStyle=vig;CTX.fillRect(0,0,W,H);
+}
+
+function drawLines(){
+  var now=performance.now();
+  for(var i=0;i<cLines.length;i++){
+    var l=cLines[i];
+    if(l.active){
+      var elapsed=now-l.startTime;
+      if(elapsed>0){var tgt=Math.min(1,elapsed/420);l.progress+=(tgt-l.progress)*0.10;}
+    } else {
+      l.progress+=(0-l.progress)*0.07;
+    }
+    if(l.progress<0.005)continue;
+    var sa=hStars[l.a],sb=hStars[l.b];
+    var ex=sa.x+(sb.x-sa.x)*l.progress;
+    var ey=sa.y+(sb.y-sa.y)*l.progress;
+    var alpha=0.45*l.progress+revealGlow*0.10;
+    CTX.strokeStyle='rgba(255,255,255,'+alpha+')';
+    CTX.lineWidth=0.7;
+    CTX.beginPath();CTX.moveTo(sa.x,sa.y);CTX.lineTo(ex,ey);CTX.stroke();
+  }
+}
+
+function drawPalmLines(){
+  var target=activatedCount>0?0.22:0;
+  palmLineAlpha+=(target-palmLineAlpha)*0.04;
+  if(palmLineAlpha<0.004)return;
+  CTX.save();
+  CTX.strokeStyle='rgba(255,255,255,'+palmLineAlpha+')';
+  CTX.lineWidth=0.8;
+  for(var i=0;i<PALM_LINES.length;i++){
+    var p=PALM_LINES[i];
+    CTX.beginPath();
+    CTX.moveTo(vbToNormX(p[0][0])*W, vbToNormY(p[0][1])*H);
+    CTX.bezierCurveTo(
+      vbToNormX(p[1][0])*W, vbToNormY(p[1][1])*H,
+      vbToNormX(p[2][0])*W, vbToNormY(p[2][1])*H,
+      vbToNormX(p[3][0])*W, vbToNormY(p[3][1])*H
+    );
+    CTX.stroke();
+  }
+  CTX.restore();
+}
+
+function updateStarGlow(s,now){
+  var target=Math.max(s.contrib[0],s.contrib[1],s.contrib[2],s.contrib[3],s.contrib[4]);
+  if(target>0&&s.activateTime>0){
+    var elapsed=now-s.activateTime;
+    if(elapsed<s.lightDelay){s.glow+=(s.glow*0.97-s.glow)*0.04;}
+    else{s.glow+=(target-s.glow)*0.045;}
+  } else {
+    s.glow+=(target-s.glow)*0.05;
+  }
+}
+
+function drawStar(x,y,glow,baseR,pulsePhase,isHovered,isGlow){
+  // Layered halo for glow nodes: r=14/0.05, r=9/0.09, r=5/0.13
+  if(isGlow){
+    CTX.fillStyle='rgba(255,255,240,0.05)';
+    CTX.beginPath();CTX.arc(x,y,14,0,Math.PI*2);CTX.fill();
+    CTX.fillStyle='rgba(255,255,240,0.09)';
+    CTX.beginPath();CTX.arc(x,y,9,0,Math.PI*2);CTX.fill();
+    CTX.fillStyle='rgba(255,255,240,0.13)';
+    CTX.beginPath();CTX.arc(x,y,5,0,Math.PI*2);CTX.fill();
+  }
+  var breath=allActive?Math.sin(tick*1.3+pulsePhase)*0.08:0;
+  var shimmer=glow>0.2?Math.sin(tick*4.0+pulsePhase)*0.06:0;
+  var r=baseR*(1+breath+shimmer);
+  if(isHovered) r*=1.35;
+  var glowVal=glow+(isHovered?0.28:0)+(allActive?revealGlow*0.14:0);
+  if(glowVal>0.04){
+    var gr=CTX.createRadialGradient(x,y,r*0.3,x,y,r*5.5+(isHovered?6:0));
+    gr.addColorStop(0,'rgba(255,255,220,'+glowVal*0.40+')');
+    gr.addColorStop(0.35,'rgba(255,240,200,'+glowVal*0.15+')');
+    gr.addColorStop(1,'rgba(255,230,180,0)');
+    CTX.fillStyle=gr;
+    CTX.beginPath();CTX.arc(x,y,r*5.5+(isHovered?6:0),0,Math.PI*2);CTX.fill();
+  }
+  // Core: glow nodes are r=3 op 0.95; other stars are r=baseR op 0.88.
+  if(isGlow){
+    CTX.fillStyle='rgba(255,255,240,0.95)';
+    CTX.beginPath();CTX.arc(x,y,3,0,Math.PI*2);CTX.fill();
+  } else {
+    CTX.fillStyle='rgba(255,255,240,0.88)';
+    CTX.beginPath();CTX.arc(x,y,Math.max(0.4,r),0,Math.PI*2);CTX.fill();
+  }
+}
+
+function drawHandStars(){
+  var now=performance.now();
+  for(var i=0;i<N;i++){
+    var s=hStars[i];
+    updateStarGlow(s,now);
+    var isH=hoveredGroup>=0&&s.group===hoveredGroup;
+    drawStar(s.x,s.y,s.glow,s.baseR,s.pulsePhase,isH,s.isGlow);
+  }
+  for(var i=0;i<strayStars.length;i++){
+    var s=strayStars[i];
+    updateStarGlow(s,now);
+    var isH=hoveredGroup>=0&&s.group===hoveredGroup;
+    drawStar(s.x,s.y,s.glow,s.baseR,s.pulsePhase,isH,false);
+  }
+}
+
+// Faint ghost outline of the raw hand path. Drawn behind constellation
+// lines so the overall hand silhouette is hinted at all times.
+function drawOutlinePath(){
+  if(!HAND_PATH2D) return;
+  CTX.save();
+  CTX.translate(0.202*W, 0.0745*H);
+  CTX.scale(0.001492*W, 0.001820*H);
+  CTX.fillStyle='rgba(255,255,255,0.02)';
+  CTX.fill(HAND_PATH2D);
+  CTX.lineWidth=0.5;
+  CTX.strokeStyle='rgba(255,255,255,0.07)';
+  CTX.stroke(HAND_PATH2D);
+  CTX.restore();
+}
+
+// ===========================================================================
+// LABELS - staggered with leader lines so they never collide
+// ===========================================================================
+// Offsets are in pixels relative to the tip star. Heights staggered.
+// DILIGENCE(pinky/g3): left-outward, DISCERNMENT(ring/g2): up-left tier,
+// DESCRIPTION(mid/g1): highest, DELEGATION(idx/g0): up-right tier,
+// DOMAIN EXPERTISE(thumb/g4): right of thumb.
+var LABEL_OFFSETS=[
+  {dx: 26, dy:-38, align:'left'},   // 0 DELEGATION (index) upper-right
+  {dx:  0, dy:-52, align:'center'}, // 1 DESCRIPTION (middle) highest above
+  {dx:-26, dy:-34, align:'right'},  // 2 DISCERNMENT (ring) upper-left
+  {dx:-44, dy:-10, align:'right'},  // 3 DILIGENCE (pinky) left
+  {dx: 22, dy:  4, align:'left'}    // 4 DOMAIN EXPERTISE (thumb) right
+];
+
+function measureLabel(txt,spacing){
+  var w=0;
+  for(var c=0;c<txt.length;c++) w+=CTX.measureText(txt.charAt(c)).width+spacing;
+  return w-spacing;
+}
+
+function drawLabels(){
+  CTX.save();
+  CTX.font='500 10.5px "DM Sans",Arial,sans-serif';
+  var spacing=1.2;
+  for(var gi=0;gi<5;gi++){
+    if(!activated[gi])continue;
+    var s=hStars[LABEL_IDX[gi]];
+    var la=Math.min(1,s.glow*1.5);
+    if(la<0.04)continue;
+    var lbl=NODE_DATA[gi].label;
+    var off=LABEL_OFFSETS[gi];
+    var tw=measureLabel(lbl,spacing);
+    var anchorX=s.x+off.dx, anchorY=s.y+off.dy;
+    var lx;
+    if(off.align==='center') lx=anchorX-tw/2;
+    else if(off.align==='right') lx=anchorX-tw;
+    else lx=anchorX;
+    var ly=anchorY;
+
+    // Leader line from star to label anchor (clean thin line)
+    CTX.strokeStyle='rgba(255,255,255,'+la*0.22+')';
+    CTX.lineWidth=0.5;
+    CTX.beginPath();
+    CTX.moveTo(s.x,s.y);
+    CTX.lineTo(anchorX + (off.align==='center'?0:(off.align==='right'?-2:2)), anchorY+3);
+    CTX.stroke();
+
+    // Text (letter-spaced)
+    CTX.fillStyle='rgba(255,255,255,'+la+')';
+    var cx=lx;
+    for(var c=0;c<lbl.length;c++){
+      var ch=lbl.charAt(c);
+      CTX.fillText(ch,cx,ly);
+      cx+=CTX.measureText(ch).width+spacing;
+    }
+  }
+  CTX.restore();
+}
+
+function drawThumbPulse(){
+  if(!thumbPulsing)return;
+  thumbPulseT+=0.012;
+  if(thumbPulseT>1.0){thumbPulsing=false;return;}
+  var f=thumbPulseT;
+  var radius=18+f*80;
+  var alpha=(1-f)*(1-f)*0.38;
+  var s=hStars[LABEL_IDX[4]];
+  var gr=CTX.createRadialGradient(s.x,s.y,0,s.x,s.y,radius);
+  gr.addColorStop(0,'rgba(255,235,200,'+alpha+')');
+  gr.addColorStop(0.5,'rgba(255,220,170,'+alpha*0.35+')');
+  gr.addColorStop(1,'rgba(255,200,140,0)');
+  CTX.fillStyle=gr;
+  CTX.beginPath();CTX.arc(s.x,s.y,radius,0,Math.PI*2);CTX.fill();
+}
+
+function drawRevealGlow(){
+  if(revealGlow<0.01)return;
+  var cx=W*0.48,cy=H*0.55;
+  var gr=CTX.createRadialGradient(cx,cy,0,cx,cy,W*0.45);
+  gr.addColorStop(0,'rgba(255,230,180,'+revealGlow*0.12+')');
+  gr.addColorStop(0.5,'rgba(255,210,150,'+revealGlow*0.05+')');
+  gr.addColorStop(1,'rgba(255,200,130,0)');
+  CTX.fillStyle=gr;
+  CTX.fillRect(0,0,W,H);
+}
+
+// ===========================================================================
+// LIVELIER BACKGROUND EVENTS
+// ===========================================================================
+function updateTwinkles(){
+  var now=performance.now()/1000;
+  var base=allActive?0.8:1.3;
+  for(var t=0;t<twinkles.length;t++){
+    var tw=twinkles[t];
+    if(tw.idx>=0){
+      tw.t+=0.06;
+      var s=bgStars[tw.idx];
+      if(s){
+        if(tw.t<1) s.alpha=s.baseAlpha+Math.sin(tw.t*Math.PI)*0.72;
+        else{s.alpha=s.baseAlpha;tw.idx=-1;tw.next=now+base+Math.random()*2.0;}
+      } else {tw.idx=-1;tw.next=now+base+Math.random()*2.0;}
+    } else if(now>tw.next){
+      tw.idx=Math.floor(Math.random()*bgStars.length);
+      tw.t=0;
+    }
+  }
+}
+
+function updateShoot(ref){
+  var now=performance.now()/1000;
+  if(ref.s){
+    ref.s.t+=0.018;ref.s.x+=ref.s.vx;ref.s.y+=ref.s.vy;
+    if(ref.s.t>0.65){ref.s=null;ref.next=now+(allActive?2.2+Math.random()*3.5:3.5+Math.random()*4.5);}
+  } else if(now>ref.next){
+    if(Math.random()<(allActive?0.75:0.60)){
+      var sx=Math.random()*W*0.8+W*0.1,sy=Math.random()*H*0.5;
+      var angle=0.2+Math.random()*0.7;
+      var speed=2.6+Math.random()*2.4;
+      ref.s={x:sx,y:sy,vx:Math.cos(angle)*speed,vy:Math.sin(angle)*speed,t:0,len:3.5+Math.random()*5};
+    }
+    ref.next=now+(allActive?2.2+Math.random()*3.5:3.5+Math.random()*4.5);
+  }
+}
+
+function drawShootStar(s){
+  if(!s)return;
+  var alpha=Math.max(0,(1-s.t/0.65))*0.95;
+  CTX.fillStyle='rgba(255,255,250,'+alpha+')';
+  CTX.beginPath();CTX.arc(s.x,s.y,1.4,0,Math.PI*2);CTX.fill();
+  CTX.strokeStyle='rgba(255,255,240,'+alpha*0.72+')';
+  CTX.lineWidth=0.9;
+  CTX.beginPath();CTX.moveTo(s.x,s.y);
+  CTX.lineTo(s.x-s.vx*s.len,s.y-s.vy*s.len);CTX.stroke();
+}
+
+// ===========================================================================
+// HOVER + INFO PANEL
+// ===========================================================================
+function handleMouseMove(e){
+  var rect=CV.getBoundingClientRect();
+  var mx=e.clientX-rect.left,my=e.clientY-rect.top;
+  var found=-1,closest=60;
+  for(var gi=0;gi<5;gi++){
+    if(!activated[gi])continue;
+    var s=hStars[LABEL_IDX[gi]];
+    var dx=s.x-mx,dy=s.y-my;
+    var d=Math.sqrt(dx*dx+dy*dy);
+    if(d<closest){closest=d;found=gi;}
+  }
+  if(found!==hoveredGroup){
+    hoveredGroup=found;
+    if(found>=0) showInfo(found);
+    else showLastOrDefault();
+  }
+}
+
+function handleMouseLeave(){hoveredGroup=-1;showLastOrDefault();}
+
+function showInfo(gi){
+  defaultHint.style.opacity='0';
+  pLabel.textContent='Your strength  '+String.fromCharCode(8594)+'  '+NODE_DATA[gi].label;
+  pDesc.textContent=NODE_DATA[gi].desc;
+  panelInner.classList.add('show');
+}
+
+function showFinal(){
+  defaultHint.style.opacity='0';
+  pLabel.textContent=FINAL_LABEL;
+  pDesc.textContent=FINAL_DESC;
+  panelInner.classList.add('show');
+}
+
+function showLastOrDefault(){
+  if(allActive){showFinal();return;}
+  if(lastActivated>=0){showInfo(lastActivated);return;}
+  panelInner.classList.remove('show');
+  defaultHint.style.opacity='0.6';
+}
+
+CV.addEventListener('mousemove',handleMouseMove);
+CV.addEventListener('mouseleave',handleMouseLeave);
+CV.addEventListener('touchstart',function(e){if(e.touches.length>0)handleMouseMove({clientX:e.touches[0].clientX,clientY:e.touches[0].clientY});},{passive:true});
+CV.addEventListener('touchend',function(){handleMouseLeave();},{passive:true});
+
+// ===========================================================================
+// CLICK
+// ===========================================================================
+function advanceNext(){
+  for(var i=0;i<5;i++){
+    if(!activated[i]){
+      if(i===4&&!(activated[0]&&activated[1]&&activated[2]&&activated[3]))return;
+      toggleGroup(i);return;
+    }
+  }
+}
+
+function toggleGroup(gi){
+  var btn=document.querySelector('.ctx-btn[data-i="'+gi+'"]');
+  if(activated[gi]){
+    deactivateGroup(gi);
+    if(btn) btn.classList.remove('active');
+  } else {
+    if(gi===4&&!(activated[0]&&activated[1]&&activated[2]&&activated[3]))return;
+    activateGroup(gi);
+    if(btn) btn.classList.add('active');
+  }
+}
+
+wrap.addEventListener('click',function(){advanceNext();});
+document.querySelectorAll('.ctx-btn').forEach(function(btn){
+  btn.addEventListener('click',function(e){e.stopPropagation();toggleGroup(parseInt(btn.getAttribute('data-i')));});
+});
+
+// ===========================================================================
+// MAIN LOOP
+// ===========================================================================
+function loop(){
+  requestAnimationFrame(loop);
+  if(W===0){resize();return;}
+  tick+=0.007;
+  nebulaT+=0.010;
+  if(allActive&&revealGlow>0.14){var el=(performance.now()-revealStart)/1000;revealGlow=Math.max(0.14,1-el*0.30);}
+  else if(!allActive){revealGlow*=0.93;}
+
+  updateTwinkles();
+  for(var i=0;i<shoots.length;i++) updateShoot(shoots[i]);
+
+  drawBg();
+  drawRevealGlow();
+  drawOutlinePath();
+  drawLines();
+  drawPalmLines();
+  drawThumbPulse();
+  drawHandStars();
+  drawLabels();
+  for(var i=0;i<shoots.length;i++) drawShootStar(shoots[i].s);
+}
+
+function init(){
+  seedStrays();
+  resize();
+  buildStars();
+  buildLines();
+  initBg();
+  var now=performance.now()/1000;
+  for(var i=0;i<twinkles.length;i++) twinkles[i].next=now+0.4*i+Math.random()*1.5;
+  for(var i=0;i<shoots.length;i++) shoots[i].next=now+2+i*1.5+Math.random()*3;
+  loop();
+}
+
+window.addEventListener('load',function(){requestAnimationFrame(function(){requestAnimationFrame(init);});});
+window.addEventListener('resize',resize);
+if(window.ResizeObserver){new ResizeObserver(resize).observe(wrap);}
+
+})();
+</script>
+</body>
+</html>
