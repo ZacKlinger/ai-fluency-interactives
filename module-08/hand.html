@@ -363,9 +363,10 @@ function initBg(){
 function resize(){
   dpr=window.devicePixelRatio||1;
   var r=wrap.getBoundingClientRect();
-  W=r.width;H=Math.round(W*0.82);
-  CV.width=Math.round(W*dpr);CV.height=Math.round(H*dpr);
-  CV.style.width=W+'px';CV.style.height=H+'px';
+  var nW=Math.round(r.width), nH=Math.round(r.height);
+  if(nW===W && nH===H && CV.width===nW*dpr) return;
+  W=nW; H=nH;
+  CV.width=W*dpr; CV.height=H*dpr;
   CTX.setTransform(dpr,0,0,dpr,0,0);
   for(var i=0;i<hStars.length;i++){hStars[i].x=hStars[i].normX*W;hStars[i].y=hStars[i].normY*H;}
   for(var i=0;i<strayStars.length;i++){strayStars[i].x=strayStars[i].normX*W;strayStars[i].y=strayStars[i].normY*H;}
@@ -721,12 +722,23 @@ function drawLabels(){
     else lx=anchorX;
     var ly=anchorY;
 
-    // Leader line from star to label anchor (clean thin line)
+    // Clamp label box inside canvas with a comfortable margin
+    var mX=14, mTop=18, mBot=10;
+    if(lx<mX) lx=mX;
+    if(lx+tw>W-mX) lx=W-mX-tw;
+    if(ly<mTop) ly=mTop;
+    if(ly>H-mBot) ly=H-mBot;
+
+    // Leader line tracks the clamped label anchor
+    var leaderX;
+    if(off.align==='center') leaderX=lx+tw/2;
+    else if(off.align==='right') leaderX=lx+tw;
+    else leaderX=lx;
     CTX.strokeStyle='rgba(255,255,255,'+la*0.22+')';
     CTX.lineWidth=0.5;
     CTX.beginPath();
     CTX.moveTo(s.x,s.y);
-    CTX.lineTo(anchorX + (off.align==='center'?0:(off.align==='right'?-2:2)), anchorY+3);
+    CTX.lineTo(leaderX + (off.align==='center'?0:(off.align==='right'?-2:2)), ly+3);
     CTX.stroke();
 
     // Text (letter-spaced)
