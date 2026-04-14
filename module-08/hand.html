@@ -192,11 +192,12 @@ var STAR_GROUP=(function(){
   // DISCERNMENT (ring)
   var discernment=[45,46,47,48,49,50,51,52,53,88,89,90,91,92,93,94,95,98,99,100,101,106];
   for(var k=0;k<discernment.length;k++) g[discernment[k]]=2;
-  // DESCRIPTION (middle)
-  var description=[33,34,35,36,37,38,39,40,41,42,43,44,107,108,109,110,111,112,113,114,115,116,117,118,119];
+  // DESCRIPTION (middle): drop the pointer-column stars 33,34,116-119
+  // and pick up the middle-left-outer walk at 102-105.
+  var description=[35,36,37,38,39,40,41,42,43,44,102,103,104,105,107,108,109,110,111,112,113,114,115];
   for(var k=0;k<description.length;k++) g[description[k]]=1;
-  // DELEGATION (index)
-  var delegation=[18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,125,126,127,128,129,130,131,132,136,140,147];
+  // DELEGATION (index): gains the pointer-base-left stars from middle.
+  var delegation=[18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,116,117,118,119,125,126,127,128,129,130,131,132,136,140,147];
   for(var k=0;k<delegation.length;k++) g[delegation[k]]=0;
   // DOMAIN EXPERTISE (thumb + wrist arc): 0-17 and 148-172 already 4.
   return g;
@@ -395,35 +396,40 @@ function activateGroup(gi){
   lastActivated=gi;
   var now=performance.now();
 
-  // Full brightness for stars in this group
+  // Full brightness for stars in this group. Group 4 (Domain Expertise
+  // / thumb) spans the whole hand, so it lights every star.
+  var all=(gi===4);
   for(var i=0;i<N;i++){
-    if(hStars[i].group===gi){
+    if(all||hStars[i].group===gi){
       hStars[i].contrib[gi]=0.85+Math.random()*0.15;
       hStars[i].lightDelay=Math.random()*600;
       hStars[i].activateTime=now;
     }
   }
   for(var i=0;i<strayStars.length;i++){
-    if(strayStars[i].group===gi){
+    if(all||strayStars[i].group===gi){
       strayStars[i].contrib[gi]=0.55+Math.random()*0.30;
       strayStars[i].lightDelay=Math.random()*800;
       strayStars[i].activateTime=now;
     }
   }
 
-  // Random scatter: partial glow anywhere in the constellation
-  var others=[];
-  for(var i=0;i<N;i++){if(hStars[i].group!==gi)others.push({type:'h',idx:i});}
-  for(var i=0;i<strayStars.length;i++){if(strayStars[i].group!==gi)others.push({type:'s',idx:i});}
-  shuffleArr(others);
-  var scatter=10+Math.floor(Math.random()*8); // 10-17 random stars
-  for(var i=0;i<scatter&&i<others.length;i++){
-    var o=others[i];
-    var arr=o.type==='h'?hStars:strayStars;
-    var st=arr[o.idx];
-    st.contrib[gi]=0.22+Math.random()*0.32;
-    st.lightDelay=Math.random()*750;
-    st.activateTime=now;
+  // Random scatter: partial glow anywhere in the constellation. Skipped
+  // for group 4 since every star is already at full brightness.
+  if(!all){
+    var others=[];
+    for(var i=0;i<N;i++){if(hStars[i].group!==gi)others.push({type:'h',idx:i});}
+    for(var i=0;i<strayStars.length;i++){if(strayStars[i].group!==gi)others.push({type:'s',idx:i});}
+    shuffleArr(others);
+    var scatter=10+Math.floor(Math.random()*8); // 10-17 random stars
+    for(var i=0;i<scatter&&i<others.length;i++){
+      var o=others[i];
+      var arr=o.type==='h'?hStars:strayStars;
+      var st=arr[o.idx];
+      st.contrib[gi]=0.22+Math.random()*0.32;
+      st.lightDelay=Math.random()*750;
+      st.activateTime=now;
+    }
   }
 
   if(activatedCount===5){
@@ -667,13 +673,13 @@ function drawHandStars(){
   for(var i=0;i<N;i++){
     var s=hStars[i];
     updateStarGlow(s,now);
-    var isH=hoveredGroup>=0&&s.group===hoveredGroup;
+    var isH=hoveredGroup>=0&&(hoveredGroup===4||s.group===hoveredGroup);
     drawStar(s.x,s.y,s.glow,s.baseR,s.pulsePhase,isH,s.isGlow);
   }
   for(var i=0;i<strayStars.length;i++){
     var s=strayStars[i];
     updateStarGlow(s,now);
-    var isH=hoveredGroup>=0&&s.group===hoveredGroup;
+    var isH=hoveredGroup>=0&&(hoveredGroup===4||s.group===hoveredGroup);
     drawStar(s.x,s.y,s.glow,s.baseR,s.pulsePhase,isH,false);
   }
 }
