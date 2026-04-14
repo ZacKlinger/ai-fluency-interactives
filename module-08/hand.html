@@ -646,13 +646,15 @@ function updateStarGlow(s,now){
 }
 
 function drawStar(x,y,glow,baseR,pulsePhase,isHovered,isGlow){
-  // Layered halo for glow nodes: r=14/0.05, r=9/0.09, r=5/0.13
+  // Halos and cores scale with glow so unactivated stars blend into
+  // the bg starfield. Rest state: hand is indistinguishable from space.
+  var haloScale=isHovered?1:Math.max(0.12,glow);
   if(isGlow){
-    CTX.fillStyle='rgba(255,255,240,0.05)';
+    CTX.fillStyle='rgba(255,255,240,'+(0.05*haloScale)+')';
     CTX.beginPath();CTX.arc(x,y,14,0,Math.PI*2);CTX.fill();
-    CTX.fillStyle='rgba(255,255,240,0.09)';
+    CTX.fillStyle='rgba(255,255,240,'+(0.09*haloScale)+')';
     CTX.beginPath();CTX.arc(x,y,9,0,Math.PI*2);CTX.fill();
-    CTX.fillStyle='rgba(255,255,240,0.13)';
+    CTX.fillStyle='rgba(255,255,240,'+(0.13*haloScale)+')';
     CTX.beginPath();CTX.arc(x,y,5,0,Math.PI*2);CTX.fill();
   }
   var breath=allActive?Math.sin(tick*1.3+pulsePhase)*0.08:0;
@@ -668,12 +670,15 @@ function drawStar(x,y,glow,baseR,pulsePhase,isHovered,isGlow){
     CTX.fillStyle=gr;
     CTX.beginPath();CTX.arc(x,y,r*5.5+(isHovered?6:0),0,Math.PI*2);CTX.fill();
   }
-  // Core: glow nodes are r=3 op 0.95; other stars are r=baseR op 0.88.
+  // Core alpha ramps from a dim rest value to full on glow. Glow nodes
+  // (the 5 dimension anchors) sit slightly above bg as faint landmarks.
   if(isGlow){
-    CTX.fillStyle='rgba(255,255,240,0.95)';
+    var coreA=0.28+0.67*glow+(isHovered?0.1:0);
+    CTX.fillStyle='rgba(255,255,240,'+Math.min(1,coreA)+')';
     CTX.beginPath();CTX.arc(x,y,3,0,Math.PI*2);CTX.fill();
   } else {
-    CTX.fillStyle='rgba(255,255,240,0.88)';
+    var coreA=0.08+0.80*glow+(isHovered?0.1:0);
+    CTX.fillStyle='rgba(255,255,240,'+Math.min(1,coreA)+')';
     CTX.beginPath();CTX.arc(x,y,Math.max(0.4,r),0,Math.PI*2);CTX.fill();
   }
 }
@@ -694,17 +699,19 @@ function drawHandStars(){
   }
 }
 
-// Faint ghost outline of the raw hand path. Drawn behind constellation
-// lines so the overall hand silhouette is hinted at all times.
+// Faint ghost outline of the raw hand path. Hidden at rest so the
+// hand is invisible until the user starts clicking; ramps in with
+// activated dimensions so the silhouette pieces together.
 function drawOutlinePath(){
-  if(!HAND_PATH2D) return;
+  if(!HAND_PATH2D || activatedCount===0) return;
+  var scale=Math.min(1,activatedCount/5);
   CTX.save();
   CTX.translate(OFF_X*W, OFF_Y*H);
   CTX.scale(SX*W, SY*H);
-  CTX.fillStyle='rgba(255,255,255,0.02)';
+  CTX.fillStyle='rgba(255,255,255,'+(0.02*scale)+')';
   CTX.fill(HAND_PATH2D);
   CTX.lineWidth=0.5;
-  CTX.strokeStyle='rgba(255,255,255,0.07)';
+  CTX.strokeStyle='rgba(255,255,255,'+(0.07*scale)+')';
   CTX.stroke(HAND_PATH2D);
   CTX.restore();
 }
