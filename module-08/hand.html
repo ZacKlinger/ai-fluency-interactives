@@ -210,13 +210,18 @@ var STAR_GROUP=(function(){
   // DELEGATION (index): finger column only.
   var delegation=[19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,116,117,118,119];
   for(var k=0;k<delegation.length;k++) g[delegation[k]]=0;
-  // DOMAIN EXPERTISE: the thumb engaging -- outer thumb arc, tip glow
-  // node, inner thumb, the thenar eminence arc along the right side of
-  // the palm (where the thumb muscle sits), and the right-side wrist
-  // attachment. Center-palm and bottom-center wrist stars stay inert so
-  // hovering the thumb never leaks into the middle of the hand.
-  var domain=[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,
-              152,153,154,155,156,157,158,159,160,161,162,163,164,165,166];
+  // DOMAIN EXPERTISE: the thumb engaging the whole hand. Outer + inner
+  // thumb arc and tip glow (3-18), right-side wrist attachment (1, 2),
+  // and the full center-palm field (125-164 + 173, 174 -- thenar muscle
+  // plus every central palm star). Pinky-outer arc (65-71, 77-83),
+  // pinky-inner palm (96, 97), left + bottom-center wrist (0, 72-76,
+  // 165-172) stay inert so the hover does not bleed outside the palm.
+  var domain=[1,2,
+              3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,
+              125,126,127,128,129,130,131,132,133,134,135,136,137,138,139,140,
+              141,142,143,144,145,146,147,148,149,150,151,152,153,154,155,156,
+              157,158,159,160,161,162,163,164,
+              173,174];
   for(var k=0;k<domain.length;k++) g[domain[k]]=4;
   return g;
 })();
