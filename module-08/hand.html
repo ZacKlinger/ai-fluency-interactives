@@ -878,6 +878,9 @@ function drawShootStar(s){
 // if no star is within HIT_R2 pixels^2.
 var HIT_R2=2600; // ~51px
 function pickGroupAt(mx,my){
+  // Hover is dormant on a fresh canvas -- the first click introduces the
+  // interaction, and only then does hover preview each group.
+  if(activatedCount===0) return -1;
   var found=-1, bestD2=HIT_R2;
   for(var i=0;i<N;i++){
     var s=hStars[i];
