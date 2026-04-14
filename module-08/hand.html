@@ -14,11 +14,11 @@ html,body{min-height:100vh;background:var(--bg);display:flex;align-items:center;
 .stage{width:100%;max-width:640px;position:relative}
 .status-badge{position:absolute;top:0;right:0;z-index:10;font-size:9px;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;background:var(--surface);border:0.5px solid var(--border);color:var(--muted);padding:3px 10px;border-radius:0 6px 0 4px}
 .card{background:var(--bg);border:0.5px solid var(--border);border-radius:6px;overflow:hidden}
-.top-bar{padding:1.1rem 1.5rem 0;padding-right:7rem}
+.top-bar{padding:1.15rem 1.5rem 0.35rem;padding-right:7rem}
 .eyebrow{font-size:9.5px;font-weight:500;letter-spacing:0.16em;text-transform:uppercase;color:var(--muted)}
-.title-area{padding:0.45rem 1.5rem 0.2rem}
-.headline{font-family:var(--serif);font-variation-settings:'opsz' 22;font-size:clamp(18px,2.6vw,23px);font-weight:600;color:var(--dark);line-height:1.2;margin-bottom:0.2rem;letter-spacing:-0.025em}
-.subhead{font-size:12px;color:var(--muted);line-height:1.5}
+.title-area{padding:0.6rem 1.5rem 0.65rem}
+.headline{font-family:var(--serif);font-variation-settings:'opsz' 22;font-size:clamp(18px,2.6vw,23px);font-weight:600;color:var(--dark);line-height:1.2;margin-bottom:0.4rem;letter-spacing:-0.025em}
+.subhead{font-size:12px;color:var(--muted);line-height:1.55}
 .field-wrap{position:relative;background:#07060f;border-top:0.5px solid var(--border);border-bottom:0.5px solid var(--border);aspect-ratio:50/41}
 canvas{display:block;width:100%;height:100%;cursor:pointer}
 .controls{padding:0.85rem 1.5rem 0.2rem;background:var(--bg)}
@@ -87,9 +87,9 @@ var W=0,H=0,dpr=1,tick=0;
 var NODE_DATA=[
   {label:'DELEGATION',      desc:"In Module 1 you named the work worth handing off and the work worth keeping. In Module 5 you made that same call with student data on the line. You have been asking 'should AI do this' long before the course gave you the word."},
   {label:'DESCRIPTION',     desc:"In the Module 6 Differentiated Materials Challenge, you briefed AI on a real lesson the way you would brief a substitute -- audience, grade band, what good looks like. Every rubric you have ever written was already a prompt. You did not learn Description this week; we just named it."},
-  {label:'DISCERNMENT',     desc:"In Module 2 you caught AI inventing confident answers in a subject you know cold. In Module 6 you ran the Okafor checklist on a draft: science accurate, reading level right, vocabulary that matters, CER setup intact. Most people skip this step -- yours is sharp."},
+  {label:'DISCERNMENT',     desc:"In Module 2 you caught AI inventing confident answers in a subject you know cold. In Module 6 you pressure-tested a draft the way Ms. Okafor did -- science accurate, reading level right, vocabulary that matters, CER setup intact. Most people skip this step -- yours is sharp."},
   {label:'DILIGENCE',       desc:"In Module 5 you validated AI output against data where you already knew the answers -- the move most people skip. You weighed FERPA and district-approved tools before anyone asked you to. Nothing reaches your students without passing through you first."},
-  {label:'DOMAIN EXPERTISE', desc:"In Module 3 you wrote an AI Constitution only you could have written -- your subject, your students, your non-negotiables. In Module 7 you ran a full 4D workflow on a real task from your own work. The framework works because of what you already carry into the room."}
+  {label:'DOMAIN EXPERTISE', desc:"In Module 3 you reflected on your professional values when using AI -- your subject, your students, your non-negotiables. In Module 7 you ran a full 4D workflow on a real task from your own work. The framework works because of what you already carry into the room."}
 ];
 
 var FINAL_LABEL='YOUR FRAMEWORK';
@@ -210,7 +210,14 @@ var STAR_GROUP=(function(){
   // so hovering the index finger lights only the finger, not the palm.
   var delegation=[19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,116,117,118,119];
   for(var k=0;k<delegation.length;k++) g[delegation[k]]=0;
-  // DOMAIN EXPERTISE (thumb + wrist arc): 0-17 and 148-172 already 4.
+  // DOMAIN EXPERTISE (thumb + right-side edge + palm): 0-17 (minus wrist
+  // bottom), 148-172 (minus wrist bottom), and all unlabeled palm-interior
+  // stars already default to 4.
+  // WRIST (bottom horizontal arc) -- inert group -1. Excluded from every
+  // dimension's hover and activation, but still lit by the all-active
+  // sweep on the fifth click so the hand completes visually.
+  var wrist=[0,1,2,72,73,74,75,76,169,170,171,172];
+  for(var k=0;k<wrist.length;k++) g[wrist[k]]=-1;
   return g;
 })();
 
@@ -407,40 +414,35 @@ function activateGroup(gi){
   lastActivated=gi;
   var now=performance.now();
 
-  // Full brightness for stars in this group. Group 4 (Domain Expertise
-  // / thumb) spans the whole hand, so it lights every star.
-  var all=(gi===4);
+  // Full brightness for stars in this group.
   for(var i=0;i<N;i++){
-    if(all||hStars[i].group===gi){
+    if(hStars[i].group===gi){
       hStars[i].contrib[gi]=0.85+Math.random()*0.15;
       hStars[i].lightDelay=Math.random()*600;
       hStars[i].activateTime=now;
     }
   }
   for(var i=0;i<strayStars.length;i++){
-    if(all||strayStars[i].group===gi){
+    if(strayStars[i].group===gi){
       strayStars[i].contrib[gi]=0.55+Math.random()*0.30;
       strayStars[i].lightDelay=Math.random()*800;
       strayStars[i].activateTime=now;
     }
   }
 
-  // Random scatter: partial glow anywhere in the constellation. Skipped
-  // for group 4 since every star is already at full brightness.
-  if(!all){
-    var others=[];
-    for(var i=0;i<N;i++){if(hStars[i].group!==gi)others.push({type:'h',idx:i});}
-    for(var i=0;i<strayStars.length;i++){if(strayStars[i].group!==gi)others.push({type:'s',idx:i});}
-    shuffleArr(others);
-    var scatter=10+Math.floor(Math.random()*8); // 10-17 random stars
-    for(var i=0;i<scatter&&i<others.length;i++){
-      var o=others[i];
-      var arr=o.type==='h'?hStars:strayStars;
-      var st=arr[o.idx];
-      st.contrib[gi]=0.22+Math.random()*0.32;
-      st.lightDelay=Math.random()*750;
-      st.activateTime=now;
-    }
+  // Random scatter: partial glow anywhere in the constellation.
+  var others=[];
+  for(var i=0;i<N;i++){if(hStars[i].group!==gi)others.push({type:'h',idx:i});}
+  for(var i=0;i<strayStars.length;i++){if(strayStars[i].group!==gi)others.push({type:'s',idx:i});}
+  shuffleArr(others);
+  var scatter=10+Math.floor(Math.random()*8); // 10-17 random stars
+  for(var i=0;i<scatter&&i<others.length;i++){
+    var o=others[i];
+    var arr=o.type==='h'?hStars:strayStars;
+    var st=arr[o.idx];
+    st.contrib[gi]=0.22+Math.random()*0.32;
+    st.lightDelay=Math.random()*750;
+    st.activateTime=now;
   }
 
   if(activatedCount===5){
@@ -689,13 +691,13 @@ function drawHandStars(){
   for(var i=0;i<N;i++){
     var s=hStars[i];
     updateStarGlow(s,now);
-    var isH=hoveredGroup>=0&&(hoveredGroup===4||s.group===hoveredGroup);
+    var isH=hoveredGroup>=0&&s.group===hoveredGroup;
     drawStar(s.x,s.y,s.glow,s.baseR,s.pulsePhase,isH,s.isGlow);
   }
   for(var i=0;i<strayStars.length;i++){
     var s=strayStars[i];
     updateStarGlow(s,now);
-    var isH=hoveredGroup>=0&&(hoveredGroup===4||s.group===hoveredGroup);
+    var isH=hoveredGroup>=0&&s.group===hoveredGroup;
     drawStar(s.x,s.y,s.glow,s.baseR,s.pulsePhase,isH,false);
   }
 }
@@ -867,17 +869,25 @@ function drawShootStar(s){
 // ===========================================================================
 // HOVER + INFO PANEL
 // ===========================================================================
+// Pick the group of the nearest hand star under the pointer. Returns -1
+// if no star is within HIT_R2 pixels^2.
+var HIT_R2=2600; // ~51px
+function pickGroupAt(mx,my){
+  var found=-1, bestD2=HIT_R2;
+  for(var i=0;i<N;i++){
+    var s=hStars[i];
+    if(s.group<0||s.group>4) continue; // wrist / inert stars are not hittable
+    var dx=s.x-mx, dy=s.y-my;
+    var d2=dx*dx+dy*dy;
+    if(d2<bestD2){bestD2=d2; found=s.group;}
+  }
+  return found;
+}
+
 function handleMouseMove(e){
   var rect=CV.getBoundingClientRect();
   var mx=e.clientX-rect.left,my=e.clientY-rect.top;
-  var found=-1,closest=60;
-  for(var gi=0;gi<5;gi++){
-    if(!activated[gi])continue;
-    var s=hStars[LABEL_IDX[gi]];
-    var dx=s.x-mx,dy=s.y-my;
-    var d=Math.sqrt(dx*dx+dy*dy);
-    if(d<closest){closest=d;found=gi;}
-  }
+  var found=pickGroupAt(mx,my);
   if(found!==hoveredGroup){
     hoveredGroup=found;
     if(found>=0) showInfo(found);
@@ -944,7 +954,18 @@ function toggleGroup(gi){
   }
 }
 
-wrap.addEventListener('click',function(){advanceNext();});
+wrap.addEventListener('click',function(e){
+  var rect=CV.getBoundingClientRect();
+  var mx=e.clientX-rect.left, my=e.clientY-rect.top;
+  var found=pickGroupAt(mx,my);
+  // Thumb/palm (group 4) still needs the other four first; if not ready,
+  // fall through to sequential advance so a palm click doesn't feel dead.
+  if(found>=0 && !(found===4 && !(activated[0]&&activated[1]&&activated[2]&&activated[3]))){
+    toggleGroup(found);
+  } else {
+    advanceNext();
+  }
+});
 document.querySelectorAll('.ctx-btn').forEach(function(btn){
   btn.addEventListener('click',function(e){e.stopPropagation();toggleGroup(parseInt(btn.getAttribute('data-i')));});
 });
