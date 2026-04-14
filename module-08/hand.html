@@ -85,11 +85,11 @@ var W=0,H=0,dpr=1,tick=0;
 // 3 pinky finger  -> DILIGENCE
 // 4 thumb         -> DOMAIN EXPERTISE
 var NODE_DATA=[
-  {label:'DELEGATION',      desc:"You have decided, a thousand times this year, what belongs to you and what belongs to someone else. You carry that instinct into every AI workflow now. The parts that need your voice stay with you. The rest, you can let go."},
-  {label:'DESCRIPTION',     desc:"Every lesson plan you have ever written was already a prompt. Every time you told a student what good work looks like, you were practicing the exact skill this course names. You came in fluent. We only gave it a word."},
-  {label:'DISCERNMENT',     desc:"You read a room mid-lesson. You know the difference between a question that lands and one that dies on the carpet. That is the same muscle you bring to an AI draft. It is a posture, not a new skill, and you already had the skill."},
-  {label:'DILIGENCE',       desc:"Nothing has ever reached a student without passing through you first. That was true before this course, and it is true now. AI does not carry that weight. The care that closes the loop is yours, and it always has been."},
-  {label:'DOMAIN EXPERTISE', desc:"This is the one thing no model can give you. Your subject, your students, the specific child having a hard week. The framework only works because of what you already bring into the room. You are the reason it works at all."}
+  {label:'DELEGATION',      desc:"In Module 1 you named the work worth handing off and the work worth keeping. In Module 5 you made that same call with student data on the line. You have been asking 'should AI do this' long before the course gave you the word."},
+  {label:'DESCRIPTION',     desc:"In the Module 6 Differentiated Materials Challenge, you briefed AI on a real lesson the way you would brief a substitute -- audience, grade band, what good looks like. Every rubric you have ever written was already a prompt. You did not learn Description this week; we just named it."},
+  {label:'DISCERNMENT',     desc:"In Module 2 you caught AI inventing confident answers in a subject you know cold. In Module 6 you ran the Okafor checklist on a draft: science accurate, reading level right, vocabulary that matters, CER setup intact. Most people skip this step -- yours is sharp."},
+  {label:'DILIGENCE',       desc:"In Module 5 you validated AI output against data where you already knew the answers -- the move most people skip. You weighed FERPA and district-approved tools before anyone asked you to. Nothing reaches your students without passing through you first."},
+  {label:'DOMAIN EXPERTISE', desc:"In Module 3 you wrote an AI Constitution only you could have written -- your subject, your students, your non-negotiables. In Module 7 you ran a full 4D workflow on a real task from your own work. The framework works because of what you already carry into the room."}
 ];
 
 var FINAL_LABEL='YOUR FRAMEWORK';
@@ -881,17 +881,24 @@ function handleMouseMove(e){
   if(found!==hoveredGroup){
     hoveredGroup=found;
     if(found>=0) showInfo(found);
+    else if(lastInfoGroup>=0) showInfo(lastInfoGroup);
     else showLastOrDefault();
   }
 }
 
-function handleMouseLeave(){hoveredGroup=-1;showLastOrDefault();}
+function handleMouseLeave(){
+  hoveredGroup=-1;
+  if(lastInfoGroup>=0) showInfo(lastInfoGroup);
+  else showLastOrDefault();
+}
 
+var lastInfoGroup=-1;
 function showInfo(gi){
   defaultHint.style.opacity='0';
   pLabel.textContent='Your strength  '+String.fromCharCode(8594)+'  '+NODE_DATA[gi].label;
   pDesc.textContent=NODE_DATA[gi].desc;
   panelInner.classList.add('show');
+  lastInfoGroup=gi;
 }
 
 function showFinal(){
