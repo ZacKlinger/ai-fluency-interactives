@@ -177,21 +177,34 @@ var HAND_PATH2D=(typeof Path2D!=='undefined')?new Path2D(RAW_HAND_PATH):null;
 function vbToNormX(vx){ return 0.202  + vx * 0.001492; }
 function vbToNormY(vy){ return 0.0745 + vy * 0.001820; }
 
-// Coarse group assignment by column for a sampled point (viewBox coords).
-// Only used to color intermediate outline points; the five fingertip glow
-// nodes are force-assigned below regardless of this classification.
-function classifyPoint(vx,vy){
-  if(vy>200) return 4;
-  if(vx>260) return 4;
-  if(vx<=135) return 3; // pinky
-  if(vx<=185) return 2; // ring
-  if(vx<=225) return 1; // middle
-  return 0;             // index (135..260)
-}
+// Explicit per-index finger membership. Groups:
+// 0 DELEGATION(index) 1 DESCRIPTION(middle) 2 DISCERNMENT(ring)
+// 3 DILIGENCE(pinky)  4 DOMAIN EXPERTISE(thumb + wrist + palm fallback)
+// Unlisted palm-interior indices default to 4 so they read as part of
+// the hand body that grounds the five dimensions.
+var STAR_GROUP=(function(){
+  var g=new Array(STARS_RAW.length);
+  for(var i=0;i<g.length;i++) g[i]=4;
+  // DILIGENCE (pinky): outer+inner pinky walk plus four palm bridges
+  // (array 84,85,86,87 = bridges 62.5,60.5,58.5,55.5 after orig 83).
+  var diligence=[54,55,56,57,58,59,60,61,62,63,64,84,85,86,87];
+  for(var k=0;k<diligence.length;k++) g[diligence[k]]=3;
+  // DISCERNMENT (ring)
+  var discernment=[45,46,47,48,49,50,51,52,53,88,89,90,91,92,93,94,95,98,99,100,101,106];
+  for(var k=0;k<discernment.length;k++) g[discernment[k]]=2;
+  // DESCRIPTION (middle)
+  var description=[33,34,35,36,37,38,39,40,41,42,43,44,107,108,109,110,111,112,113,114,115,116,117,118,119];
+  for(var k=0;k<description.length;k++) g[description[k]]=1;
+  // DELEGATION (index)
+  var delegation=[18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,125,126,127,128,129,130,131,132,136,140,147];
+  for(var k=0;k<delegation.length;k++) g[delegation[k]]=0;
+  // DOMAIN EXPERTISE (thumb + wrist arc): 0-17 and 148-172 already 4.
+  return g;
+})();
 
 function buildHandFromPath(){
-  // The five glow nodes encountered in path order map to the five
-  // dimensions: thumb, index, middle, ring, pinky.
+  // Glow nodes encountered in path order map to dimensions:
+  // thumb, index, middle, ring, pinky.
   var GLOW_TO_GROUP=[4,0,1,2,3];
   var glowSeen=0;
   var outline=[];
@@ -199,13 +212,11 @@ function buildHandFromPath(){
   for(var i=0;i<STARS_RAW.length;i++){
     var s=STARS_RAW[i];
     var vx=s[0], vy=s[1], isGlow=(s[2]===1);
-    var group;
+    var group=STAR_GROUP[i];
     if(isGlow){
       group=GLOW_TO_GROUP[glowSeen];
       labelIdx[group]=i;
       glowSeen++;
-    } else {
-      group=classifyPoint(vx,vy);
     }
     // Entry: [normX, normY, group, isGlow, vbX, vbY]
     outline.push([vbToNormX(vx), vbToNormY(vy), group, isGlow, vx, vy]);
