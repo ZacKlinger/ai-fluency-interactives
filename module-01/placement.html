@@ -80,13 +80,17 @@ var nodes=[
   {l1:"My name is on it,",l2:"so I make sure it's right",fx:0.68,fy:0.79,name:"You stand behind what you send",desc:"When something goes out under your name, you have made sure it is right.",tags:[["Diligence","tg"],["Delegation","td"]],d4:"Diligence",col:"rgba(197,155,128,",insight:"AI helps you move faster - but you are the one who stands behind everything that reaches your students.",anchor:"The work is yours. AI is a tool in service of it."},
   {l1:"I know when to call",l2:"in the right person",fx:0.5,fy:0.51,name:"You recognize the edges of your knowledge",desc:"You know when to bring in the specialist. That is a professional strength.",tags:[["Delegation","td"],["Discernment","tc"]],d4:"Delegation + Discernment",col:"rgba(150,158,128,",insight:"Knowing what only you can do - and what AI cannot - is the whole game.",anchor:"Knowing when not to use AI is as important as knowing when to."}
 ];
-function resize(){dpr=window.devicePixelRatio||1;var rect=field.getBoundingClientRect();W=rect.width;H=rect.height;if(W===0)W=field.offsetWidth;if(H===0)H=field.offsetHeight;canvas.width=Math.round(W*dpr);canvas.height=Math.round(H*dpr);canvas.style.width=W+'px';canvas.style.height=H+'px';ctx.setTransform(dpr,0,0,dpr,0,0);nodes.forEach(function(n){n.x=n.fx*W;n.y=n.fy*H;if(!n.r)n.r=26;if(n.pulse===undefined)n.pulse=Math.random()*Math.PI*2;});}
+var decor=[{fx:0.62,fy:0.58},{fx:0.67,fy:0.65}];
+function resize(){dpr=window.devicePixelRatio||1;var rect=field.getBoundingClientRect();W=rect.width;H=rect.height;if(W===0)W=field.offsetWidth;if(H===0)H=field.offsetHeight;canvas.width=Math.round(W*dpr);canvas.height=Math.round(H*dpr);canvas.style.width=W+'px';canvas.style.height=H+'px';ctx.setTransform(dpr,0,0,dpr,0,0);nodes.forEach(function(n){n.x=n.fx*W;n.y=n.fy*H;if(!n.r)n.r=26;if(n.pulse===undefined)n.pulse=Math.random()*Math.PI*2;});decor.forEach(function(d){d.x=d.fx*W;d.y=d.fy*H;});}
 field.addEventListener('mousemove',function(e){var r=field.getBoundingClientRect();mx=e.clientX-r.left;my=e.clientY-r.top;trail.push({x:mx,y:my,a:1,s:Math.random()*1.5+1});if(trail.length>48)trail.shift();});
 field.addEventListener('mouseleave',function(){mx=-999;my=-999;});
 function dist(x1,y1,x2,y2){return Math.sqrt((x2-x1)*(x2-x1)+(y2-y1)*(y2-y1));}
 function getHov(){var b=null,bd=9999;nodes.forEach(function(n){var d=dist(mx,my,n.x,n.y);if(d<bd){bd=d;b=n;}});return b&&bd<(b.r+36)?b:null;}
 function draw(){requestAnimationFrame(draw);if(W===0||H===0){resize();return;}ctx.clearRect(0,0,W,H);
 for(var i=0;i<trail.length;i++){var tr=trail[i];tr.a*=0.88;if(tr.a<0.008)continue;ctx.beginPath();ctx.arc(tr.x,tr.y,tr.s*(i/trail.length)+0.5,0,Math.PI*2);ctx.fillStyle='rgba(217,119,87,'+tr.a*0.3+')';ctx.fill();}
+ctx.strokeStyle='rgba(20,20,19,0.08)';ctx.lineWidth=0.5;
+[[decor[0],nodes[7]],[decor[0],decor[1]],[decor[1],nodes[4]],[decor[1],nodes[6]]].forEach(function(p){ctx.beginPath();ctx.moveTo(p[0].x,p[0].y);ctx.lineTo(p[1].x,p[1].y);ctx.stroke();});
+decor.forEach(function(d){ctx.beginPath();ctx.arc(d.x,d.y,1.8,0,Math.PI*2);ctx.fillStyle='rgba(20,20,19,0.18)';ctx.fill();});
 var hov=getHov();
 nodes.forEach(function(n){var isH=hov===n,wasR=revealedSet[n.l1];var tgt=isH?44:(wasR?32:24);n.r=n.r+(tgt-n.r)*0.1;n.pulse+=0.02;var pls=isH?0:Math.sin(n.pulse)*2;
 if(isH||wasR){var grd=ctx.createRadialGradient(n.x,n.y,n.r*0.4,n.x,n.y,n.r+20);grd.addColorStop(0,n.col+(isH?0.2:0.08)+')');grd.addColorStop(1,n.col+'0)');ctx.beginPath();ctx.arc(n.x,n.y,n.r+20+pls,0,Math.PI*2);ctx.fillStyle=grd;ctx.fill();}
