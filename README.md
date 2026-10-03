@@ -6,34 +6,34 @@ Live gallery: **https://zacklinger.github.io/ai-fluency-interactives**
 
 ---
 
-## Structure
+## Modules
 
+Every module has its interactive, and the gallery ([`index.html`](index.html)) links them all.
+
+| Module | Interactive | File |
+|--------|-------------|------|
+| 01 | You already have a head start | [`module-01/placement.html`](module-01/placement.html) |
+| 02 | Read carefully | [`module-02/timeline.html`](module-02/timeline.html) |
+| 03 | What AI carries with it | [`module-03/ethics.html`](module-03/ethics.html) |
+| 04 | The 4D Framework | [`module-04/framework.html`](module-04/framework.html) |
+| 05 | What's Worth Delegating | [`module-05/delegation.html`](module-05/delegation.html) |
+| 06 | Conduct the Symphony | [`module-06/telephone.html`](module-06/telephone.html) |
+| 07 | Designing with AI | [`module-07/designing.html`](module-07/designing.html) |
+| 07 | The 4D Workflow | [`module-07/orbit.html`](module-07/orbit.html) |
+| 08 | Your Fluency, Mapped | [`module-08/hand.html`](module-08/hand.html) |
+
+[`When-Properties-Collide-standalone.html`](When-Properties-Collide-standalone.html) is an early standalone prototype, not linked from the gallery.
+
+Building a new interactive? Read [`course-content.md`](course-content.md) for module objectives, transcripts, and the phrases to use verbatim, and [`CLAUDE.md`](CLAUDE.md) for the design system.
+
+## Local preview
+
+```bash
+python -m http.server 8000
+# then open http://localhost:8000
 ```
-index.html                  ← Gallery of all modules (start here)
-module-01/placement.html    ← Module 1: Orientation / placement dial
-module-02/                  ← Coming soon
-...
-```
 
-## Status
-
-| Module | Title | Interactive | Status |
-|--------|-------|-------------|--------|
-| 01 | Intro to AI Fluency | Placement dial | ✅ Final |
-| 02 | Capabilities & Limits | TBD | ⬜ Pending |
-| 03 | Delegation | TBD | ⬜ Pending |
-| 04 | Description | TBD | ⬜ Pending |
-| 05 | Discernment | TBD | ⬜ Pending |
-| 06 | Diligence | TBD | ⬜ Pending |
-| 07 | AI in Your Classroom | TBD | ⬜ Pending |
-| 08 | Integration & Moving Forward | TBD | ⬜ Pending |
-
-## Enabling GitHub Pages
-
-1. Push this repo to GitHub as `ai-fluency-interactives`
-2. Go to **Settings → Pages**
-3. Set source to **Deploy from branch → main → / (root)**
-4. Save. Live in ~60 seconds at `https://zacklinger.github.io/ai-fluency-interactives`
+GitHub Pages builds the gallery from `main`, so every merge to `main` is a deploy.
 
 ## Notes
 
